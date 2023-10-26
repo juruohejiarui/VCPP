@@ -1,0 +1,180 @@
+#GLOMEM 0
+#EXPOSE Console@Print.int_Dimc0
+#EXPOSE Console@Print.long_Dimc0
+#EXPOSE Console@Print.ulong_Dimc0
+#EXPOSE Console@Print.double_Dimc0
+#EXPOSE Console@InputInt
+#EXPOSE Console@InputDouble
+#EXPOSE Console@PutChar.char_Dimc0
+#EXPOSE Console@GetChar
+#EXPOSE Console@Print.char_Dimc1
+#EXPOSE Console@Print.char_Dimc1.int_Dimc0
+label Console@Print.int_Dimc0
+setvar 1
+poparg 1
+		pvar0
+		vi32gvl
+		sys 0
+
+pvar0
+push0
+vi64mov
+ret
+label Console@Print.long_Dimc0
+setvar 1
+poparg 1
+		pvar0
+		vi64gvl
+		sys 1
+
+pvar0
+push0
+vi64mov
+ret
+label Console@Print.ulong_Dimc0
+setvar 1
+poparg 1
+		pvar0
+		vi64gvl
+		sys 2
+
+pvar0
+push0
+vi64mov
+ret
+label Console@Print.double_Dimc0
+setvar 1
+poparg 1
+		pvar0
+		vfgvl
+		sys 3
+
+pvar0
+push0
+vi64mov
+ret
+label Console@InputInt
+setvar 0
+poparg 0
+		sys 6
+		ret
+
+ret
+label Console@InputDouble
+setvar 0
+poparg 0
+		sys 9
+		ret
+
+ret
+label Console@PutChar.char_Dimc0
+setvar 1
+poparg 1
+		pvar0
+		vbgvl
+		sys 5
+
+pvar0
+push0
+vi64mov
+ret
+label Console@GetChar
+setvar 0
+poparg 0
+		sys 11
+		ret
+
+ret
+label Console@Print.char_Dimc1
+setvar 2
+poparg 1
+pvar1
+push0
+vi32mov
+label @LOOP_START0
+povar0
+vogvl
+pvar1
+vi32gvl
+arrmem1
+mbgvl
+push0
+ne
+jz @LOGIC_FAIL0
+povar0
+vogvl
+pvar1
+vi32gvl
+arrmem1
+mi32gvl
+push 255
+ne
+jz @LOGIC_FAIL0
+push1
+jmp @LOGIC_END0
+label @LOGIC_FAIL0
+push0
+label @LOGIC_END0
+jz @LOOP_END0
+povar0
+vogvl
+pvar1
+vi32gvl
+arrmem1
+mbgvl
+call Console@PutChar.char_Dimc0 1
+label @LOOP_CTEND0
+pvar1
+pvar1
+vi32gvl
+push1
+add
+vi32mov
+jmp @LOOP_START0
+label @LOOP_END0
+pvar1
+push0
+vi64mov
+povar0
+push0
+vomov
+ret
+label Console@Print.char_Dimc1.int_Dimc0
+setvar 3
+poparg 2
+pvar2
+push0
+vi32mov
+label @LOOP_START1
+pvar2
+vi32gvl
+pvar1
+vi32gvl
+ls
+jz @LOOP_END1
+povar0
+vogvl
+pvar2
+vi32gvl
+arrmem1
+mbgvl
+call Console@PutChar.char_Dimc0 1
+label @LOOP_CTEND1
+pvar2
+pvar2
+vi32gvl
+push1
+add
+vi32mov
+jmp @LOOP_START1
+label @LOOP_END1
+pvar2
+push0
+vi64mov
+pvar1
+push0
+vi64mov
+povar0
+push0
+vomov
+ret

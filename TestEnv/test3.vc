@@ -1,0 +1,80 @@
+using Console;
+using Container;
+using Math;
+
+var ACNode[] nd;
+var int ndcnt;
+var double[] a;
+
+func int getid(char ch) { return (ch - 'a') => int; }
+class ACNode {
+	public var int[] ch;
+	public var int fil, fl;
+	func __init__() { ch = $int[26]; }
+}
+
+func void insert(String str) {
+	var int cur = 0;
+	for (var int i = 0; i < str.Length(); i = i + 1) {
+		var int ch = getid(str.Get(i));
+		if (nd[cur].ch[ch] == 0) ndcnt = ndcnt + 1, nd[cur].ch[ch] = ndcnt;
+		cur = nd[cur].ch[ch];
+	}
+	nd[cur].fl = nd[cur].fl + 1;
+}
+
+var int[] q;
+var int ql, qr;
+
+func void build() {
+	ql = 1, qr = 0;
+	for (var int i = 0; i < 26; i = i + 1) if (nd[0].ch[i])
+		qr = qr + 1, q[qr] = nd[0].ch[i];
+	while (ql <= qr) {
+		var int u = q[ql]; ql = ql + 1;
+		for (var int i = 0; i < 26; i = i + 1)
+			if (nd[u].ch[i]) {
+				qr = qr + 1, q[qr] = nd[u].ch[i];
+				nd[nd[u].ch[i]].fil = nd[nd[u].fil].ch[i];
+			} else nd[u].ch[i] = nd[nd[u].fil].ch[i];
+	}
+}
+
+func int calc(String str) {
+	var int ans = 0;
+	for (var int i = 0, u = 0; i < str.Length(); i = i + 1) {
+		u = nd[u].ch[getid(str.Get(i))];
+		for (var int j = u; j && nd[j].fl != 0 - 1; j = nd[j].fil)
+		 	ans = ans + nd[j].fl, nd[j].fl = 0 - 1;
+	}
+	return ans;
+}
+
+func int Main() {
+	nd = $ACNode[10000005];
+	q = $int[10000005];
+	for (var int i = 0; i <= 10000000; i = i + 1) nd[i] = $ACNode();
+	var int n = InputInt();
+	ndcnt = 0;
+	for (var int i = 1; i <= n; i = i + 1) {
+		var String str = $String();
+		str.Input();
+		insert(str);
+	}
+	build();
+	var String str = $String();
+	str.Input();
+	Print(calc(str)), PutChar('\n');
+
+	Print("Now input the length of the sequence: ");
+	n = InputInt();
+	a = $double[n + 1];
+	var double mxa;
+	for (var int i = 1; i <= n; i = i + 1) {
+		a[i] = InputDouble();
+		if (i == 1) mxa = a[i];
+		else mxa = max(mxa, a[i]);
+	}
+	Print(mxa);
+	return 0;
+}

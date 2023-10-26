@@ -1,0 +1,743 @@
+#RELY "list.vlib"
+#RELY "math.vlib"
+#GLOMEM 48
+#EXTERN __init__.Container@List_Dimc0
+#EXTERN __init__.Container@List_Dimc0.int_Dimc0
+#EXTERN __init__.Container@String_Dimc0
+#EXTERN __init__.Container@String_Dimc0.char_Dimc1
+#EXTERN __init__.Container@String_Dimc0.char_Dimc1.int_Dimc0
+#EXTERN __init__.Container@String_Dimc0.int_Dimc0
+#EXTERN Container@List@Append.object_Dimc0
+#EXTERN Container@List@Get.int_Dimc0
+#EXTERN Container@List@Length
+#EXTERN Container@List@Merge.Container@List_Dimc0
+#EXTERN Container@List@Popback
+#EXTERN Container@List@Set.int_Dimc0.object_Dimc0
+#EXTERN Container@String@Append.char_Dimc0
+#EXTERN Container@String@Get.int_Dimc0
+#EXTERN Container@String@GetArray
+#EXTERN Container@String@Input
+#EXTERN Container@String@Length
+#EXTERN Container@String@Merge.Container@String_Dimc0
+#EXTERN Container@String@Popback
+#EXTERN Container@String@Print
+#EXTERN Container@String@Set.int_Dimc0.char_Dimc0
+#EXTERN Console@GetChar
+#EXTERN Console@InputDouble
+#EXTERN Console@InputInt
+#EXTERN Console@Print.char_Dimc1
+#EXTERN Console@Print.char_Dimc1.int_Dimc0
+#EXTERN Console@Print.double_Dimc0
+#EXTERN Console@Print.int_Dimc0
+#EXTERN Console@Print.long_Dimc0
+#EXTERN Console@Print.ulong_Dimc0
+#EXTERN Console@PutChar.char_Dimc0
+#EXTERN __init__.Math@Pair_Dimc0.object_Dimc0.object_Dimc0
+#EXTERN Math@max.double_Dimc0.double_Dimc0
+#EXTERN Math@max.int_Dimc0.int_Dimc0
+#EXTERN Math@min.double_Dimc0.double_Dimc0
+#EXTERN Math@min.int_Dimc0.int_Dimc0
+label getid.char_Dimc0
+setvar 1
+poparg 1
+pvar0
+vbgvl
+push 97
+bsub
+pvar0
+push0
+vi64mov
+ret
+pvar0
+push0
+vi64mov
+ret
+label __init__.ACNode_Dimc0
+setvar 1
+poparg 1
+povar0
+vogvl
+omem 8
+push 4
+push 26
+arrnew 1
+momov
+povar0
+push0
+vomov
+ret
+label insert.Container@String_Dimc0
+setvar 4
+poparg 1
+pvar1
+push0
+vi32mov
+pvar2
+push0
+vi32mov
+label @LOOP_START0
+pvar2
+vi32gvl
+povar0
+vogvl
+call Container@String@Length 1
+ls
+jz @LOOP_END0
+pvar3
+povar0
+vogvl
+pvar2
+vi32gvl
+call Container@String@Get.int_Dimc0 2
+call getid.char_Dimc0 1
+vi32mov
+poglo 0
+vogvl
+pvar1
+vi32gvl
+arromem1
+mogvl
+omem 8
+mogvl
+pvar3
+vi32gvl
+arrmem1
+mi32gvl
+push0
+eq
+jz @IF_FAIL0
+pglo 8
+pglo 8
+vi32gvl
+push1
+add
+vi32mov
+poglo 0
+vogvl
+pvar1
+vi32gvl
+arromem1
+mogvl
+omem 8
+mogvl
+pvar3
+vi32gvl
+arrmem1
+pglo 8
+vi32gvl
+mi32mov
+jmp @IF_END0
+label @IF_FAIL0
+label @IF_END0
+pvar1
+poglo 0
+vogvl
+pvar1
+vi32gvl
+arromem1
+mogvl
+omem 8
+mogvl
+pvar3
+vi32gvl
+arrmem1
+mi32gvl
+vi32mov
+pvar3
+push0
+vi64mov
+label @LOOP_CTEND0
+pvar2
+pvar2
+vi32gvl
+push1
+add
+vi32mov
+jmp @LOOP_START0
+label @LOOP_END0
+pvar2
+push0
+vi64mov
+poglo 0
+vogvl
+pvar1
+vi32gvl
+arromem1
+mogvl
+mem 24
+poglo 0
+vogvl
+pvar1
+vi32gvl
+arromem1
+mogvl
+mem 24
+mi32gvl
+push1
+add
+mi32mov
+pvar1
+push0
+vi64mov
+povar0
+push0
+vomov
+ret
+label build
+setvar 2
+poparg 0
+pglo 32
+push1
+vi32mov
+pglo 40
+push0
+vi32mov
+pvar0
+push0
+vi32mov
+label @LOOP_START1
+pvar0
+vi32gvl
+push 26
+ls
+jz @LOOP_END1
+poglo 0
+vogvl
+push0
+arromem1
+mogvl
+omem 8
+mogvl
+pvar0
+vi32gvl
+arrmem1
+mi32gvl
+jz @IF_FAIL1
+pglo 40
+pglo 40
+vi32gvl
+push1
+add
+vi32mov
+poglo 24
+vogvl
+pglo 40
+vi32gvl
+arrmem1
+poglo 0
+vogvl
+push0
+arromem1
+mogvl
+omem 8
+mogvl
+pvar0
+vi32gvl
+arrmem1
+mi32gvl
+mi32mov
+jmp @IF_END1
+label @IF_FAIL1
+label @IF_END1
+label @LOOP_CTEND1
+pvar0
+pvar0
+vi32gvl
+push1
+add
+vi32mov
+jmp @LOOP_START1
+label @LOOP_END1
+pvar0
+push0
+vi64mov
+label @LOOP_START2
+pglo 32
+vi32gvl
+pglo 40
+vi32gvl
+le
+jz @LOOP_END2
+pvar0
+poglo 24
+vogvl
+pglo 32
+vi32gvl
+arrmem1
+mi32gvl
+vi32mov
+pglo 32
+pglo 32
+vi32gvl
+push1
+add
+vi32mov
+pvar1
+push0
+vi32mov
+label @LOOP_START3
+pvar1
+vi32gvl
+push 26
+ls
+jz @LOOP_END3
+poglo 0
+vogvl
+pvar0
+vi32gvl
+arromem1
+mogvl
+omem 8
+mogvl
+pvar1
+vi32gvl
+arrmem1
+mi32gvl
+jz @IF_FAIL2
+pglo 40
+pglo 40
+vi32gvl
+push1
+add
+vi32mov
+poglo 24
+vogvl
+pglo 40
+vi32gvl
+arrmem1
+poglo 0
+vogvl
+pvar0
+vi32gvl
+arromem1
+mogvl
+omem 8
+mogvl
+pvar1
+vi32gvl
+arrmem1
+mi32gvl
+mi32mov
+poglo 0
+vogvl
+poglo 0
+vogvl
+pvar0
+vi32gvl
+arromem1
+mogvl
+omem 8
+mogvl
+pvar1
+vi32gvl
+arrmem1
+mi32gvl
+arromem1
+mogvl
+mem 16
+poglo 0
+vogvl
+poglo 0
+vogvl
+pvar0
+vi32gvl
+arromem1
+mogvl
+mem 16
+mi32gvl
+arromem1
+mogvl
+omem 8
+mogvl
+pvar1
+vi32gvl
+arrmem1
+mi32gvl
+mi32mov
+jmp @IF_END2
+label @IF_FAIL2
+poglo 0
+vogvl
+pvar0
+vi32gvl
+arromem1
+mogvl
+omem 8
+mogvl
+pvar1
+vi32gvl
+arrmem1
+poglo 0
+vogvl
+poglo 0
+vogvl
+pvar0
+vi32gvl
+arromem1
+mogvl
+mem 16
+mi32gvl
+arromem1
+mogvl
+omem 8
+mogvl
+pvar1
+vi32gvl
+arrmem1
+mi32gvl
+mi32mov
+label @IF_END2
+label @LOOP_CTEND3
+pvar1
+pvar1
+vi32gvl
+push1
+add
+vi32mov
+jmp @LOOP_START3
+label @LOOP_END3
+pvar1
+push0
+vi64mov
+pvar0
+push0
+vi64mov
+label @LOOP_CTEND2
+jmp @LOOP_START2
+label @LOOP_END2
+ret
+label calc.Container@String_Dimc0
+setvar 5
+poparg 1
+pvar1
+push0
+vi32mov
+pvar2
+push0
+vi32mov
+pvar3
+push0
+vi32mov
+label @LOOP_START4
+pvar2
+vi32gvl
+povar0
+vogvl
+call Container@String@Length 1
+ls
+jz @LOOP_END4
+pvar3
+poglo 0
+vogvl
+pvar3
+vi32gvl
+arromem1
+mogvl
+omem 8
+mogvl
+povar0
+vogvl
+pvar2
+vi32gvl
+call Container@String@Get.int_Dimc0 2
+call getid.char_Dimc0 1
+arrmem1
+mi32gvl
+vi32mov
+pvar 4
+pvar3
+vi32gvl
+vi32mov
+label @LOOP_START5
+pvar 4
+vi32gvl
+jz @LOGIC_FAIL0
+poglo 0
+vogvl
+pvar 4
+vi32gvl
+arromem1
+mogvl
+mem 24
+mi32gvl
+push0
+push1
+sub
+ne
+jz @LOGIC_FAIL0
+push1
+jmp @LOGIC_END0
+label @LOGIC_FAIL0
+push0
+label @LOGIC_END0
+jz @LOOP_END5
+pvar1
+pvar1
+vi32gvl
+poglo 0
+vogvl
+pvar 4
+vi32gvl
+arromem1
+mogvl
+mem 24
+mi32gvl
+add
+vi32mov
+poglo 0
+vogvl
+pvar 4
+vi32gvl
+arromem1
+mogvl
+mem 24
+push0
+push1
+sub
+mi32mov
+label @LOOP_CTEND5
+pvar 4
+poglo 0
+vogvl
+pvar 4
+vi32gvl
+arromem1
+mogvl
+mem 16
+mi32gvl
+vi32mov
+jmp @LOOP_START5
+label @LOOP_END5
+pvar 4
+push0
+vi64mov
+label @LOOP_CTEND4
+pvar2
+pvar2
+vi32gvl
+push1
+add
+vi32mov
+jmp @LOOP_START4
+label @LOOP_END4
+pvar2
+push0
+vi64mov
+pvar3
+push0
+vi64mov
+pvar1
+vi32gvl
+pvar1
+push0
+vi64mov
+povar0
+push0
+vomov
+ret
+pvar1
+push0
+vi64mov
+povar0
+push0
+vomov
+ret
+label Main
+setvar 4
+poparg 0
+poglo 0
+push 8
+push 10000005
+arrnew 1
+vomov
+poglo 24
+push 4
+push 10000005
+arrnew 1
+vomov
+pvar0
+push0
+vi32mov
+label @LOOP_START6
+pvar0
+vi32gvl
+push 10000000
+le
+jz @LOOP_END6
+poglo 0
+vogvl
+pvar0
+vi32gvl
+arromem1
+push 32
+new
+ocpy
+call __init__.ACNode_Dimc0 1
+momov
+label @LOOP_CTEND6
+pvar0
+pvar0
+vi32gvl
+push1
+add
+vi32mov
+jmp @LOOP_START6
+label @LOOP_END6
+pvar0
+push0
+vi64mov
+pvar0
+call Console@InputInt 0
+vi32mov
+pglo 8
+push0
+vi32mov
+pvar1
+push1
+vi32mov
+label @LOOP_START7
+pvar1
+vi32gvl
+pvar0
+vi32gvl
+le
+jz @LOOP_END7
+povar2
+push 32
+new
+ocpy
+call __init__.Container@String_Dimc0 1
+vomov
+povar2
+vogvl
+call Container@String@Input 1
+povar2
+vogvl
+call insert.Container@String_Dimc0 1
+povar2
+push0
+vomov
+label @LOOP_CTEND7
+pvar1
+pvar1
+vi32gvl
+push1
+add
+vi32mov
+jmp @LOOP_START7
+label @LOOP_END7
+pvar1
+push0
+vi64mov
+call build 0
+povar1
+push 32
+new
+ocpy
+call __init__.Container@String_Dimc0 1
+vomov
+povar1
+vogvl
+call Container@String@Input 1
+povar1
+vogvl
+call calc.Container@String_Dimc0 1
+call Console@Print.int_Dimc0 1
+push 10
+call Console@PutChar.char_Dimc0 1
+#STRING "Now input the length of the sequence: "
+pstr 0
+vogvl
+call Console@Print.char_Dimc1 1
+pvar0
+call Console@InputInt 0
+vi32mov
+poglo 16
+push 8
+pvar0
+vi32gvl
+push1
+add
+arrnew 1
+vomov
+pvar2
+pvar3
+push1
+vi32mov
+label @LOOP_START8
+pvar3
+vi32gvl
+pvar0
+vi32gvl
+le
+jz @LOOP_END8
+poglo 16
+vogvl
+pvar3
+vi32gvl
+arrmem1
+call Console@InputDouble 0
+mfmov
+pvar3
+vi32gvl
+push1
+eq
+jz @IF_FAIL3
+pvar2
+poglo 16
+vogvl
+pvar3
+vi32gvl
+arrmem1
+mfgvl
+vfmov
+jmp @IF_END3
+label @IF_FAIL3
+pvar2
+pvar2
+vfgvl
+poglo 16
+vogvl
+pvar3
+vi32gvl
+arrmem1
+mfgvl
+call Math@max.double_Dimc0.double_Dimc0 2
+vfmov
+label @IF_END3
+label @LOOP_CTEND8
+pvar3
+pvar3
+vi32gvl
+push1
+add
+vi32mov
+jmp @LOOP_START8
+label @LOOP_END8
+pvar3
+push0
+vi64mov
+pvar2
+vfgvl
+call Console@Print.double_Dimc0 1
+push0
+pvar2
+push0
+vi64mov
+pvar0
+push0
+vi64mov
+povar1
+push0
+vomov
+ret
+pvar2
+push0
+vi64mov
+pvar0
+push0
+vi64mov
+povar1
+push0
+vomov
+ret

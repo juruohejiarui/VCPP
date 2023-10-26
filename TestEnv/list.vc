@@ -1,0 +1,81 @@
+using Console;
+namespace Container {
+	public class List {
+		var object[] data;
+		var int size, mem_size;
+		func __init__() { data = $object[1]; size = 0, mem_size = 1; }
+		func __init__(int size) {
+			data = $object[size];
+			this.size = size;
+			for (mem_size = 1; mem_size < size; mem_size = mem_size << 1) ;
+		}
+		public func object Get(int index) { return data[index]; }
+		public func void Set(int index, object data) { this.data[index] = data; }
+		public func int Length() { return size; }
+		public func void Append(object data) { 
+			if (size >= mem_size) {
+				mem_size = mem_size << 1;
+				var object[] new_data = $object[mem_size];
+				for (var int i = 0; i < (mem_size >> 1); i = i + 1) new_data[i] = this.data[i];
+				this.data = new_data;
+			}
+			this.data[size] = data;
+			size = size + 1;
+		}
+		public func void Popback() { size = size - 1; }
+		public func void Merge(List src) {
+			for (var int i = 0; i < src.Length(); i = i + 1) Append(src.Get(i));
+		}
+	}
+	public class String {
+		var char[] data;
+		var int size, mem_size;
+		func __init__() { data = $char[1]; size = 0, mem_size = 1; }
+		func __init__(int size) {
+			data = $char[1]; size = 0, mem_size = 1; 
+			for (mem_size = 1; mem_size < size; mem_size = mem_size << 1) Append('\0');
+		}
+		func __init__(char[] str) {
+			data = $char[1]; size = 0, mem_size = 1; 
+			for (var int i = 0; str[i] != '\0'; i = i + 1) Append(str[i]);
+		}
+		func __init__(char[] str, int len) {
+			data = $char[1]; size = 0, mem_size = 1; 
+			for (var int i = 0; str[i] != '\0' && i < len; i = i + 1) Append(str[i]);
+			if (size < len) Append('\0');
+		}
+		public func char Get(int index) { return data[index]; }
+		public func void Set(int index, char data) { this.data[index] = data; }
+		public func int Length() { return size; }
+		public func void Append(char data) { 
+			if (size >= mem_size) {
+				mem_size = mem_size << 1;
+				var char[] new_data = $char[mem_size];
+				for (var int i = 0; i < (mem_size >> 1); i = i + 1) new_data[i] = this.data[i];
+				this.data = new_data;
+			}
+			this.data[size] = data;
+			size = size + 1;
+		}
+		public func void Popback() { size = size - 1; }
+		public func void Merge(String src) {
+			for (var int i = 0; i < src.Length(); i = i + 1) Append(src.Get(i));
+		}
+		public func void Print() {
+			Print(size), PutChar('\n');
+			for (var int i = 0; i < size; i = i + 1) PutChar(data[i]);
+		}
+		public func void Input() {
+			while (size > 0) Popback();
+			var char ch;
+			for (ch = GetChar(); ch == '\n' || ch == '\r' || ch == ' '; ch = GetChar()) ;
+			for (1; ch != '\n' && ch != '\r' && ch != ' ' && ch != '\0' && ch => int != 255; ch = GetChar())
+				Append(ch);
+		}
+		public func char[] GetArray() {
+			var char[] res = $char[size + 1];
+			for (var int i = 0; i < size; i = i + 1) res[i] = data[i];
+			return res;
+		}
+	}
+}

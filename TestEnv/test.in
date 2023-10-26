@@ -1,0 +1,17 @@
+4
+2 1 0
+console.vc
+console.vlib
+2 1 1
+list.vc
+console.vlib
+list.vlib
+2 1 0
+math.vc
+math.vlib
+1 1 3
+test3.vc
+list.vlib
+math.vlib
+console.vlib
+test.vexe

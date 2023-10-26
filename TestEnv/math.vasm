@@ -1,0 +1,179 @@
+#GLOMEM 0
+#EXPOSE Math@max.int_Dimc0.int_Dimc0
+#EXPOSE Math@min.int_Dimc0.int_Dimc0
+#EXPOSE Math@min.double_Dimc0.double_Dimc0
+#EXPOSE Math@max.double_Dimc0.double_Dimc0
+#EXPOSE __init__.Math@Pair_Dimc0.object_Dimc0.object_Dimc0
+label Math@max.int_Dimc0.int_Dimc0
+setvar 2
+poparg 2
+pvar0
+vi32gvl
+pvar1
+vi32gvl
+ls
+jz @IF_FAIL0
+pvar1
+vi32gvl
+pvar0
+push0
+vi64mov
+pvar1
+push0
+vi64mov
+ret
+jmp @IF_END0
+label @IF_FAIL0
+label @IF_END0
+pvar0
+vi32gvl
+pvar0
+push0
+vi64mov
+pvar1
+push0
+vi64mov
+ret
+pvar0
+push0
+vi64mov
+pvar1
+push0
+vi64mov
+ret
+label Math@min.int_Dimc0.int_Dimc0
+setvar 2
+poparg 2
+pvar0
+vi32gvl
+pvar1
+vi32gvl
+ls
+jz @IF_FAIL1
+pvar0
+vi32gvl
+pvar0
+push0
+vi64mov
+pvar1
+push0
+vi64mov
+ret
+jmp @IF_END1
+label @IF_FAIL1
+label @IF_END1
+pvar1
+vi32gvl
+pvar0
+push0
+vi64mov
+pvar1
+push0
+vi64mov
+ret
+pvar0
+push0
+vi64mov
+pvar1
+push0
+vi64mov
+ret
+label Math@min.double_Dimc0.double_Dimc0
+setvar 2
+poparg 2
+pvar0
+vfgvl
+pvar1
+vfgvl
+fls
+jz @IF_FAIL2
+pvar0
+vfgvl
+pvar0
+push0
+vi64mov
+pvar1
+push0
+vi64mov
+ret
+jmp @IF_END2
+label @IF_FAIL2
+label @IF_END2
+pvar1
+vfgvl
+pvar0
+push0
+vi64mov
+pvar1
+push0
+vi64mov
+ret
+pvar0
+push0
+vi64mov
+pvar1
+push0
+vi64mov
+ret
+label Math@max.double_Dimc0.double_Dimc0
+setvar 2
+poparg 2
+pvar0
+vfgvl
+pvar1
+vfgvl
+fls
+jz @IF_FAIL3
+pvar1
+vfgvl
+pvar0
+push0
+vi64mov
+pvar1
+push0
+vi64mov
+ret
+jmp @IF_END3
+label @IF_FAIL3
+label @IF_END3
+pvar0
+vfgvl
+pvar0
+push0
+vi64mov
+pvar1
+push0
+vi64mov
+ret
+pvar0
+push0
+vi64mov
+pvar1
+push0
+vi64mov
+ret
+label __init__.Math@Pair_Dimc0.object_Dimc0.object_Dimc0
+setvar 3
+poparg 3
+povar0
+vogvl
+omem 8
+povar1
+vogvl
+momov
+povar0
+vogvl
+omem 16
+povar2
+vogvl
+momov
+povar0
+push0
+vomov
+povar1
+push0
+vomov
+povar2
+push0
+vomov
+ret

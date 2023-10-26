@@ -1,0 +1,26 @@
+namespace Test {
+    public class Person {
+        protected var int Age, Weight;
+        public func __init__() {
+            Age = 0, Weight = 0;
+        }
+        public func __init__(int Age) {
+            this.Age = Age;
+        }
+        public func int GetAge() { return Age; }
+        public func void SetAge(int Age) { this.Age = Age; }
+    }
+    public class Student :: Person {
+        protected var int range;
+        public func __init__() {
+            super(0);
+            
+        }
+        public func void SetAge(int Age) {
+            if (Age < 12) range = 1;
+            else if (Age < 15) range = 2;
+            else range = 3;
+            this.Age = Age;
+        }
+    }
+}

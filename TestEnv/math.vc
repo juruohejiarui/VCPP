@@ -1,0 +1,23 @@
+namespace Math {
+	public func int max(int a, int b) {
+		if (a < b) return b;
+		return a;
+	}
+	public func int min(int a, int b) {
+		if (a < b) return a;
+		return b;
+	}
+	public func double min(double a, double b) {
+		if (a < b) return a;
+		return b;
+	}
+	public func double max(double a, double b) {
+		if (a < b) return b;
+		return a;
+	}
+
+	public class Pair {
+		var object x, y;
+		func __init__(object x, object y) { this.x = x, this.y = y; }
+	}
+}
