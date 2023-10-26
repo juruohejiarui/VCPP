@@ -1,1 +1,0 @@
-gcc  -O3 -std=c11 -lpthread  -rdynamic CMakeFiles/Runtime.dir/gloconst.c.o CMakeFiles/Runtime.dir/vm.c.o CMakeFiles/Runtime.dir/vmobj.c.o CMakeFiles/Runtime.dir/main.c.o CMakeFiles/Runtime.dir/hashmap.c.o CMakeFiles/Runtime.dir/syscall.c.o  -o Runtime  -pthread 

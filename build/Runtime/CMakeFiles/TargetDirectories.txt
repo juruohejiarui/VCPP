@@ -1,3 +1,0 @@
-/home/jhe/Projects/VC/build/Runtime/CMakeFiles/rebuild_cache.dir
-/home/jhe/Projects/VC/build/Runtime/CMakeFiles/edit_cache.dir
-/home/jhe/Projects/VC/build/Runtime/CMakeFiles/Runtime.dir
