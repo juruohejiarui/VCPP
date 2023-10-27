@@ -5,6 +5,32 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "(lldb)Interpreter",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/Interpreter/Interpreter",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/TestEnv",
+            "preLaunchTask": "Interpreter-make",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb"
+        },
+        {
+            "name": "(lldb)Runtime",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/Runtime/Runtime",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/TestEnv",
+            "preLaunchTask": "Runtime-make",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb"
+        },
+        {
             "name": "Interpreter",
             "type": "cppdbg",
             "request": "launch",
@@ -29,6 +55,7 @@
                 }
             ]
         },
+
         {
             "name": "Runtime",
             "type": "cppdbg",
