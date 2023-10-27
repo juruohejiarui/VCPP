@@ -84,6 +84,7 @@ namespace Interpreter {
         for (auto pir : cls->MemberMap) {
             switch (pir.second->Type) {
                 case IdenType::Variable:
+                    if (!IsDefinition(((VarInfo *)pir.second)->Node) || !IsSpecificMem(((VarInfo *)pir.second)->Node, cls)) break;
                     AppendDefinition(MakeVisibilityString(pir.second->Visibility));
                     AppendDefinition("var ");
                     AppendDefinition(MakeETypeString(pir.second->ExprType));

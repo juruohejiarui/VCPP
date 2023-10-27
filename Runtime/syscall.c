@@ -4,19 +4,19 @@ uulong System_IO(uulong id, uulong arg) {
     uulong res = 0;
     switch (id) {
         case 0:
-            printf("%d\n", *(int*)&arg);
+            printf("%d", *(int*)&arg);
             return 0;
         case 1:
-            printf("%lld\n", *(long long*)&arg);
+            printf("%lld", *(long long*)&arg);
             return 0;
         case 2:
-            printf("%llu\n", arg);
+            printf("%llu", arg);
             return 0;
         case 3:
-            printf("%lf\n", *(double*)&arg);
+            printf("%lf", *(double*)&arg);
             return 0;
         case 4:
-            printf("%d\n", arg);
+            printf("%d", arg);
         case 5:
             putchar(*(char*)&arg);
             return 0;

@@ -6,7 +6,7 @@
 namespace Interpreter {
     vector<VLibraryInfo*> vlibraries;
     unordered_map<string, int> extern_link;
-    vector<int> direct_rely;
+    unordered_set<string> direct_rely;
     unordered_set<string> vlibrary_path;
     vector<CplNode*> vc_node;
     vector<OutFileInfo*> outfile;
@@ -58,6 +58,7 @@ namespace Interpreter {
 
     //Load the vlib file, build a CplTree of declaration, and update the idensystem
 	int ProjectBuilder_LoadVlib(string &path, bool is_direct) {
+        if (is_direct) direct_rely.insert(path);
         if (vlibrary_path.count(path)) return 0;
         vlibrary_path.insert(path);
         VLibraryInfo *lib = new VLibraryInfo;
@@ -67,7 +68,6 @@ namespace Interpreter {
         //read the infomation is the vlib file
         lib->Path = path;
         lib->IsDirectRely = is_direct;
-        if (is_direct) direct_rely.push_back(vlibraries.size());
         lib->DefinitionContent = ReadString(ifs);
         lib->ExposeCount = ReadUlong(ifs);
         lib->ExposeContent = new pair<string, ulong>[lib->ExposeCount];
@@ -177,8 +177,8 @@ namespace Interpreter {
     void Load_PreLabel(string &vasm_path, int separate_pos) {
         ofstream ofs(vasm_path);
         //write the rely paths
-        for (auto index : direct_rely)
-            ofs << "#RELY \"" << vlibraries[index]->Path << "\"\n";
+        for (auto path : direct_rely)
+            ofs << "#RELY \"" << path << "\"\n";
         //Load the exposed and extern labels
         //write all the functions whose visibility is not private
         auto build_label = [&ofs](string label, CplNode* root) {

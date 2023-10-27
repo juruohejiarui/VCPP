@@ -432,6 +432,7 @@ namespace Interpreter {
 							v_info->Name = iden_nd->Content.String;
 							v_info->Visibility = visibility;
 							v_info->ExprType = var_def->ExprType;
+							v_info->Node = iden_nd;
 							
 							cls->InsertMember(v_info);
 						}

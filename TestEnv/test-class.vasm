@@ -1,0 +1,182 @@
+#RELY "math.vlib"
+#GLOMEM 0
+#EXPOSE __init__.Test@Person_Dimc0
+#EXPOSE __init__.Test@Person_Dimc0.int_Dimc0
+#EXPOSE Test@Person@GetAge
+#EXPOSE Test@Person@SetAge.int_Dimc0
+#EXPOSE __init__.Test@Girl_Dimc0
+#EXPOSE __init__.Test@Girl_Dimc0.int_Dimc0
+#EXPOSE Test@Girl@GetAge
+#EXPOSE __init__.Test@Student_Dimc0
+#EXPOSE __init__.Test@Student_Dimc0.int_Dimc0
+#EXPOSE Test@Student@SetAge.int_Dimc0
+#EXPOSE Test@Student@GetRegion
+#EXTERN __init__.Math@Pair_Dimc0.object_Dimc0.object_Dimc0
+#EXTERN Math@max.double_Dimc0.double_Dimc0
+#EXTERN Math@max.int_Dimc0.int_Dimc0
+#EXTERN Math@min.double_Dimc0.double_Dimc0
+#EXTERN Math@min.int_Dimc0.int_Dimc0
+label __init__.Test@Person_Dimc0
+setvar 1
+poparg 1
+povar0
+vogvl
+mem 8
+push0
+mi32mov
+povar0
+vogvl
+mem 16
+push0
+mi32mov
+povar0
+push0
+vomov
+ret
+label __init__.Test@Person_Dimc0.int_Dimc0
+setvar 2
+poparg 2
+povar0
+vogvl
+mem 8
+pvar1
+vi32gvl
+mi32mov
+pvar1
+push0
+vi64mov
+povar0
+push0
+vomov
+ret
+label Test@Person@GetAge
+setvar 0
+poparg 1
+povar0
+vogvl
+mem 8
+mi32gvl
+povar0
+push0
+vomov
+ret
+povar0
+push0
+vomov
+ret
+label Test@Person@SetAge.int_Dimc0
+setvar 1
+poparg 2
+povar0
+vogvl
+mem 8
+pvar1
+vi32gvl
+mi32mov
+pvar1
+push0
+vi64mov
+povar0
+push0
+vomov
+ret
+label __init__.Test@Girl_Dimc0
+setvar 1
+poparg 1
+povar0
+push0
+vomov
+ret
+label __init__.Test@Girl_Dimc0.int_Dimc0
+setvar 2
+poparg 2
+pvar1
+push0
+vi64mov
+povar0
+push0
+vomov
+ret
+label Test@Girl@GetAge
+setvar 0
+poparg 1
+povar0
+vogvl
+mem 8
+mi32gvl
+push 18
+call Math@min.int_Dimc0.int_Dimc0 2
+povar0
+push0
+vomov
+ret
+povar0
+push0
+vomov
+ret
+label __init__.Test@Student_Dimc0
+setvar 1
+poparg 1
+povar0
+push0
+vomov
+ret
+label __init__.Test@Student_Dimc0.int_Dimc0
+setvar 2
+poparg 2
+pvar1
+push0
+vi64mov
+povar0
+push0
+vomov
+ret
+label Test@Student@SetAge.int_Dimc0
+setvar 1
+poparg 2
+povar0
+vogvl
+mem 8
+pvar1
+vi32gvl
+mi32mov
+pvar1
+vi32gvl
+push 18
+ls
+jz @IF_FAIL0
+povar0
+vogvl
+mem 24
+push1
+mi32mov
+jmp @IF_END0
+label @IF_FAIL0
+povar0
+vogvl
+mem 24
+push 2
+mi32mov
+label @IF_END0
+pvar1
+push0
+vi64mov
+povar0
+push0
+vomov
+ret
+label Test@Student@GetRegion
+setvar 0
+poparg 1
+povar0
+vogvl
+mem 24
+mi32gvl
+povar0
+push0
+vomov
+ret
+povar0
+push0
+vomov
+ret

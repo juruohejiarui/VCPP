@@ -1,4 +1,4 @@
-4
+5
 2 1 0
 console.vc
 console.vlib
@@ -9,9 +9,14 @@ list.vlib
 2 1 0
 math.vc
 math.vlib
-1 1 3
-test3.vc
+2 1 1
+test-class.vc
+math.vlib
+test-class.vlib
+1 1 4
+main.vc
 list.vlib
 math.vlib
 console.vlib
+test-class.vlib
 test.vexe

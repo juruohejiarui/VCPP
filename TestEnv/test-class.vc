@@ -1,3 +1,4 @@
+using Math;
 namespace Test {
     public class Person {
         protected var int Age, Weight;
@@ -10,17 +11,29 @@ namespace Test {
         public func int GetAge() { return Age; }
         public func void SetAge(int Age) { this.Age = Age; }
     }
-    public class Student :: Person {
-        protected var int range;
+    public class Girl :: Person {
         public func __init__() {
-            super(0);
-            
+            super();
+        }
+        public func __init__(int Age) {
+            super(Age);
+        }
+        public func int GetAge() { return min(Age, 18); }
+    }
+
+    public class Student :: Person {
+        protected var int Region;
+        public func __init__() {
+            super();
+        }
+        public func __init__(int Age) {
+            super(Age);
         }
         public func void SetAge(int Age) {
-            if (Age < 12) range = 1;
-            else if (Age < 15) range = 2;
-            else range = 3;
             this.Age = Age;
+            if (Age < 18) Region = 1;
+            else Region = 2;
         }
+        public func int GetRegion() { return Region; }
     }
 }

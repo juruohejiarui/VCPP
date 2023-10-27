@@ -50,7 +50,7 @@ func int calc(String str) {
 	return ans;
 }
 
-func int Main() {
+func void AC() {
 	nd = $ACNode[10000005];
 	q = $int[10000005];
 	for (var int i = 0; i <= 10000000; i = i + 1) nd[i] = $ACNode();
@@ -65,9 +65,19 @@ func int Main() {
 	var String str = $String();
 	str.Input();
 	Print(calc(str)), PutChar('\n');
+}
 
+func void Class() {
+	var Test::Girl girl = $Test::Girl(24);
+	Print(girl.GetAge()), PutChar(' '), Print((girl => Test::Person).GetAge()), PutChar('\n');
+	var Test::Student student = $Test::Student();
+	student.SetAge(24);
+	Print(student.GetRegion());
+}
+
+func void Float() {
 	Print("Now input the length of the sequence: ");
-	n = InputInt();
+	var int n = InputInt();
 	a = $double[n + 1];
 	var double mxa;
 	for (var int i = 1; i <= n; i = i + 1) {
@@ -76,5 +86,13 @@ func int Main() {
 		else mxa = max(mxa, a[i]);
 	}
 	Print(mxa);
+}
+
+func int Main() {
+	Print("Test Module\n 1. AC-Machine 2. Class 3.float-max");
+	var int T = InputInt();
+	if (T == 1) AC();
+	else if (T == 2) Class();
+	else Float();
 	return 0;
 }

@@ -20,10 +20,7 @@
             "options": {
                 "cwd": "${workspaceFolder}/build/Interpreter"
             }, 
-        },
-        {
-            "label": "build",
-            "dependsOn":["Interpreter-cmake", "Interpreter-make"]
+            "dependsOn": ["Interpreter-cmake"]
         },
         {
             "label": "Runtime-cmake",
@@ -44,10 +41,7 @@
             "options": {
                 "cwd": "${workspaceFolder}/build/Runtime"
             }, 
-        },
-        {
-            "label": "build",
-            "dependsOn":["Runtime-cmake", "Runtime-make"]
+            "dependsOn": ["Runtime-cmake"]
         },
     ],
 }

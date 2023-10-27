@@ -1,5 +1,7 @@
-#RELY "list.vlib"
+#RELY "test-class.vlib"
+#RELY "console.vlib"
 #RELY "math.vlib"
+#RELY "list.vlib"
 #GLOMEM 48
 #EXTERN __init__.Container@List_Dimc0
 #EXTERN __init__.Container@List_Dimc0.int_Dimc0
@@ -37,6 +39,17 @@
 #EXTERN Math@max.int_Dimc0.int_Dimc0
 #EXTERN Math@min.double_Dimc0.double_Dimc0
 #EXTERN Math@min.int_Dimc0.int_Dimc0
+#EXTERN __init__.Test@Girl_Dimc0
+#EXTERN __init__.Test@Girl_Dimc0.int_Dimc0
+#EXTERN __init__.Test@Person_Dimc0
+#EXTERN __init__.Test@Person_Dimc0.int_Dimc0
+#EXTERN __init__.Test@Student_Dimc0
+#EXTERN __init__.Test@Student_Dimc0.int_Dimc0
+#EXTERN Test@Girl@GetAge
+#EXTERN Test@Person@GetAge
+#EXTERN Test@Person@SetAge.int_Dimc0
+#EXTERN Test@Student@GetRegion
+#EXTERN Test@Student@SetAge.int_Dimc0
 label getid.char_Dimc0
 setvar 1
 poparg 1
@@ -542,8 +555,8 @@ povar0
 push0
 vomov
 ret
-label Main
-setvar 4
+label AC
+setvar 3
 poparg 0
 poglo 0
 push 8
@@ -603,7 +616,7 @@ vi32gvl
 le
 jz @LOOP_END7
 povar2
-push 32
+push 8
 new
 ocpy
 call __init__.Container@String_Dimc0 1
@@ -631,7 +644,7 @@ push0
 vi64mov
 call build 0
 povar1
-push 32
+push 8
 new
 ocpy
 call __init__.Container@String_Dimc0 1
@@ -645,6 +658,59 @@ call calc.Container@String_Dimc0 1
 call Console@Print.int_Dimc0 1
 push 10
 call Console@PutChar.char_Dimc0 1
+pvar0
+push0
+vi64mov
+povar1
+push0
+vomov
+ret
+label Class
+setvar 2
+poparg 0
+povar0
+push 8
+new
+ocpy
+push 24
+call __init__.Test@Girl_Dimc0.int_Dimc0 2
+vomov
+povar0
+vogvl
+call Test@Girl@GetAge 1
+call Console@Print.int_Dimc0 1
+push 32
+call Console@PutChar.char_Dimc0 1
+povar0
+vogvl
+call Test@Person@GetAge 1
+call Console@Print.int_Dimc0 1
+push 10
+call Console@PutChar.char_Dimc0 1
+povar1
+push 8
+new
+ocpy
+call __init__.Test@Student_Dimc0 1
+vomov
+povar1
+vogvl
+push 24
+call Test@Student@SetAge.int_Dimc0 2
+povar1
+vogvl
+call Test@Student@GetRegion 1
+call Console@Print.int_Dimc0 1
+povar0
+push0
+vomov
+povar1
+push0
+vomov
+ret
+label Float
+setvar 3
+poparg 0
 #STRING "Now input the length of the sequence: "
 pstr 0
 vogvl
@@ -660,12 +726,12 @@ push1
 add
 arrnew 1
 vomov
+pvar1
 pvar2
-pvar3
 push1
 vi32mov
 label @LOOP_START8
-pvar3
+pvar2
 vi32gvl
 pvar0
 vi32gvl
@@ -673,32 +739,32 @@ le
 jz @LOOP_END8
 poglo 16
 vogvl
-pvar3
+pvar2
 vi32gvl
 arrmem1
 call Console@InputDouble 0
 mfmov
-pvar3
+pvar2
 vi32gvl
 push1
 eq
 jz @IF_FAIL3
-pvar2
+pvar1
 poglo 16
 vogvl
-pvar3
+pvar2
 vi32gvl
 arrmem1
 mfgvl
 vfmov
 jmp @IF_END3
 label @IF_FAIL3
-pvar2
-pvar2
+pvar1
+pvar1
 vfgvl
 poglo 16
 vogvl
-pvar3
+pvar2
 vi32gvl
 arrmem1
 mfgvl
@@ -706,38 +772,62 @@ call Math@max.double_Dimc0.double_Dimc0 2
 vfmov
 label @IF_END3
 label @LOOP_CTEND8
-pvar3
-pvar3
+pvar2
+pvar2
 vi32gvl
 push1
 add
 vi32mov
 jmp @LOOP_START8
 label @LOOP_END8
-pvar3
+pvar2
 push0
 vi64mov
-pvar2
+pvar1
 vfgvl
 call Console@Print.double_Dimc0 1
-push0
-pvar2
+pvar1
 push0
 vi64mov
 pvar0
 push0
 vi64mov
-povar1
-push0
-vomov
 ret
-pvar2
+label Main
+setvar 1
+poparg 0
+#STRING "Test Module\n 1. AC-Machine 2. Class 3.float-max"
+pstr 1
+vogvl
+call Console@Print.char_Dimc1 1
+pvar0
+call Console@InputInt 0
+vi32mov
+pvar0
+vi32gvl
+push1
+eq
+jz @IF_FAIL4
+call AC 0
+jmp @IF_END4
+label @IF_FAIL4
+pvar0
+vi32gvl
+push 2
+eq
+jz @IF_FAIL5
+call Class 0
+jmp @IF_END5
+label @IF_FAIL5
+call Float 0
+label @IF_END5
+label @IF_END4
 push0
-vi64mov
 pvar0
 push0
 vi64mov
-povar1
+ret
+pvar0
 push0
-vomov
+vi64mov
 ret

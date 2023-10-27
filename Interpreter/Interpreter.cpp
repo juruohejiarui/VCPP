@@ -7,6 +7,7 @@
 using namespace Interpreter;
 
 void test() {
+    PrintLog("Test Module\n");
     ifstream ifs("test.in", ios::in);
     int task_cnt; 
     ifs >> task_cnt;
@@ -34,18 +35,49 @@ void test() {
         if (res == -1) { PrintError("Fail at building process..."); return ; }
     }
     ifs.close();
-    // printf("Running\n");
-    // string vexe_path = "test.vexe";
-    // system(("./vm_c " + vexe_path + " < input.in").c_str());
 }
 
+int main(int argc, char **argv) {
+    vector<string> rely, vcpp;
+    string target = "a.vexe";
+    bool is_vexe = false;
+    if (argc == 1) { test(); return 0; }
+    for (int i = 1; i < argc; i++) {
+        string arg = argv[i];
+        if (arg == "-vexe" || arg == "-vlib") {
+            if (i == argc - 1 || argv[i + 1][0] == '-') {
+                PrintError("Miss the target path");
+                return -1;
+            }
+            target = argv[i + 1];
+            is_vexe = (arg == "-vexe");
+        } else if (arg == "-rely") {
+            for (i++; i < argc; i++) {
+                string path = argv[i];
+                if (path[0] == '-') { i--; break; }
+                rely.emplace_back(path);
+            }
+        } else if (arg == "-vcpp") {
+            for (i++; i < argc; i++) {
+                string path = argv[i];
+                if (path[0] == '-') { i--; break; }
+                vcpp.emplace_back(path);
+            }
+        }
+    }
 
-int main() {
-    #ifdef DEBUG_FILESTYLE
-    freopen("input.in", "r", stdin);
-    // freopen("test.out", "w", stdout);
-    #endif
-    printf("test\n");
-    test();
+    if (vcpp.empty()) {
+        PrintError("There is no .vc file");
+        return 1;
+    }
+
+    ProjectBuilder_Init();
+    int res = 0;
+    for (auto &path : vcpp) res |= ProjectBuilder_LoadVcpp(path);
+    for (auto &path : rely) res |= ProjectBuilder_LoadVlib(path);
+    if (res == -1) { PrintError("Fail at loading process..."); return -1; }
+    if (is_vexe) res = ProjectBuilder_BuildVexe(target);
+    else res = ProjectBuilder_BuildVlib(target);
+    if (res == -1) { PrintError("Fail at building process..."); return -1; }
     return 0;
 }
