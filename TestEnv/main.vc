@@ -67,12 +67,26 @@ func void AC() {
 	Print(calc(str)), PutChar('\n');
 }
 
+class Man :: Test::Person {
+	protected var int Salary;
+	func __init__() { super(); }
+	func __init__(int Age) { SetAge(Age); }
+	func void SetAge(int Age) {
+		this.Age = Age;
+		if (Age >= 18) Salary = 100 * (Age - 17);
+		else Salary = 0;
+	}
+	func int GetSalary() { return Salary; }
+}
+
 func void Class() {
 	var Test::Girl girl = $Test::Girl(24);
 	Print(girl.GetAge()), PutChar(' '), Print((girl => Test::Person).GetAge()), PutChar('\n');
 	var Test::Student student = $Test::Student();
 	student.SetAge(24);
-	Print(student.GetRegion());
+	Print(student.GetRegion()), PutChar(' '), Print(student.GetAge()), PutChar('\n');
+	var Man man = $Man(12);  
+	Print(man.GetSalary()), PutChar(' '), man.SetAge(24), Print(man.GetSalary());
 }
 
 func void Float() {
@@ -89,7 +103,7 @@ func void Float() {
 }
 
 func int Main() {
-	Print("Test Module\n 1. AC-Machine 2. Class 3.float-max");
+	Print("Test Module\n 1. AC-Machine 2. Class 3.float-max : ");
 	var int T = InputInt();
 	if (T == 1) AC();
 	else if (T == 2) Class();

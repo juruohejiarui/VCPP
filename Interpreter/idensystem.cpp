@@ -14,6 +14,16 @@ namespace Interpreter {
 		return (int)a >= (int)b;
 	}
 
+	string GetCodeIdentifier(string &iden) {
+		string res = "";
+		for(int i = 0; i < iden.size(); i++) {
+			if (iden[i] == '.') break;
+			else if (iden[i] == '@') res.append("::");
+			else res.push_back(iden[i]);
+		}
+		return res;
+	}
+
 	void BuildBasicType(ClassInfo *&cls, ExpressionType &etype, string name, ulong size) {
 		cls = new ClassInfo();
 		cls->Name = name;
@@ -326,15 +336,18 @@ namespace Interpreter {
 			CplNode *arg_expr = new CplNode(CplNodeType::Expression),
 					*expr_this = new CplNode(CplNodeType::Identifier),
 					*expr_as = new CplNode(CplNodeType::As),
-					*expr_par = new CplNode(CplNodeType::Identifier);
-			arg_this->Content.String = "this";
-			expr_par->Content.String = current_class->Parent->FullName;
+					*expr_par = new CplNode(CplNodeType::Identifier),
+					*rt_expr = new CplNode(CplNodeType::Expression);
+			expr_this->Content.String = "this";
+			expr_par->Content.String = cls->Parent->FullName;
 			sup->InsertChild(0, arg_expr);
 			arg_expr->AddChild(expr_as);
 			expr_as->AddChild(expr_this);
 			expr_as->AddChild(expr_par);
 			sup->Type = CplNodeType::FuncCall;
 			sup->Content.String = "__init__";
+			rt_expr->AddChild(sup);
+			blk->At(0) = rt_expr;
 		}
 		return res;
 	}
@@ -366,6 +379,7 @@ namespace Interpreter {
 		arg_this->ExprType = ExpressionType(cls->FullName, 0, true, false);
 		arg_this->ExprType.Type = cls;
 		nd->InsertChild(0, arg_this);
+		nd->LocalVarCount++;
 
 		FuncInfo *f_info = new FuncInfo();
 		f_info->Name = name;
@@ -433,6 +447,8 @@ namespace Interpreter {
 							v_info->Visibility = visibility;
 							v_info->ExprType = var_def->ExprType;
 							v_info->Node = iden_nd;
+							// use the Content.Ulong as the pointer of cls
+							iden_nd->Content.Ulong = (ulong)cls;
 							
 							cls->InsertMember(v_info);
 						}

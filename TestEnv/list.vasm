@@ -107,7 +107,7 @@ push0
 vomov
 ret
 label Container@List@Get.int_Dimc0
-setvar 1
+setvar 2
 poparg 2
 povar0
 vogvl
@@ -132,7 +132,7 @@ push0
 vomov
 ret
 label Container@List@Set.int_Dimc0.object_Dimc0
-setvar 2
+setvar 3
 poparg 3
 povar0
 vogvl
@@ -155,7 +155,7 @@ push0
 vomov
 ret
 label Container@List@Length
-setvar 0
+setvar 1
 poparg 1
 povar0
 vogvl
@@ -170,7 +170,7 @@ push0
 vomov
 ret
 label Container@List@Append.object_Dimc0
-setvar 3
+setvar 4
 poparg 2
 povar0
 vogvl
@@ -282,7 +282,7 @@ push0
 vomov
 ret
 label Container@List@Popback
-setvar 0
+setvar 1
 poparg 1
 povar0
 vogvl
@@ -299,7 +299,7 @@ push0
 vomov
 ret
 label Container@List@Merge.Container@List_Dimc0
-setvar 2
+setvar 3
 poparg 2
 pvar2
 push0
@@ -572,7 +572,7 @@ push0
 vomov
 ret
 label Container@String@Get.int_Dimc0
-setvar 1
+setvar 2
 poparg 2
 povar0
 vogvl
@@ -597,7 +597,7 @@ push0
 vomov
 ret
 label Container@String@Set.int_Dimc0.char_Dimc0
-setvar 2
+setvar 3
 poparg 3
 povar0
 vogvl
@@ -620,7 +620,7 @@ push0
 vomov
 ret
 label Container@String@Length
-setvar 0
+setvar 1
 poparg 1
 povar0
 vogvl
@@ -635,7 +635,7 @@ push0
 vomov
 ret
 label Container@String@Append.char_Dimc0
-setvar 3
+setvar 4
 poparg 2
 povar0
 vogvl
@@ -747,7 +747,7 @@ push0
 vomov
 ret
 label Container@String@Popback
-setvar 0
+setvar 1
 poparg 1
 povar0
 vogvl
@@ -764,7 +764,7 @@ push0
 vomov
 ret
 label Container@String@Merge.Container@String_Dimc0
-setvar 2
+setvar 3
 poparg 2
 pvar2
 push0
@@ -805,7 +805,7 @@ push0
 vomov
 ret
 label Container@String@Print
-setvar 1
+setvar 2
 poparg 1
 povar0
 vogvl
@@ -852,7 +852,7 @@ push0
 vomov
 ret
 label Container@String@Input
-setvar 1
+setvar 2
 poparg 1
 label @LOOP_START9
 povar0
@@ -978,7 +978,7 @@ push0
 vomov
 ret
 label Container@String@GetArray
-setvar 2
+setvar 3
 poparg 1
 povar1
 push1

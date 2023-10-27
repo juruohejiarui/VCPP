@@ -363,15 +363,13 @@ namespace Interpreter {
 			while (tk(ed).Type != TokenType::ExpressionEnd) ed++;
 			return nd;
 		}
-		CplNode *arg_nd = new CplNode(CplNodeType::FuncCall);
-		nd->AddChild(arg_nd);
-		int to = tk(ed++).Ulong;
-		for (int to = tk(ed++).Ulong; ed < to; ed++) {
+		int to;
+		for (to = tk(ed++).Ulong; ed < to; ed++) {
 			int l = ed;
 			for (; ed < to && tk(ed).Type != TokenType::Comma; ed++)
 				if (IsBracketLeft(tk(ed).Type)) ed = tk(ed).Ulong;
 			CplNode* expr = BuildExpressionNode(l, ed - 1);
-			arg_nd->AddChild(expr);
+			nd->AddChild(expr);
 			if (ed == to) ed--;
 		}
 		ed = to + 1;

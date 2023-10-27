@@ -50,7 +50,7 @@ push0
 vomov
 ret
 label Test@Person@GetAge
-setvar 0
+setvar 1
 poparg 1
 povar0
 vogvl
@@ -65,7 +65,7 @@ push0
 vomov
 ret
 label Test@Person@SetAge.int_Dimc0
-setvar 1
+setvar 2
 poparg 2
 povar0
 vogvl
@@ -84,12 +84,20 @@ label __init__.Test@Girl_Dimc0
 setvar 1
 poparg 1
 povar0
+vogvl
+call __init__.Test@Person_Dimc0 1
+povar0
 push0
 vomov
 ret
 label __init__.Test@Girl_Dimc0.int_Dimc0
 setvar 2
 poparg 2
+povar0
+vogvl
+pvar1
+vi32gvl
+call __init__.Test@Person_Dimc0.int_Dimc0 2
 pvar1
 push0
 vi64mov
@@ -98,7 +106,7 @@ push0
 vomov
 ret
 label Test@Girl@GetAge
-setvar 0
+setvar 1
 poparg 1
 povar0
 vogvl
@@ -118,12 +126,20 @@ label __init__.Test@Student_Dimc0
 setvar 1
 poparg 1
 povar0
+vogvl
+call __init__.Test@Person_Dimc0 1
+povar0
 push0
 vomov
 ret
 label __init__.Test@Student_Dimc0.int_Dimc0
 setvar 2
 poparg 2
+povar0
+vogvl
+pvar1
+vi32gvl
+call __init__.Test@Person_Dimc0.int_Dimc0 2
 pvar1
 push0
 vi64mov
@@ -132,7 +148,7 @@ push0
 vomov
 ret
 label Test@Student@SetAge.int_Dimc0
-setvar 1
+setvar 2
 poparg 2
 povar0
 vogvl
@@ -166,7 +182,7 @@ push0
 vomov
 ret
 label Test@Student@GetRegion
-setvar 0
+setvar 1
 poparg 1
 povar0
 vogvl

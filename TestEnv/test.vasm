@@ -616,7 +616,7 @@ vi32gvl
 le
 jz @LOOP_END7
 povar2
-push 8
+push 32
 new
 ocpy
 call __init__.Container@String_Dimc0 1
@@ -644,7 +644,7 @@ push0
 vi64mov
 call build 0
 povar1
-push 8
+push 32
 new
 ocpy
 call __init__.Container@String_Dimc0 1
@@ -665,11 +665,90 @@ povar1
 push0
 vomov
 ret
-label Class
+label __init__.Man_Dimc0
+setvar 1
+poparg 1
+povar0
+vogvl
+call __init__.Test@Person_Dimc0 1
+povar0
+push0
+vomov
+ret
+label __init__.Man_Dimc0.int_Dimc0
 setvar 2
+poparg 2
+povar0
+vogvl
+pvar1
+vi32gvl
+call Man@SetAge.int_Dimc0 2
+pvar1
+push0
+vi64mov
+povar0
+push0
+vomov
+ret
+label Man@SetAge.int_Dimc0
+setvar 2
+poparg 2
+povar0
+vogvl
+mem 8
+pvar1
+vi32gvl
+mi32mov
+pvar1
+vi32gvl
+push 18
+ge
+jz @IF_FAIL3
+povar0
+vogvl
+mem 24
+push 100
+pvar1
+vi32gvl
+push 17
+sub
+mul
+mi32mov
+jmp @IF_END3
+label @IF_FAIL3
+povar0
+vogvl
+mem 24
+push0
+mi32mov
+label @IF_END3
+pvar1
+push0
+vi64mov
+povar0
+push0
+vomov
+ret
+label Man@GetSalary
+setvar 1
+poparg 1
+povar0
+vogvl
+mem 24
+mi32gvl
+povar0
+push0
+vomov
+ret
+povar0
+push0
+vomov
+ret
+label Class
+setvar 3
 poparg 0
 povar0
-push 8
+push 24
 new
 ocpy
 push 24
@@ -688,7 +767,7 @@ call Console@Print.int_Dimc0 1
 push 10
 call Console@PutChar.char_Dimc0 1
 povar1
-push 8
+push 32
 new
 ocpy
 call __init__.Test@Student_Dimc0 1
@@ -701,7 +780,39 @@ povar1
 vogvl
 call Test@Student@GetRegion 1
 call Console@Print.int_Dimc0 1
+push 32
+call Console@PutChar.char_Dimc0 1
+povar1
+vogvl
+call Test@Person@GetAge 1
+call Console@Print.int_Dimc0 1
+push 10
+call Console@PutChar.char_Dimc0 1
+povar2
+push 32
+new
+ocpy
+push 12
+call __init__.Man_Dimc0.int_Dimc0 2
+vomov
+povar2
+vogvl
+call Man@GetSalary 1
+call Console@Print.int_Dimc0 1
+push 32
+call Console@PutChar.char_Dimc0 1
+povar2
+vogvl
+push 24
+call Man@SetAge.int_Dimc0 2
+povar2
+vogvl
+call Man@GetSalary 1
+call Console@Print.int_Dimc0 1
 povar0
+push0
+vomov
+povar2
 push0
 vomov
 povar1
@@ -748,7 +859,7 @@ pvar2
 vi32gvl
 push1
 eq
-jz @IF_FAIL3
+jz @IF_FAIL4
 pvar1
 poglo 16
 vogvl
@@ -757,8 +868,8 @@ vi32gvl
 arrmem1
 mfgvl
 vfmov
-jmp @IF_END3
-label @IF_FAIL3
+jmp @IF_END4
+label @IF_FAIL4
 pvar1
 pvar1
 vfgvl
@@ -770,7 +881,7 @@ arrmem1
 mfgvl
 call Math@max.double_Dimc0.double_Dimc0 2
 vfmov
-label @IF_END3
+label @IF_END4
 label @LOOP_CTEND8
 pvar2
 pvar2
@@ -796,7 +907,7 @@ ret
 label Main
 setvar 1
 poparg 0
-#STRING "Test Module\n 1. AC-Machine 2. Class 3.float-max"
+#STRING "Test Module\n 1. AC-Machine 2. Class 3.float-max : "
 pstr 1
 vogvl
 call Console@Print.char_Dimc1 1
@@ -807,21 +918,21 @@ pvar0
 vi32gvl
 push1
 eq
-jz @IF_FAIL4
+jz @IF_FAIL5
 call AC 0
-jmp @IF_END4
-label @IF_FAIL4
+jmp @IF_END5
+label @IF_FAIL5
 pvar0
 vi32gvl
 push 2
 eq
-jz @IF_FAIL5
+jz @IF_FAIL6
 call Class 0
-jmp @IF_END5
-label @IF_FAIL5
+jmp @IF_END6
+label @IF_FAIL6
 call Float 0
+label @IF_END6
 label @IF_END5
-label @IF_END4
 push0
 pvar0
 push0
