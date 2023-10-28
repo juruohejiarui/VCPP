@@ -953,23 +953,33 @@ void *VM_VMThread(void *vexe_path) {
                             break;
 
                         case EX_vbpdec:
+                            *(vbyte *)calculate_stack_top = --*(vbyte *)*calculate_stack_top;
                             break;
                         case EX_vi32pdec:
+                            *(int *)calculate_stack_top = --*(int *)*calculate_stack_top;
                             break;
                         case EX_vi64pdec:
+                            *(long long *)calculate_stack_top = --*(long long *)*calculate_stack_top;
                             break;
                         case EX_vupdec:
+                            *calculate_stack_top = --*(ullong *)*calculate_stack_top;
                             break;
                         case EX_vbsdec:
+                            *calculate_stack_top = *(vbyte *)*calculate_stack_top--;
                             break;
                         case EX_vi32sdec:
+                            *calculate_stack_top = (*(int *)*calculate_stack_top)--;
+                            *((int *)calculate_stack_top + 1) = 0;
                             break;
                         case EX_vi64sdec:
+                            *(long long *)calculate_stack_top = (*(long long *)*calculate_stack_top)--;
                             break;
                         case EX_vusdec:
+                            *calculate_stack_top = *(ullong *)*calculate_stack_top--;
                             break;
 
                         case EX_mbpinc:
+                            
                             break;
                         case EX_mi32pinc:
                             break;
