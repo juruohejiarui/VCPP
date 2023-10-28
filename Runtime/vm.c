@@ -234,10 +234,6 @@ void *VM_VMThread(void *vexe_path) {
             VMThreadState = ThreadState_Running;
         }
         cid = current_runtime_block->ExecContent[call_stack_top->Address++];
-        printf("%s\n", CommandNameList[cid]);
-        if (cid == label) {
-            printf("error");
-        }
         switch (cid) {
             #pragma region xxmov
             case vbmov:
@@ -943,10 +939,11 @@ void *VM_VMThread(void *vexe_path) {
                             *calculate_stack_top = ++*(ullong *)*calculate_stack_top;
                             break;
                         case EX_vbsinc:
-                            *(vbyte *)calculate_stack_top = *(vbyte *)*calculate_stack_top++;
+                            *calculate_stack_top = *(vbyte *)*calculate_stack_top++;
                             break;
                         case EX_vi32sinc:
-                            *(int *)calculate_stack_top = *(int *)*calculate_stack_top++;
+                            *calculate_stack_top = (*(int *)*calculate_stack_top)++;
+                            *((int *)calculate_stack_top + 1) = 0;
                             break;
                         case EX_vi64sinc:
                             *(long long *)calculate_stack_top = (*(long long *)*calculate_stack_top)++;
@@ -1030,7 +1027,6 @@ void VM_Launch(char *path, ullong calculate_stack_size, ullong call_stack_size) 
     // PrintLog("Finish initialization process.\n", FOREGROUND_BLUE);
     VMThreadState = ThreadState_Running;
     GCThreadState = ThreadState_Pause;
-
     
     pthread_t vm_thread, gc_thread;
     pthread_create(&gc_thread, NULL, VM_GCThread, NULL);

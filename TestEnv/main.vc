@@ -51,9 +51,9 @@ func int calc(String str) {
 }
 
 func void AC() {
-	nd = $ACNode[10000005];
-	q = $int[10000005];
-	for (var int i = 0; i <= 10000000; i++) nd[i] = $ACNode();
+	nd = $ACNode[1000005];
+	q = $int[1000005];
+	for (var int i = 0; i <= 1000000; i++) nd[i] = $ACNode();
 	var int n = InputInt();
 	ndcnt = 0;
 	for (var int i = 1; i <= n; i++) {
@@ -105,6 +105,7 @@ func void Float() {
 func int Main() {
 	Print("Test Module\n 1. AC-Machine 2. Class 3.float-max : ");
 	var int T = InputInt();
+	Print(T); PutChar('\n');
 	if (T == 1) AC();
 	else if (T == 2) Class();
 	else Float();

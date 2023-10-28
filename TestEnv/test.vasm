@@ -545,12 +545,12 @@ setvar 3
 poparg 0
 poglo 0
 push 8
-push 10000005
+push 1000005
 arrnew 1
 vomov
 poglo 24
 push 4
-push 10000005
+push 1000005
 arrnew 1
 vomov
 pvar0
@@ -559,7 +559,7 @@ vi32mov
 label @LOOP_START6
 pvar0
 vi32gvl
-push 10000000
+push 1000000
 le
 jz @LOOP_END6
 poglo 0
@@ -890,6 +890,11 @@ call Console@Print.char_Dimc1 1
 pvar0
 call Console@InputInt 0
 vi32mov
+pvar0
+vi32gvl
+call Console@Print.int_Dimc0 1
+push 10
+call Console@PutChar.char_Dimc0 1
 pvar0
 vi32gvl
 push1

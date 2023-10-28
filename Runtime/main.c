@@ -2,13 +2,10 @@
 #include "vm.h"
 
 int main(int argc, char **argv) {
-    // printf("Hello world\n");
-    // freopen("test.out", "w", stdout);
+    // freopen("input.in", "r", stdin);
     char *vexe_path = "./test.vexe";
     ullong calculate_stack_size = DEFAULT_CALCUATE_STACK_SIZE,
             call_stack_size = DEFAULT_CALL_STACK_SIZE;
-    
-    // handle all the arguments
     for (int i = 1; i < argc; i++) {
         if (argv[i][0] == '-') {
             if (!strcmp("-calc", argv[i])) calculate_stack_size = StringToUint64(argv[i + 1]) << 10;
