@@ -1,7 +1,7 @@
 #include "syscall.h"
 
-uulong System_IO(uulong id, uulong arg) {
-    uulong res = 0;
+ullong System_IO(ullong id, ullong arg) {
+    ullong res = 0;
     switch (id) {
         case 0:
             printf("%d", *(int*)&arg);

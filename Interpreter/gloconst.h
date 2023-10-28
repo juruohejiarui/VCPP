@@ -31,7 +31,6 @@ using namespace std;
 
 constexpr int MACHINE_BIT = 8;
 
-constexpr int CMD0_COUNT = 100, CMD1_COUNT = 17, CMD2_COUNT = 2;
 
 #define COMMAND_NAME_LS "label", \
 "vbmov", "vi32mov", "vi64mov", "vfmov", "vomov", "mbmov", "mi32mov", "mi64mov", "mfmov", "momov", \
@@ -53,10 +52,12 @@ constexpr int CMD0_COUNT = 100, CMD1_COUNT = 17, CMD2_COUNT = 2;
 "mem", "omem", \
 "sys", \
 "arrnew", "arrmem", "arromem", \
-"call", "ecall"
+"call", "ecall", "excmd"
 
 
 namespace Interpreter {
+	constexpr int CMD0_COUNT = 100, CMD1_COUNT = 17, CMD2_COUNT = 2;
+
 	enum commandid {
 		label,
 		vbmov, vi32mov, vi64mov, vfmov, vomov, mbmov, mi32mov, mi64mov, mfmov, momov,
@@ -79,7 +80,56 @@ namespace Interpreter {
 		mem, omem, 
 		sys,
 		arrnew, arrmem, arromem,
-		call, ecall
+		call, ecall, 
+		excmd, 
+	};
+
+	constexpr int EXCMD0_COUNT = 159, EXCMD1_COUNT = 2, EXCMDX_COUNT = 1;
+	enum EXCommand {
+		EX_none,
+		//++ and --
+		EX_vbpinc, EX_vi32pinc, EX_vi64pinc, EX_vupinc, EX_vbsinc, EX_vi32sinc, EX_vi64sinc, EX_vusinc,
+		EX_vbpdec, EX_vi32pdec, EX_vi64pdec, EX_vupdec, EX_vbsdec, EX_vi32sdec, EX_vi64sdec, EX_vusdec,
+		EX_mbpinc, EX_mi32pinc, EX_mi64pinc, EX_mupinc, EX_mbsinc, EX_mi32sinc, EX_mi64sinc, EX_musinc,
+		EX_mbpdec, EX_mi32pdec, EX_mi64pdec, EX_mupdec, EX_mbsdec, EX_mi32sdec, EX_mi64sdec, EX_musdec,
+
+		//+= -= *= /= %= &= |= ^= <<= >>=
+		EX_vbaddmov, EX_vaddmov, EX_vladdmov, EX_vuaddmov, EX_vfaddmov, 
+		EX_mbaddmov, EX_maddmov, EX_mladdmov, EX_muaddmov, EX_mfaddmov, 
+		EX_vbsubmov, EX_vsubmov, EX_vlsubmov, EX_vusubmov, EX_vfsubmov, 
+		EX_mbsubmov, EX_msubmov, EX_mlsubmov, EX_musubmov, EX_mfsubmov,
+		EX_vbmulmov, EX_vmulmov, EX_vlmulmov, EX_vumulmov, EX_vfmulmov, 
+		EX_mbmulmov, EX_mmulmov, EX_mlmulmov, EX_mumulmov, EX_mfmulmov,
+		EX_vbdivmov, EX_vdivmov, EX_vldivmov, EX_vudivmov, EX_vfdivmov, 
+		EX_mbdivmov, EX_mdivmov, EX_mldivmov, EX_mudivmov, EX_mfdivmov,
+		EX_vbmodmov, EX_vmodmov, EX_vlmodmov, EX_vumodmov, 
+		EX_mbmodmov, EX_mmodmov, EX_mlmodmov, EX_mumodmov,
+		EX_vbandmov, EX_vandmov, EX_vlandmov, EX_vuandmov, 
+		EX_mbandmov, EX_mandmov, EX_mlandmov, EX_muandmov,
+		EX_vbormov, EX_vormov, EX_vlormov, EX_vuormov, 
+		EX_mbormov, EX_mormov, EX_mlormov, EX_muormov,
+		EX_vbxormov, EX_vxormov, EX_vlxormov, EX_vuxormov, 
+		EX_mbxormov, EX_mxormov, EX_mlxormov, EX_muxormov,
+		EX_vblmvmov, EX_vlmvmov, EX_vllmvmov, EX_vulmvmov, 
+		EX_mblmvmov, EX_mlmvmov, EX_mllmvmov, EX_mulmvmov,
+		EX_vbrmvmov, EX_vrmvmov, EX_vlrmvmov, EX_vurmvmov,
+		EX_mbrmvmov, EX_mrmvmov, EX_mlrmvmov, EX_murmvmov,
+
+		// vector operator
+		EX_newvec2, EX_newvec3, EX_newvec4, 
+		EX_vvec2mov, EX_vvec3mov, EX_vvec4mov, EX_mvec2mov, EX_mvec3mov, EX_mvec4mov,
+		EX_vvec2addmov, EX_vvec3addmov, EX_vvec4addmov, EX_mvec2addmov, EX_mvvec3addmov, EX_mvec4addmov, 
+		EX_vvec2submov, EX_vvec3submov, EX_vvec4submov, EX_mvec2submov, EX_mvvec3submov, EX_mvec4submov, 
+
+		EX_vec2add, EX_vec3add, EX_vec4add, EX_vec2sub, EX_vec3sub, EX_vec4sub,
+		EX_vec2pmul, EX_vec3pmul, EX_vec4pmul, EX_vec2smul, EX_vec3smul, EX_vec4smul,
+		EX_vec2div, EX_vec3div, EX_vec4div, 
+		EX_vec2len, EX_vec3len, EX_vec4len, 
+
+		// debug operator
+		EX_hint_var, EX_hint_code, 
+
+		EX_switch,
 	};
 
 	typedef unsigned long long ulong;
@@ -103,6 +153,11 @@ namespace Interpreter {
 	int GetCommandSize(int id);
 	int GetCommandIndex(string cmd_name);
 	int GetCommndArgCount(int cmdid);
+
+	extern const string EXCommandName[];
+	EXCommand GetEXCommandIndex(string excmd_name);
+	int GetEXCommandSize(int id);
+	int GetEXCommandArgCount(int cmdid);
 
 	vector<string> FuncNameSplit(string name);
 	vector<string> StringSplit(const string& str, const char& delimiter);

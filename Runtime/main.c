@@ -5,7 +5,7 @@ int main(int argc, char **argv) {
     // printf("Hello world\n");
     // freopen("test.out", "w", stdout);
     char *vexe_path = "./test.vexe";
-    uulong calculate_stack_size = DEFAULT_CALCUATE_STACK_SIZE,
+    ullong calculate_stack_size = DEFAULT_CALCUATE_STACK_SIZE,
             call_stack_size = DEFAULT_CALL_STACK_SIZE;
     
     // handle all the arguments

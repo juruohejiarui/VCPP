@@ -653,10 +653,24 @@ namespace Interpreter {
 				else node->ExprType = int32_etype;
 				break;
 			#pragma endregion
+			#pragma region inc and dec
+			case CplNodeType::PInc:
+			case CplNodeType::PDec:
+			case CplNodeType::SInc:
+			case CplNodeType::SDec:
+				res = BuildExpressionEType(node->At(0));
+				if (!IsInteger(node->At(0)->ExprType) || !node->At(0)->ExprType.IsQuote) {
+					PrintError("The operand of ++ and -- must be Integer and a reference.", node->Content.Line);
+					node->Type = CplNodeType::Error, res = 1;
+				}
+				node->ExprType = node->At(0)->ExprType;
+				node->ExprType.IsQuote = node->ExprType.IsMember = false;
+				break;
+			#pragma endregion
 			case CplNodeType::As:
 				res |= BuildExpressionEType(node->At(0)) | BuildExpressionEType(node->At(1));
 				if (node->At(1)->ExprType.Dimc <= (TypeVarDimc >> 1))
-					PrintError("The right operand of => must a type indentifier.", node->Content.Line),
+					PrintError("The right operand of => must a type identifier.", node->Content.Line),
 					node->Type = CplNodeType::Error, res = 1;
 				node->ExprType = node->At(1)->ExprType;
 				node->ExprType.Dimc = TypeVarDimc - node->ExprType.Dimc;

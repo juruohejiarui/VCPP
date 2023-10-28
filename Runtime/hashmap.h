@@ -9,10 +9,10 @@ struct HashMapElement {
 };
 struct HashMap {
     struct HashMapElement **ElementStart, **ElementEnd;
-    uulong HashRange;
+    ullong HashRange;
 };
 
-struct HashMap *HashMap_CreateMap(uulong range);
+struct HashMap *HashMap_CreateMap(ullong range);
 void HashMap_Insert(struct HashMap* map, char* key, void* value);
 void HashMap_Erase(struct HashMap* map, char* key, int free_value);
 int HashMap_Count(struct HashMap* map, char *key);

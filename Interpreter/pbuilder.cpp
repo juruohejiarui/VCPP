@@ -277,17 +277,27 @@ namespace Interpreter {
             //modify the the arguments of jmp, jz, jp and call, ecall
             for (ulong pos = 0; pos < ofile->ExecSize; ) {
                 vbyte &cid = ofile->ExecContent[pos];
-                if (is_addrcmd(cid)) {
-                    ulong &arg1 = *(ulong*)&ofile->ExecContent[pos + 1];
-                    if (cid == ecall) {
-                        auto minus_pos = ofile->ExternContent[arg1].find('-');
-                        if (minus_pos != -1) { // it can be change into a "call"
-                            ofile->ExecContent[pos] = call,
-                            arg1 = stoull(ofile->ExternContent[arg1].substr(minus_pos + 1));
-                        } else arg1 = extset[ofile->ExternContent[arg1]];
-                    } else arg1 += exec_sz;
+                if (cid == excmd) {
+                    pos += sizeof(vbyte);
+                    ulong excid = *(ulong *)(&ofile->ExecContent[pos]);
+                    if (excid == EX_switch) {
+                        PrintError("We have not support EX_switch...\n");
+                        return 1;
+                    }
+                    pos += GetEXCommandSize(excid);
+                } else {
+                    if (is_addrcmd(cid)) {
+                        ulong &arg1 = *(ulong*)&ofile->ExecContent[pos + 1];
+                        if (cid == ecall) {
+                            auto minus_pos = ofile->ExternContent[arg1].find('-');
+                            if (minus_pos != -1) { // it can be change into a "call"
+                                ofile->ExecContent[pos] = call,
+                                arg1 = stoull(ofile->ExternContent[arg1].substr(minus_pos + 1));
+                            } else arg1 = extset[ofile->ExternContent[arg1]];
+                        } else arg1 += exec_sz;
+                    }
+                    pos += GetCommandSize(cid);
                 }
-                pos += GetCommandSize(cid);
             }
             exec_sz += ofile->ExecSize;
         }

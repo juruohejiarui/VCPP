@@ -28,17 +28,17 @@ void InitCommandInfo() {
     for (int i = 0; i <= CMD0_COUNT; i++) 
         cmdsize[i] = sizeof(vbyte), cmdargcnt[i] = 0;
     for (int i = CMD0_COUNT + 1; i <= CMD1_COUNT; i++) 
-        cmdsize[i] = sizeof(vbyte) + sizeof(uulong), cmdargcnt[i] = 1;
+        cmdsize[i] = sizeof(vbyte) + sizeof(ullong), cmdargcnt[i] = 1;
     for (int i = CMD0_COUNT + CMD1_COUNT + 1; i <= CMD0_COUNT + CMD1_COUNT + CMD2_COUNT; i++)
-        cmdsize[i] = sizeof(vbyte) + sizeof(uulong) + sizeof(uulong), cmdargcnt[i] = 2;
+        cmdsize[i] = sizeof(vbyte) + sizeof(ullong) + sizeof(ullong), cmdargcnt[i] = 2;
 }
 
 int GetCommandSize(int cmdid) { return cmdsize[cmdid]; }
 
 int GetCommandArgCount(int cmdid) { return cmdargcnt[cmdid]; }
 
-uulong StringToUint64(char *str) {
-    uulong res = 0;
+ullong StringToUint64(char *str) {
+    ullong res = 0;
     while (*str != '\0') res = (res << 3) + (res << 1) + (*str - '0');
     return res;
 }

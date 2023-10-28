@@ -1,0 +1,363 @@
+case EX_vbpinc:
+	break;
+case EX_vi32pinc:
+	break;
+case EX_vi64pinc:
+	break;
+case EX_vupinc:
+	break;
+case EX_vbsinc:
+	break;
+case EX_vi32sinc:
+	break;
+case EX_vi64sinc:
+	break;
+case EX_vusinc:
+	break;
+
+case EX_vbpdec:
+	break;
+case EX_vi32pdec:
+	break;
+case EX_vi64pdec:
+	break;
+case EX_vupdec:
+	break;
+case EX_vbsdec:
+	break;
+case EX_vi32sdec:
+	break;
+case EX_vi64sdec:
+	break;
+case EX_vusdec:
+	break;
+
+case EX_mbpinc:
+	break;
+case EX_mi32pinc:
+	break;
+case EX_mi64pinc:
+	break;
+case EX_mupinc:
+	break;
+case EX_mbsinc:
+	break;
+case EX_mi32sinc:
+	break;
+case EX_mi64sinc:
+	break;
+case EX_musinc:
+	break;
+
+case EX_mbpdec:
+	break;
+case EX_mi32pdec:
+	break;
+case EX_mi64pdec:
+	break;
+case EX_mupdec:
+	break;
+case EX_mbsdec:
+	break;
+case EX_mi32sdec:
+	break;
+case EX_mi64sdec:
+	break;
+case EX_musdec:
+	break;
+
+
+case EX_vbaddmov:
+	break;
+case EX_vaddmov:
+	break;
+case EX_vladdmov:
+	break;
+case EX_vuaddmov:
+	break;
+case EX_vfaddmov:
+	break;
+
+case EX_mbaddmov:
+	break;
+case EX_maddmov:
+	break;
+case EX_mladdmov:
+	break;
+case EX_muaddmov:
+	break;
+case EX_mfaddmov:
+	break;
+
+case EX_vbsubmov:
+	break;
+case EX_vsubmov:
+	break;
+case EX_vlsubmov:
+	break;
+case EX_vusubmov:
+	break;
+case EX_vfsubmov:
+	break;
+
+case EX_mbsubmov:
+	break;
+case EX_msubmov:
+	break;
+case EX_mlsubmov:
+	break;
+case EX_musubmov:
+	break;
+case EX_mfsubmov:
+	break;
+
+case EX_vbmulmov:
+	break;
+case EX_vmulmov:
+	break;
+case EX_vlmulmov:
+	break;
+case EX_vumulmov:
+	break;
+case EX_vfmulmov:
+	break;
+
+case EX_mbmulmov:
+	break;
+case EX_mmulmov:
+	break;
+case EX_mlmulmov:
+	break;
+case EX_mumulmov:
+	break;
+case EX_mfmulmov:
+	break;
+
+case EX_vbdivmov:
+	break;
+case EX_vdivmov:
+	break;
+case EX_vldivmov:
+	break;
+case EX_vudivmov:
+	break;
+case EX_vfdivmov:
+	break;
+
+case EX_mbdivmov:
+	break;
+case EX_mdivmov:
+	break;
+case EX_mldivmov:
+	break;
+case EX_mudivmov:
+	break;
+case EX_mfdivmov:
+	break;
+
+case EX_vbmodmov:
+	break;
+case EX_vmodmov:
+	break;
+case EX_vlmodmov:
+	break;
+case EX_vumodmov:
+	break;
+
+case EX_mbmodmov:
+	break;
+case EX_mmodmov:
+	break;
+case EX_mlmodmov:
+	break;
+case EX_mumodmov:
+	break;
+
+case EX_vbandmov:
+	break;
+case EX_vandmov:
+	break;
+case EX_vlandmov:
+	break;
+case EX_vuandmov:
+	break;
+
+case EX_mbandmov:
+	break;
+case EX_mandmov:
+	break;
+case EX_mlandmov:
+	break;
+case EX_muandmov:
+	break;
+
+case EX_vbormov:
+	break;
+case EX_vormov:
+	break;
+case EX_vlormov:
+	break;
+case EX_vuormov:
+	break;
+
+case EX_mbormov:
+	break;
+case EX_mormov:
+	break;
+case EX_mlormov:
+	break;
+case EX_muormov:
+	break;
+
+case EX_vbxormov:
+	break;
+case EX_vxormov:
+	break;
+case EX_vlxormov:
+	break;
+case EX_vuxormov:
+	break;
+
+case EX_mbxormov:
+	break;
+case EX_mxormov:
+	break;
+case EX_mlxormov:
+	break;
+case EX_muxormov:
+	break;
+
+case EX_vblmvmov:
+	break;
+case EX_vlmvmov:
+	break;
+case EX_vllmvmov:
+	break;
+case EX_vulmvmov:
+	break;
+
+case EX_mblmvmov:
+	break;
+case EX_mlmvmov:
+	break;
+case EX_mllmvmov:
+	break;
+case EX_mulmvmov:
+	break;
+
+case EX_vbrmvmov:
+	break;
+case EX_vrmvmov:
+	break;
+case EX_vlrmvmov:
+	break;
+case EX_vurmvmov:
+	break;
+
+case EX_mbrmvmov:
+	break;
+case EX_mrmvmov:
+	break;
+case EX_mlrmvmov:
+	break;
+case EX_murmvmov:
+	break;
+
+
+case EX_switch:
+	break;
+
+
+case EX_newvec2:
+	break;
+case EX_newvec3:
+	break;
+case EX_newvec4:
+	break;
+
+case EX_vvec2mov:
+	break;
+case EX_vvec3mov:
+	break;
+case EX_vvec4mov:
+	break;
+case EX_mvec2mov:
+	break;
+case EX_mvec3mov:
+	break;
+case EX_mvec4mov:
+	break;
+
+case EX_vvec2addmov:
+	break;
+case EX_vvec3addmov:
+	break;
+case EX_vvec4addmov:
+	break;
+case EX_mvec2addmov:
+	break;
+case EX_mvvec3addmov:
+	break;
+case EX_mvec4addmov:
+	break;
+
+case EX_vvec2submov:
+	break;
+case EX_vvec3submov:
+	break;
+case EX_vvec4submov:
+	break;
+case EX_mvec2submov:
+	break;
+case EX_mvvec3submov:
+	break;
+case EX_mvec4submov:
+	break;
+
+
+case EX_vec2add:
+	break;
+case EX_vec3add:
+	break;
+case EX_vec4add:
+	break;
+case EX_vec2sub:
+	break;
+case EX_vec3sub:
+	break;
+case EX_vec4sub:
+	break;
+
+case EX_vec2pmul:
+	break;
+case EX_vec3pmul:
+	break;
+case EX_vec4pmul:
+	break;
+case EX_vec2smul:
+	break;
+case EX_vec3smul:
+	break;
+case EX_vec4smul:
+	break;
+
+case EX_vec2div:
+	break;
+case EX_vec3div:
+	break;
+case EX_vec4div:
+	break;
+
+case EX_vec2len:
+	break;
+case EX_vec3len:
+	break;
+case EX_vec4len:
+	break;
+
+
+case EX_hint_var:
+	break;
+case EX_hint_code:
+	break;
+

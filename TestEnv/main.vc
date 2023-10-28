@@ -15,9 +15,9 @@ class ACNode {
 
 func void insert(String str) {
 	var int cur = 0;
-	for (var int i = 0; i < str.Length(); i = i + 1) {
+	for (var int i = 0; i < str.Length(); i++) {
 		var int ch = getid(str.Get(i));
-		if (nd[cur].ch[ch] == 0) ndcnt = ndcnt + 1, nd[cur].ch[ch] = ndcnt;
+		if (nd[cur].ch[ch] == 0) ndcnt++, nd[cur].ch[ch] = ndcnt;
 		cur = nd[cur].ch[ch];
 	}
 	nd[cur].fl = nd[cur].fl + 1;
@@ -28,11 +28,11 @@ var int ql, qr;
 
 func void build() {
 	ql = 1, qr = 0;
-	for (var int i = 0; i < 26; i = i + 1) if (nd[0].ch[i])
+	for (var int i = 0; i < 26; i++) if (nd[0].ch[i])
 		qr = qr + 1, q[qr] = nd[0].ch[i];
 	while (ql <= qr) {
 		var int u = q[ql]; ql = ql + 1;
-		for (var int i = 0; i < 26; i = i + 1)
+		for (var int i = 0; i < 26; i++)
 			if (nd[u].ch[i]) {
 				qr = qr + 1, q[qr] = nd[u].ch[i];
 				nd[nd[u].ch[i]].fil = nd[nd[u].fil].ch[i];
@@ -42,7 +42,7 @@ func void build() {
 
 func int calc(String str) {
 	var int ans = 0;
-	for (var int i = 0, u = 0; i < str.Length(); i = i + 1) {
+	for (var int i = 0, u = 0; i < str.Length(); i++) {
 		u = nd[u].ch[getid(str.Get(i))];
 		for (var int j = u; j && nd[j].fl != 0 - 1; j = nd[j].fil)
 		 	ans = ans + nd[j].fl, nd[j].fl = 0 - 1;
@@ -53,10 +53,10 @@ func int calc(String str) {
 func void AC() {
 	nd = $ACNode[10000005];
 	q = $int[10000005];
-	for (var int i = 0; i <= 10000000; i = i + 1) nd[i] = $ACNode();
+	for (var int i = 0; i <= 10000000; i++) nd[i] = $ACNode();
 	var int n = InputInt();
 	ndcnt = 0;
-	for (var int i = 1; i <= n; i = i + 1) {
+	for (var int i = 1; i <= n; i++) {
 		var String str = $String();
 		str.Input();
 		insert(str);
@@ -94,7 +94,7 @@ func void Float() {
 	var int n = InputInt();
 	a = $double[n + 1];
 	var double mxa;
-	for (var int i = 1; i <= n; i = i + 1) {
+	for (var int i = 1; i <= n; i++) {
 		a[i] = InputDouble();
 		if (i == 1) mxa = a[i];
 		else mxa = max(mxa, a[i]);

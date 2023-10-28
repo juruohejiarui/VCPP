@@ -230,11 +230,8 @@ mogvl
 momov
 label @LOOP_CTEND1
 pvar3
-pvar3
-vi32gvl
-push1
-add
-vi32mov
+excmd EX_vi32sinc
+pop
 jmp @LOOP_START1
 label @LOOP_END1
 pvar3
@@ -322,11 +319,8 @@ call Container@List@Get.int_Dimc0 2
 call Container@List@Append.object_Dimc0 2
 label @LOOP_CTEND2
 pvar2
-pvar2
-vi32gvl
-push1
-add
-vi32mov
+excmd EX_vi32sinc
+pop
 jmp @LOOP_START2
 label @LOOP_END2
 pvar2
@@ -463,11 +457,8 @@ mbgvl
 call Container@String@Append.char_Dimc0 2
 label @LOOP_CTEND4
 pvar2
-pvar2
-vi32gvl
-push1
-add
-vi32mov
+excmd EX_vi32sinc
+pop
 jmp @LOOP_START4
 label @LOOP_END4
 pvar2
@@ -536,11 +527,8 @@ mbgvl
 call Container@String@Append.char_Dimc0 2
 label @LOOP_CTEND5
 pvar3
-pvar3
-vi32gvl
-push1
-add
-vi32mov
+excmd EX_vi32sinc
+pop
 jmp @LOOP_START5
 label @LOOP_END5
 pvar3
@@ -695,11 +683,8 @@ mbgvl
 mbmov
 label @LOOP_CTEND6
 pvar3
-pvar3
-vi32gvl
-push1
-add
-vi32mov
+excmd EX_vi32sinc
+pop
 jmp @LOOP_START6
 label @LOOP_END6
 pvar3
@@ -787,11 +772,8 @@ call Container@String@Get.int_Dimc0 2
 call Container@String@Append.char_Dimc0 2
 label @LOOP_CTEND7
 pvar2
-pvar2
-vi32gvl
-push1
-add
-vi32mov
+excmd EX_vi32sinc
+pop
 jmp @LOOP_START7
 label @LOOP_END7
 pvar2
@@ -837,11 +819,8 @@ mbgvl
 call Console@PutChar.char_Dimc0 1
 label @LOOP_CTEND8
 pvar1
-pvar1
-vi32gvl
-push1
-add
-vi32mov
+excmd EX_vi32sinc
+pop
 jmp @LOOP_START8
 label @LOOP_END8
 pvar1
@@ -1018,11 +997,8 @@ mbgvl
 mbmov
 label @LOOP_CTEND12
 pvar2
-pvar2
-vi32gvl
-push1
-add
-vi32mov
+excmd EX_vi32sinc
+pop
 jmp @LOOP_START12
 label @LOOP_END12
 pvar2

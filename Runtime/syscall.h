@@ -1,4 +1,4 @@
 #pragma once
 #include "gloconst.h"
 
-uulong System_IO(uulong id, uulong arg);
+ullong System_IO(ullong id, ullong arg);

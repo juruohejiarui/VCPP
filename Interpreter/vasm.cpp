@@ -83,30 +83,50 @@ namespace Interpreter {
 				}
 				rely_list.push_back(tklist[i].String);
 			} else if ((int)fir_tk.Type < TokenTypeShift) {
-				PrintError("invalid content : " + to_string((int)fir_tk.Type));
-				cout << "Token id = " << i << endl;
-				printf("This token is : "), PrintToken(tklist[i]);
-				printf("The last token is :"), PrintToken(tklist[i - 1]);
+				PrintError("invalid content : " + to_string((int)fir_tk.Type), fir_tk.Line);
 				return -1;
 			}
 			if ((int)fir_tk.Type < TokenTypeShift) continue;
-			int cid = GetCommandID(fir_tk.Type), argcnt = GetCommndArgCount(cid);
-			Token fir_arg, sec_arg;
-			if (argcnt >= 1) fir_arg = tklist[++i];
-			if (argcnt >= 2) sec_arg = tklist[++i];
-
-			if (fir_tk.Type == TokenType::label) {
-				if (label_addr.count(fir_arg.String)) {
-					PrintError("multiple label : " + fir_arg.String);
+			// handle EXCommand
+			if (fir_tk.Type == TokenType::excmd) {
+				cur_size += sizeof(byte) + sizeof(ulong);
+				EXCommand excid = GetEXCommandIndex(tklist[++i].String);
+				if (excid == EX_none) {
+					PrintError("Invalid EXCommand name : " + tklist[i].String, tklist[i].Line);
 					return -1;
 				}
-				label_addr[fir_arg.String] = cur_size;
-#ifdef DEBUG_MODULE
-				cout << "find label : " << fir_arg.String << endl;
-#endif
-				continue;
+				// handle EX_switch
+				if (excid == EX_switch) {
+					// there has no support for this command
+					PrintError("We have not supported command EX_switch", tklist[i].Line);
+					return -1;
+				} else {
+					int argcnt = GetEXCommandArgCount(excid);
+					cur_size += argcnt * sizeof(ulong);
+					// Check the arguments
+					for (int p = 1; p <= argcnt; p++) if (tklist[i + p].Type != TokenType::Integer) {
+						PrintError("The arguments of EXCommand must be integer.", tklist[i + p].Line);
+						return -1;
+					}
+					i += argcnt;
+				}
+			} else {
+				int cid = GetCommandID(fir_tk.Type), argcnt = GetCommndArgCount(cid);
+				Token fir_arg, sec_arg;
+				if (argcnt >= 1) fir_arg = tklist[++i];
+				if (argcnt >= 2) sec_arg = tklist[++i];
+
+				// handle the labels
+				if (fir_tk.Type == TokenType::label) {
+					if (label_addr.count(fir_arg.String)) {
+						PrintError("multiple label : " + fir_arg.String);
+						return -1;
+					}
+					label_addr[fir_arg.String] = cur_size;
+					continue;
+				}
+				cur_size += GetCommandSize(cid);
 			}
-			cur_size += GetCommandSize(cid);
 		}
 		for (int i = 0; i < expose_list.size(); i++) {
 			ulong addr = GetLabelAddr(expose_list[i]);
@@ -126,7 +146,6 @@ namespace Interpreter {
 		WriteUlong(str.size());
 		for (int i = 0; i < str.size(); i++) WriteString(str[i]);
 		if (label_addr.count("Main")) WriteChar(1), WriteUlong(label_addr["Main"]);
-		else if (label_addr.count("Global@Main")) WriteChar(1), WriteUlong(label_addr["Global@Main"]);
 		else WriteChar(0), WriteUlong(0);
 
 		//接着开始载入指令
@@ -138,34 +157,39 @@ namespace Interpreter {
 				|| fir_tk.Type == TokenType::Rely) { 
 				i++; continue; 
 			}
-			int cid = GetCommandID(fir_tk.Type), argcnt = GetCommndArgCount(cid);
-			ulong arg1 = 0, arg2 = 0;
-			if (fir_tk.Type >= TokenType::jmp && fir_tk.Type <= TokenType::jp) {
-				arg1 = GetLabelAddr(tklist[i + 1].String);
-				if (arg1 == -1) { PrintError("Undefined label : " + tklist[i + 1].String); return -1; }
-			} else if (fir_tk.Type == TokenType::call) {
-				arg1 = GetLabelAddr(tklist[i + 1].String), arg2 = tklist[i + 2].Ulong;
-				if (arg1 == -1) { 
-					//check if it can be change into "ecall"
-					arg1 = GetExternID(tklist[i + 1].String);
-					if (arg1 == -1) { PrintError("Undefined label : " + tklist[i + 1].String); return -1; }
-					cid = GetCommandID(fir_tk.Type = TokenType::ecall);
-				}
-			} else if (fir_tk.Type == TokenType::ecall) {
-				arg1 = GetExternID(tklist[i + 1].String), arg2 = tklist[i + 2].Ulong;
-				if (arg1 == -1) { PrintError("Undefined extern label : " + tklist[i + 1].String); return -1; }
+			// handle EXCommand
+			if (fir_tk.Type == TokenType::excmd) {
+				WriteChar(excmd);
+				int excid = GetEXCommandIndex(tklist[++i].String), argcnt = GetEXCommandArgCount(excid);
+				WriteUlong(excid);
+				if (argcnt >= 1) WriteUlong(tklist[++i].Ulong);
+				if (argcnt >= 2) WriteUlong(tklist[++i].Ulong);
 			} else {
-				if (argcnt >= 1) arg1 = tklist[i + 1].Ulong;
-				if (argcnt >= 2) arg2 = tklist[i + 2].Ulong;
+				int cid = GetCommandID(fir_tk.Type), argcnt = GetCommndArgCount(cid);
+				ulong arg1 = 0, arg2 = 0;
+				if (fir_tk.Type >= TokenType::jmp && fir_tk.Type <= TokenType::jp) {
+					arg1 = GetLabelAddr(tklist[i + 1].String);
+					if (arg1 == -1) { PrintError("Undefined label : " + tklist[i + 1].String); return -1; }
+				} else if (fir_tk.Type == TokenType::call) {
+					arg1 = GetLabelAddr(tklist[i + 1].String), arg2 = tklist[i + 2].Ulong;
+					if (arg1 == -1) { 
+						//check if it can be change into "ecall"
+						arg1 = GetExternID(tklist[i + 1].String);
+						if (arg1 == -1) { PrintError("Undefined label : " + tklist[i + 1].String); return -1; }
+						cid = GetCommandID(fir_tk.Type = TokenType::ecall);
+					}
+				} else if (fir_tk.Type == TokenType::ecall) {
+					arg1 = GetExternID(tklist[i + 1].String), arg2 = tklist[i + 2].Ulong;
+					if (arg1 == -1) { PrintError("Undefined extern label : " + tklist[i + 1].String); return -1; }
+				} else {
+					if (argcnt >= 1) arg1 = tklist[i + 1].Ulong;
+					if (argcnt >= 2) arg2 = tklist[i + 2].Ulong;
+				}
+				WriteChar(cid);
+				if (argcnt >= 1) WriteUlong(arg1);
+				if (argcnt >= 2) WriteUlong(arg2);
+				cur_size += GetCommandSize(cid), i += argcnt;
 			}
-			WriteChar(cid);
-			if (argcnt >= 1) WriteUlong(arg1);
-			if (argcnt >= 2) WriteUlong(arg2);
-			cur_size += GetCommandSize(cid), i += argcnt;
-#ifdef DEBUG_MODULE
-			static string cmdls[] = { COMMAND_NAME_LS };
-			printf("%3llu: %s %llu %llu\n", cur_size - GetCommandSize(cid), cmdls[cid].c_str(), arg1, arg2);
-#endif
 		}
 		outfile_stream.close();
 		return 0;

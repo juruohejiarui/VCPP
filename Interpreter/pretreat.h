@@ -16,7 +16,7 @@ namespace Interpreter {
 		Add, Minus, Mul, Divison, Mod, BitAnd, BitOr, BitXor, BitNot, Lmov, Rmov,
 		Equ, Neq, Gt, Ge, Ls, Le,
 		LogicAnd, LogicOr, LogicNot,
-		CallMember, New, As, Region, ArrIndex, /*这个ArrIndex只是为了和CplNodeType对齐*/
+		CallMember, New, As, Region, PInc, SInc, PDec, SDec, ArrIndex, /*这个ArrIndex只是为了和CplNodeType对齐*/
 		Expose, Extern, VasmRegion, Glomem, StringRegion, Rely,
 		//下列内容为汇编模式的标志
 		label = 1024,
@@ -39,7 +39,7 @@ namespace Interpreter {
 		mem, omem,
 		sys,
 		arrnew, arrmem, arromem,
-		call, ecall
+		call, ecall, excmd, 
 	};
 	constexpr TokenType OperTokenTypeStart = TokenType::Comma, OperTokenTypeEnd = TokenType::ArrIndex,
 		KeywordTokenTypeStart = TokenType::VarDefine, KeywordTokenTypeEnd = TokenType::Using;
@@ -59,7 +59,7 @@ namespace Interpreter {
 		"Add", "Minus", "Mul", "Divison", "Mod", "BitAnd", "BitOr", "BitXor", "BitNot", "Lmov", "Rmov",
 		"Equ", "Neq", "Gt", "Ge", "Ls", "Le",
 		"LogicAnd", "LogicOr", "LogicNot",
-		"CallMember", "New", "As", "Region", "ArrIndex", /*这个ArrIndex只是为了和CplNodeType对齐*/
+		"CallMember", "New", "As", "Region", "PInc", "SInc", "PDec", "SDec", "ArrIndex", /*这个ArrIndex只是为了和CplNodeType对齐*/
 		"Expose", "Extern", "VasmRegion", "Glomem", "StringRegion", "Rely",
 
 		//下列内容为汇编模式的标志

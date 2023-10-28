@@ -42,7 +42,7 @@
 "mem", "omem", \
 "sys", \
 "arrnew", "arrmem", "arromem", \
-"call", "ecall"
+"call", "ecall", "excmd"
 
 enum CommandID {
 	label,
@@ -66,10 +66,11 @@ enum CommandID {
 	mem, omem, 
 	sys, 
 	arrnew, arrmem, arromem,
-	call, ecall
+	call, ecall, excmd, 
 };
 
 enum EXCommandID {
+	EX_none, 
 	//++ and --
 	EX_vbpinc, EX_vi32pinc, EX_vi64pinc, EX_vupinc, EX_vbsinc, EX_vi32sinc, EX_vi64sinc, EX_vusinc,
 	EX_vbpdec, EX_vi32pdec, EX_vi64pdec, EX_vupdec, EX_vbsdec, EX_vi32sdec, EX_vi64sdec, EX_vusdec,
@@ -98,7 +99,7 @@ enum EXCommandID {
 	EX_vbrmvmov, EX_vrmvmov, EX_vlrmvmov, EX_vurmvmov,
 	EX_mbrmvmov, EX_mrmvmov, EX_mlrmvmov, EX_murmvmov,
 
-	EX_objcpy,
+	EX_switch,
 
 	// vector operator
 	EX_newvec2, EX_newvec3, EX_newvec4, 
@@ -116,7 +117,7 @@ enum EXCommandID {
 	
 };
 
-typedef unsigned long long uulong;
+typedef unsigned long long ullong;
 typedef unsigned char vbyte;
 #ifdef PLATFORM_WINDOWS
 #define FOREGROUND_WHITE 0x07
@@ -140,4 +141,4 @@ int GetCommandArgCount(int cmdid);
 #define min(a, b) ((a) < (b) ? (a) : (b))
 #define max(a, b) ((a) < (b) ? (b) : (a))
 
-uulong StringToUint64(char *str);
+ullong StringToUint64(char *str);

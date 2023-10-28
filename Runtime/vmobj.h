@@ -11,18 +11,18 @@ struct VM_ObjectInfo {
     //The number of quote
     int QuoteCount, VarQuoteCount;
     //1: the size of this object
-    uulong Size, FlagSize;
+    ullong Size, FlagSize;
     //The data
     vbyte *Data;
     //The flag, the i-th bit demonstrates whethter Data[i...i+8] store an address of an object
-    uulong *Flag;
+    ullong *Flag;
     
    struct VM_ObjectInfo *Previous, *Next;
 };
 void VM_InitGC();
-struct VM_ObjectInfo* VM_CreateObjectInfo(uulong size);
+struct VM_ObjectInfo* VM_CreateObjectInfo(ullong size);
 void VM_GC(struct VM_ObjectInfo* obj);
 void *VM_GCThread(void *arg);
 
-static inline uulong VM_ObjectInfo_FlagAddr(uulong addr) { return addr >> 9; }
-static inline uulong VM_ObjectInfo_FlagBit(uulong addr) { return 1llu << ((addr >> 3) - ((addr >> 9) << 6)); }
+static inline ullong VM_ObjectInfo_FlagAddr(ullong addr) { return addr >> 9; }
+static inline ullong VM_ObjectInfo_FlagBit(ullong addr) { return 1llu << ((addr >> 3) - ((addr >> 9) << 6)); }

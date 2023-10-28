@@ -55,12 +55,12 @@ namespace Console {
 	}
 
 	public func void Print(char[] str) {
-		for (var int i = 0; str[i] != '\0' && str[i] => int != 255; i = i + 1)
+		for (var int i = 0; str[i] != '\0' && str[i] => int != 255; i++)
 			PutChar(str[i]);
 	}
 
 	public func void Print(char[] str, int len) {
-		for (var int i = 0; i < len; i = i + 1) 
+		for (var int i = 0; i < len; i++) 
 			PutChar(str[i]);
 	}
 }

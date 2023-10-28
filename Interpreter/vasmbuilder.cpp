@@ -20,6 +20,12 @@ namespace Interpreter {
 		vasm_stream << endl;
 	}
 
+    void VasmBuilder_WriteEXCommand(ulong cmd, ulong arg1, ulong *arg2) {
+		vasm_stream << "excmd " << EXCommandName[cmd];
+		if (cmd > EXCMD0_COUNT) vasm_stream << " " << arg1;
+		vasm_stream << endl;
+    }
+
 #define wrtcmd VasmBuilder_WriteCommand
 #define wrtcmdstr VasmBuilder_WriteCommandStr
 
@@ -247,6 +253,24 @@ namespace Interpreter {
 					if (node->At(0)->ExprType == float64_etype || node->At(1)->ExprType == float64_etype)
 						cid += feq - eq;
 					wrtcmd(cid);
+				}
+				break;
+			case CplNodeType::PInc:
+			case CplNodeType::SInc:
+			case CplNodeType::PDec:
+			case CplNodeType::SDec:
+				res = BuildExpressionVasm(node->At(0));
+				{	
+					int cid = EX_vbsinc;
+					if (node->ExprType == int32_etype) cid += (EX_vi32sinc - EX_vbsinc);
+					if (node->ExprType == int64_etype) cid += (EX_vi64sinc - EX_vbsinc);
+					if (node->ExprType == uint64_etype) cid += (EX_vusinc - EX_vbsinc);
+					if (node->ExprType.IsMember) cid += EX_mbsinc - EX_vbsinc;
+					if (node->Type == CplNodeType::PDec || node->Type == CplNodeType::SDec)
+						cid += EX_vbsdec - EX_vbsinc;
+					if (node->Type == CplNodeType::PInc || node->Type == CplNodeType::PDec)
+						cid += EX_vbpinc - EX_vbsinc;
+					VasmBuilder_WriteEXCommand(cid);
 				}
 				break;
 			case CplNodeType::Empty:

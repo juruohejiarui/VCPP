@@ -10,7 +10,7 @@ namespace Interpreter {
 		Add, Minus, Mul, Divison, Mod, BitAnd, BitOr, BitXor, BitNot, Lmov, Rmov,
 		Equ, Neq, Gt, Ge, Ls, Le,
 		LogicAnd, LogicOr, LogicNot,
-		CallMember, New, As, Region, ArrIndex,
+		CallMember, New, As, Region, PInc, SInc, PDec, SDec, ArrIndex,
 		VarDefine, FuncDefine, ClassDefine, NamespaceDefine,
 		If, Else, Switch, Case, While, For, Continue, Break, Return,
 		Using, Super,
@@ -156,6 +156,7 @@ namespace Interpreter {
 
 	void VasmBuilder_WriteCommand(vbyte cmd, ulong arg1 = 0, ulong arg2 = 0);
 	void VasmBuilder_WriteCommandStr(vbyte cmd, string arg1, ulong arg2 = 0);
+	void VasmBuilder_WriteEXCommand(ulong cmd, ulong arg1 = 0, ulong *arg2 = nullptr);
 
 	int VasmBuilder_Init();
 	int VasmBuilder_Build(vector<CplNode *> &roots, string vasm_path, bool is_append = false);

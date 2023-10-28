@@ -120,11 +120,8 @@ push0
 eq
 jz @IF_FAIL0
 pglo 8
-pglo 8
-vi32gvl
-push1
-add
-vi32mov
+excmd EX_vi32sinc
+pop
 poglo 0
 vogvl
 pvar1
@@ -161,11 +158,8 @@ push0
 vi64mov
 label @LOOP_CTEND0
 pvar2
-pvar2
-vi32gvl
-push1
-add
-vi32mov
+excmd EX_vi32sinc
+pop
 jmp @LOOP_START0
 label @LOOP_END0
 pvar2
@@ -254,11 +248,8 @@ label @IF_FAIL1
 label @IF_END1
 label @LOOP_CTEND1
 pvar0
-pvar0
-vi32gvl
-push1
-add
-vi32mov
+excmd EX_vi32sinc
+pop
 jmp @LOOP_START1
 label @LOOP_END1
 pvar0
@@ -402,11 +393,8 @@ mi32mov
 label @IF_END2
 label @LOOP_CTEND3
 pvar1
-pvar1
-vi32gvl
-push1
-add
-vi32mov
+excmd EX_vi32sinc
+pop
 jmp @LOOP_START3
 label @LOOP_END3
 pvar1
@@ -526,11 +514,8 @@ push0
 vi64mov
 label @LOOP_CTEND4
 pvar2
-pvar2
-vi32gvl
-push1
-add
-vi32mov
+excmd EX_vi32sinc
+pop
 jmp @LOOP_START4
 label @LOOP_END4
 pvar2
@@ -589,11 +574,8 @@ call __init__.ACNode_Dimc0 1
 momov
 label @LOOP_CTEND6
 pvar0
-pvar0
-vi32gvl
-push1
-add
-vi32mov
+excmd EX_vi32sinc
+pop
 jmp @LOOP_START6
 label @LOOP_END6
 pvar0
@@ -632,11 +614,8 @@ push0
 vomov
 label @LOOP_CTEND7
 pvar1
-pvar1
-vi32gvl
-push1
-add
-vi32mov
+excmd EX_vi32sinc
+pop
 jmp @LOOP_START7
 label @LOOP_END7
 pvar1
@@ -884,11 +863,8 @@ vfmov
 label @IF_END4
 label @LOOP_CTEND8
 pvar2
-pvar2
-vi32gvl
-push1
-add
-vi32mov
+excmd EX_vi32sinc
+pop
 jmp @LOOP_START8
 label @LOOP_END8
 pvar2

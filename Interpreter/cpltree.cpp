@@ -16,7 +16,7 @@ namespace Interpreter {
 		//比较运算符（都是缩写）
 		"Equ", "Neq", "Gt", "Ge", "Ls", "Le",
 		"LogicAnd", "LogicOr", "LogicNot",
-		"CallMember"/* . */, "New", "As", "Region", "ArrIndex",
+		"CallMember"/* . */, "New", "As", "Region", "PInc", "SInc", "PDec", "SDec", "ArrIndex",
 		"VarDefine", "FuncDefine", "ClassDefine", "NamespaceDefine",
 		"If", "Else", "Switch", "Case", "While", "For", "Continue", "Break", "Return",
 		"Using", "Super",
@@ -175,7 +175,7 @@ namespace Interpreter {
 		//比较运算符（都是缩写）
 		8/*==*/, 8/*!=*/, 9/*>*/, 9/*>=*/, 9/*<*/, 9/*<=*/,
 		4/*&&*/, 3/*||*/, 13/*!*/,
-		14/* . */, 13/*$*/, 13/*=>*/, 15/*@*/, 14/*[]*/,
+		14/* . */, 13/*$*/, 13/*=>*/, 15/*@*/, 13/*++*/, 13/*++*/, 13/*--*/, 13/*--*/, 14/*[]*/,
 	};
 	const int IdenWeight = 20;
 
@@ -269,6 +269,9 @@ namespace Interpreter {
 				CplNode *lnd = nullptr, *rnd = nullptr, *res = expr_ele[mnp];
 				if (mnp > l) lnd = self(self, l, mnp - 1), res->AddChild(lnd);
 				if (mnp < r) rnd = self(self, mnp + 1, r), res->AddChild(rnd);
+				// turn the prefix increase or prefix decrease into the suffix one
+				if ((res->Type == CplNodeType::PInc || res->Type == CplNodeType::PDec) && mnp == r)
+					res->Type = (CplNodeType)((int)res->Type + 1);
 				return res;
 			};
 			return func(func, 0, expr_ele.size() - 1);

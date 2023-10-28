@@ -125,11 +125,8 @@ mbgvl
 call Console@PutChar.char_Dimc0 1
 label @LOOP_CTEND0
 pvar1
-pvar1
-vi32gvl
-push1
-add
-vi32mov
+excmd EX_vi32sinc
+pop
 jmp @LOOP_START0
 label @LOOP_END0
 pvar1
@@ -161,11 +158,8 @@ mbgvl
 call Console@PutChar.char_Dimc0 1
 label @LOOP_CTEND1
 pvar2
-pvar2
-vi32gvl
-push1
-add
-vi32mov
+excmd EX_vi32sinc
+pop
 jmp @LOOP_START1
 label @LOOP_END1
 pvar2

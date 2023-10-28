@@ -12,14 +12,14 @@ struct RuntimeBlock {
     FILE *FileInfo;
 
     vbyte *Glomem, *ExecContent;
-    uulong ExposeCount;
+    ullong ExposeCount;
     struct HashMap* ExposeMap;
-    uulong RelyCount;
+    ullong RelyCount;
     char **RelyList;
-    uulong ExternCount;
+    ullong ExternCount;
     char **ExternList;
 
-    uulong StringObjectCount;
+    ullong StringObjectCount;
     struct VM_ObjectInfo **StringObjectList;
     
     int IsLoaded;
@@ -42,18 +42,18 @@ struct HashMap *ExternMap;
 struct HashMap *LibraryMap;
 
 struct CallFrame {
-    uulong Address, VariableCount, UsedMaxVariable, *Variables;
+    ullong Address, VariableCount, UsedMaxVariable, *Variables;
     int BlockID;
 } *call_stack, *call_stack_top;
 
-uulong arg_data[16], tmp_data[16];
-uulong *calculate_stack, *calculate_stack_top;
+ullong arg_data[16], tmp_data[16];
+ullong *calculate_stack, *calculate_stack_top;
 
 #pragma region File Operations
 static inline FILE *OpenFile(char *path) { return fopen(path, "rb"); }
-static inline uulong ReadUULong(FILE *file) {
-    uulong res = 0;
-    fread(&res, sizeof(uulong), 1, file);
+static inline ullong ReadUULong(FILE *file) {
+    ullong res = 0;
+    fread(&res, sizeof(ullong), 1, file);
     return res;
 }
 static inline vbyte ReadVByte(FILE *file) { 
@@ -101,13 +101,13 @@ int PreloadVlib(char *path) {
     ReadString(file_info);
 
 
-    uulong expose_count = blk->ExposeCount = ReadUULong(file_info);
+    ullong expose_count = blk->ExposeCount = ReadUULong(file_info);
 
-    uulong *blkid_store = (uulong *)malloc(sizeof(uulong));
-    *blkid_store = (uulong) blkid;
+    ullong *blkid_store = (ullong *)malloc(sizeof(ullong));
+    *blkid_store = (ullong) blkid;
 
     for (int i = 0; i < expose_count; i++) {
-        char *str = ReadString(file_info); uulong *addr = (uulong *)malloc(sizeof(uulong));
+        char *str = ReadString(file_info); ullong *addr = (ullong *)malloc(sizeof(ullong));
         *addr = ReadUULong(file_info);
         HashMap_Insert(blk->ExposeMap, str, addr);
         HashMap_Insert(ExternMap, str, blkid_store);
@@ -121,13 +121,13 @@ void LoadStringRegion(FILE *file, struct RuntimeBlock *blk) {
     blk->StringObjectList = (struct VM_ObjectInfo **) malloc(sizeof(struct VM_ObjectInfo*) * blk->StringObjectCount);
     for (int i = 0; i < blk->StringObjectCount; i++) {
         char *str = ReadString(file);
-        uulong len = strlen(str) + 1;
-        struct VM_ObjectInfo *obj = VM_CreateObjectInfo(len + sizeof(uulong));
+        ullong len = strlen(str) + 1;
+        struct VM_ObjectInfo *obj = VM_CreateObjectInfo(len + sizeof(ullong));
         obj->QuoteCount = obj->VarQuoteCount = 1;
         obj->FlagSize = 0;
-        obj->Size = sizeof(uulong) + len;
-        *(uulong*)(obj->Data) = 1;
-        for (int j = 0; j < len; j++) obj->Data[j + sizeof(uulong)] = str[j];
+        obj->Size = sizeof(ullong) + len;
+        *(ullong*)(obj->Data) = 1;
+        for (int j = 0; j < len; j++) obj->Data[j + sizeof(ullong)] = str[j];
         blk->StringObjectList[i] = obj;
     }
 }
@@ -135,7 +135,7 @@ void LoadStringRegion(FILE *file, struct RuntimeBlock *blk) {
 void LoadVlib(int blkid) {
     struct RuntimeBlock *blk = runtime_block[blkid];
     blk->IsLoaded = 1;
-    uulong cnt = blk->RelyCount = ReadUULong(blk->FileInfo);
+    ullong cnt = blk->RelyCount = ReadUULong(blk->FileInfo);
     for (int i = 0; i < cnt; i++) {
         char *path = ReadString(blk->FileInfo);
         PreloadVlib(path), free(path);
@@ -156,7 +156,7 @@ void LoadVlib(int blkid) {
 }
 
 //Load a vexe file, modify the current_runtime_block to it and return the main pointer
-uulong LoadVexe(char *path) {
+ullong LoadVexe(char *path) {
     // create a runtime block
     int blkid = runtime_block_count++;
     struct RuntimeBlock *blk = (struct RuntimeBlock *) malloc(sizeof(struct RuntimeBlock));
@@ -165,7 +165,7 @@ uulong LoadVexe(char *path) {
     //modify the current_runtime_block
     current_runtime_block = blk;
 
-    uulong main_addr, execsize, cnt; vbyte flag;
+    ullong main_addr, execsize, cnt; vbyte flag;
     int res = 0;
     FILE *file = OpenFile(path);
     blk->RelyCount = cnt = ReadUULong(file);
@@ -196,7 +196,7 @@ uulong LoadVexe(char *path) {
 
 #pragma region Function Operations
 // blkid == -1 means that call a function in the current_block
-void Function_Call(uulong addr, int arg_count, int blkid) {
+void Function_Call(ullong addr, int arg_count, int blkid) {
     for (arg_count--; arg_count >= 0; arg_count--, calculate_stack_top--) 
         arg_data[arg_count] = *calculate_stack_top;
     if (blkid == -1) blkid = call_stack_top->BlockID;
@@ -205,11 +205,11 @@ void Function_Call(uulong addr, int arg_count, int blkid) {
     current_runtime_block = runtime_block[blkid];
 }
 
-void Function_ECall(uulong id, int arg_count) {
+void Function_ECall(ullong id, int arg_count) {
     char *extiden = current_runtime_block->ExternList[id];
-    uulong libid = *(uulong *) HashMap_Get(ExternMap, extiden), addr;
+    ullong libid = *(ullong *) HashMap_Get(ExternMap, extiden), addr;
     if (!runtime_block[libid]->IsLoaded) LoadVlib(libid);
-    addr = *(uulong *) HashMap_Get(runtime_block[libid]->ExposeMap, extiden);
+    addr = *(ullong *) HashMap_Get(runtime_block[libid]->ExposeMap, extiden);
     Function_Call(addr, arg_count, libid);
 }
 
@@ -223,10 +223,10 @@ void Function_Return() {
 
 void *VM_VMThread(void *vexe_path) {
     // printf("VMThread Launched.\n");
-    uulong main_addr = LoadVexe((char *)vexe_path);
+    ullong main_addr = LoadVexe((char *)vexe_path);
     // printf("Loaded vexe file %s\n", vexe_path);
     Function_Call(main_addr, 0, 0);
-    vbyte cid; uulong arg1, arg2;
+    vbyte cid; ullong arg1, arg2;
     while (call_stack_top != call_stack) {
         if (GCThreadState == ThreadState_Waiting) {
             VMThreadState = ThreadState_Pause;
@@ -234,6 +234,10 @@ void *VM_VMThread(void *vexe_path) {
             VMThreadState = ThreadState_Running;
         }
         cid = current_runtime_block->ExecContent[call_stack_top->Address++];
+        printf("%s\n", CommandNameList[cid]);
+        if (cid == label) {
+            printf("error");
+        }
         switch (cid) {
             #pragma region xxmov
             case vbmov:
@@ -245,7 +249,7 @@ void *VM_VMThread(void *vexe_path) {
                 calculate_stack_top -= 2;
                 break;
             case vi64mov:
-                *((uulong *)(*(calculate_stack_top - 1))) = *((uulong *)calculate_stack_top);
+                *((ullong *)(*(calculate_stack_top - 1))) = *((ullong *)calculate_stack_top);
                 calculate_stack_top -= 2;
                 break;
             case vfmov:
@@ -254,12 +258,12 @@ void *VM_VMThread(void *vexe_path) {
                 break;
             case vomov:
                 {
-                    struct VM_ObjectInfo *lst_obj = (struct VM_ObjectInfo*)*(uulong*)*(calculate_stack_top - 1);
+                    struct VM_ObjectInfo *lst_obj = (struct VM_ObjectInfo*)*(ullong*)*(calculate_stack_top - 1);
                     if (lst_obj != NULL) {
                         lst_obj->VarQuoteCount -= 2, lst_obj->QuoteCount -= 2;
                         VM_GC(lst_obj);
                     }
-                    *(uulong *)*(calculate_stack_top - 1) = *calculate_stack_top;
+                    *(ullong *)*(calculate_stack_top - 1) = *calculate_stack_top;
                     calculate_stack_top -= 2;
                 }
                 break;
@@ -286,7 +290,7 @@ void *VM_VMThread(void *vexe_path) {
                     struct VM_ObjectInfo *obj = (struct VM_ObjectInfo *)*(calculate_stack_top - 2);
                     obj->VarQuoteCount--, obj->QuoteCount--;
                     VM_GC(obj);
-                    *(uulong *)*(calculate_stack_top - 1) = *(uulong *)calculate_stack_top;
+                    *(ullong *)*(calculate_stack_top - 1) = *(ullong *)calculate_stack_top;
                     calculate_stack_top -= 3;
                 }
                 break;
@@ -302,14 +306,14 @@ void *VM_VMThread(void *vexe_path) {
             case momov:
                 {
                     struct VM_ObjectInfo *par = (struct VM_ObjectInfo *)*(calculate_stack_top - 2),
-                                        *lst_obj = (struct VM_ObjectInfo *)*(uulong *)*(calculate_stack_top - 1);
+                                        *lst_obj = (struct VM_ObjectInfo *)*(ullong *)*(calculate_stack_top - 1);
                     par->VarQuoteCount--, par->QuoteCount--;
                     VM_GC(par);
                     if (lst_obj != NULL) {
                         lst_obj->QuoteCount -= 2, lst_obj->VarQuoteCount--;
                         VM_GC(lst_obj);
                     }
-                    *(uulong *)*(calculate_stack_top - 1) = *calculate_stack_top;
+                    *(ullong *)*(calculate_stack_top - 1) = *calculate_stack_top;
                     if ((struct VM_ObjectInfo*)*calculate_stack_top != NULL) 
                         ((struct VM_ObjectInfo*)*calculate_stack_top)->VarQuoteCount--;
                     calculate_stack_top -= 3;
@@ -374,27 +378,27 @@ void *VM_VMThread(void *vexe_path) {
                 calculate_stack_top--;
                 break;
             case uadd:
-                *((uulong *)(calculate_stack_top - 1)) += *((uulong *)calculate_stack_top);
+                *((ullong *)(calculate_stack_top - 1)) += *((ullong *)calculate_stack_top);
                 calculate_stack_top--;
                 break;
             case usub:
-                *((uulong *)(calculate_stack_top - 1)) -= *((uulong *)calculate_stack_top);
+                *((ullong *)(calculate_stack_top - 1)) -= *((ullong *)calculate_stack_top);
                 calculate_stack_top--;
                 break;
             case umul:
-                *((uulong *)(calculate_stack_top - 1)) *= *((uulong *)calculate_stack_top);
+                *((ullong *)(calculate_stack_top - 1)) *= *((ullong *)calculate_stack_top);
                 calculate_stack_top--;
                 break;
             case udiv:
-                *((uulong *)(calculate_stack_top - 1)) /= *((uulong *)calculate_stack_top);
+                *((ullong *)(calculate_stack_top - 1)) /= *((ullong *)calculate_stack_top);
                 calculate_stack_top--;
                 break;
             case umod:
-                *((uulong *)(calculate_stack_top - 1)) %= *((uulong *)calculate_stack_top);
+                *((ullong *)(calculate_stack_top - 1)) %= *((ullong *)calculate_stack_top);
                 calculate_stack_top--;
                 break;
             case badd:
-                *((uulong *)(calculate_stack_top - 1)) += *((uulong *)calculate_stack_top);
+                *((ullong *)(calculate_stack_top - 1)) += *((ullong *)calculate_stack_top);
                 calculate_stack_top--;
                 break;
             case bsub:
@@ -416,27 +420,27 @@ void *VM_VMThread(void *vexe_path) {
             #pragma endregion
             #pragma region compare operator
             case ne:
-                *((uulong *)(calculate_stack_top - 1)) = (*((uulong *)(calculate_stack_top - 1)) != *((uulong *)calculate_stack_top));
+                *((ullong *)(calculate_stack_top - 1)) = (*((ullong *)(calculate_stack_top - 1)) != *((ullong *)calculate_stack_top));
                 calculate_stack_top--;
                 break;
             case eq:
-                *((uulong *)(calculate_stack_top - 1)) = (*((uulong *)(calculate_stack_top - 1)) == *((uulong *)calculate_stack_top));
+                *((ullong *)(calculate_stack_top - 1)) = (*((ullong *)(calculate_stack_top - 1)) == *((ullong *)calculate_stack_top));
                 calculate_stack_top--;
                 break;
             case gt:
-                *((uulong *)(calculate_stack_top - 1)) = (*((uulong *)(calculate_stack_top - 1)) > *((uulong *)calculate_stack_top));
+                *((ullong *)(calculate_stack_top - 1)) = (*((ullong *)(calculate_stack_top - 1)) > *((ullong *)calculate_stack_top));
                 calculate_stack_top--;
                 break;
             case ge:
-                *((uulong *)(calculate_stack_top - 1)) = (*((uulong *)(calculate_stack_top - 1)) >= *((uulong *)calculate_stack_top));
+                *((ullong *)(calculate_stack_top - 1)) = (*((ullong *)(calculate_stack_top - 1)) >= *((ullong *)calculate_stack_top));
                 calculate_stack_top--;
                 break;
             case ls:
-                *((uulong *)(calculate_stack_top - 1)) = (*((uulong *)(calculate_stack_top - 1)) < *((uulong *)calculate_stack_top));
+                *((ullong *)(calculate_stack_top - 1)) = (*((ullong *)(calculate_stack_top - 1)) < *((ullong *)calculate_stack_top));
                 calculate_stack_top--;
                 break;
             case le:
-                *((uulong *)(calculate_stack_top - 1)) = (*((uulong *)(calculate_stack_top - 1)) <= *((uulong *)calculate_stack_top));
+                *((ullong *)(calculate_stack_top - 1)) = (*((ullong *)(calculate_stack_top - 1)) <= *((ullong *)calculate_stack_top));
                 calculate_stack_top--;
                 break;
             case fne:
@@ -513,26 +517,26 @@ void *VM_VMThread(void *vexe_path) {
                 calculate_stack_top--;
                 break;
             case uand:
-                *((uulong *)(calculate_stack_top - 1)) &= *((uulong *)calculate_stack_top);
+                *((ullong *)(calculate_stack_top - 1)) &= *((ullong *)calculate_stack_top);
                 calculate_stack_top--;
                 break;
             case uor:
-                *((uulong *)(calculate_stack_top - 1)) |= *((uulong *)calculate_stack_top);
+                *((ullong *)(calculate_stack_top - 1)) |= *((ullong *)calculate_stack_top);
                 calculate_stack_top--;
                 break;
             case uxor:
-                *((uulong *)(calculate_stack_top - 1)) ^= *((uulong *)calculate_stack_top);
+                *((ullong *)(calculate_stack_top - 1)) ^= *((ullong *)calculate_stack_top);
                 calculate_stack_top--;
                 break;
             case unot:
-                *((uulong *)calculate_stack_top) = ~(*(uulong *)calculate_stack_top);
+                *((ullong *)calculate_stack_top) = ~(*(ullong *)calculate_stack_top);
                 break;
             case ulmv:
-                *((uulong *)(calculate_stack_top - 1)) <<= *((uulong *)calculate_stack_top);
+                *((ullong *)(calculate_stack_top - 1)) <<= *((ullong *)calculate_stack_top);
                 calculate_stack_top--;
                 break;
             case urmv:
-                *((uulong *)(calculate_stack_top - 1)) >>= *((uulong *)calculate_stack_top);
+                *((ullong *)(calculate_stack_top - 1)) >>= *((ullong *)calculate_stack_top);
                 calculate_stack_top--;
                 break;
             case band:
@@ -567,13 +571,13 @@ void *VM_VMThread(void *vexe_path) {
                 *calculate_stack_top = *(unsigned int *)*calculate_stack_top;
                 break;
             case vi64gvl:
-                *calculate_stack_top = *(uulong *)*calculate_stack_top;
+                *calculate_stack_top = *(ullong *)*calculate_stack_top;
                 break;
             case vfgvl:
                 *((double *)(calculate_stack_top)) = *(double *)*calculate_stack_top;
 				break;
             case vogvl:
-                *calculate_stack_top = (uulong)(struct VM_ObjectInfo*)*(uulong*)*calculate_stack_top;
+                *calculate_stack_top = (ullong)(struct VM_ObjectInfo*)*(ullong*)*calculate_stack_top;
                 break;
             case mbgvl:
                 {
@@ -597,7 +601,7 @@ void *VM_VMThread(void *vexe_path) {
                 {
                     struct VM_ObjectInfo *obj = (struct VM_ObjectInfo *)*(calculate_stack_top - 1);
                     obj->QuoteCount--, obj->VarQuoteCount--;
-                    *(uulong *)(calculate_stack_top - 1) = *(uulong *)*calculate_stack_top;
+                    *(ullong *)(calculate_stack_top - 1) = *(ullong *)*calculate_stack_top;
                     calculate_stack_top--;
                     if (!obj->QuoteCount) VM_GC(obj);
                 }
@@ -615,7 +619,7 @@ void *VM_VMThread(void *vexe_path) {
                 {
                     struct VM_ObjectInfo *obj = (struct VM_ObjectInfo *)*(calculate_stack_top - 1);
                     obj->QuoteCount--, obj->VarQuoteCount--;
-                    *(uulong *)(calculate_stack_top - 1) = *(uulong *)*calculate_stack_top;
+                    *(ullong *)(calculate_stack_top - 1) = *(ullong *)*calculate_stack_top;
                     calculate_stack_top--;
                     if (!obj->QuoteCount) VM_GC(obj);
                 }
@@ -626,89 +630,89 @@ void *VM_VMThread(void *vexe_path) {
                 {
                     struct VM_ObjectInfo *obj = VM_CreateObjectInfo(*calculate_stack_top);
                     obj->QuoteCount++, obj->VarQuoteCount++;
-                    *calculate_stack_top = (uulong)obj;
+                    *calculate_stack_top = (ullong)obj;
                 }
                 break;
             case mem:
                 {
-                    arg1 = *(uulong *)&current_runtime_block->ExecContent[call_stack_top->Address];
-                    call_stack_top->Address += sizeof(uulong);
+                    arg1 = *(ullong *)&current_runtime_block->ExecContent[call_stack_top->Address];
+                    call_stack_top->Address += sizeof(ullong);
                     struct VM_ObjectInfo *obj = (struct VM_ObjectInfo*)*(calculate_stack_top++);
-                    *calculate_stack_top = (uulong)(obj->Data + arg1);
+                    *calculate_stack_top = (ullong)(obj->Data + arg1);
                 }
                 break;
             case omem:
                 {
                     //find the address
-                    arg1 = *(uulong *)&current_runtime_block->ExecContent[call_stack_top->Address];
-                    call_stack_top->Address += sizeof(uulong);
+                    arg1 = *(ullong *)&current_runtime_block->ExecContent[call_stack_top->Address];
+                    call_stack_top->Address += sizeof(ullong);
                     //get the object
                     struct VM_ObjectInfo *obj = (struct VM_ObjectInfo*)*(calculate_stack_top++);
-                    *calculate_stack_top = (uulong)(obj->Data + arg1);
+                    *calculate_stack_top = (ullong)(obj->Data + arg1);
                     //set the flag
                     *(obj->Flag + VM_ObjectInfo_FlagAddr(arg1)) |= VM_ObjectInfo_FlagBit(arg1);
-                    if ((struct VM_ObjectInfo*)*(uulong*)*calculate_stack_top != NULL)
-                        ((struct VM_ObjectInfo*)*(uulong*)*calculate_stack_top)->QuoteCount++,
-                        ((struct VM_ObjectInfo*)*(uulong*)*calculate_stack_top)->VarQuoteCount++;
+                    if ((struct VM_ObjectInfo*)*(ullong*)*calculate_stack_top != NULL)
+                        ((struct VM_ObjectInfo*)*(ullong*)*calculate_stack_top)->QuoteCount++,
+                        ((struct VM_ObjectInfo*)*(ullong*)*calculate_stack_top)->VarQuoteCount++;
                 }
                 break;
             case arrnew:
                 {
-                    arg1 = *(uulong *)(current_runtime_block->ExecContent + call_stack_top->Address);
-                    call_stack_top->Address += sizeof(uulong);
+                    arg1 = *(ullong *)(current_runtime_block->ExecContent + call_stack_top->Address);
+                    call_stack_top->Address += sizeof(ullong);
                     for (int i = arg1; i >= 0; i--) tmp_data[i] = *(calculate_stack_top--);
-                    tmp_data[0] = min(sizeof(uulong), tmp_data[0]);
+                    tmp_data[0] = min(sizeof(ullong), tmp_data[0]);
                     for (int i = 1; i <= arg1; i++) tmp_data[i] *= tmp_data[i - 1];
                     struct VM_ObjectInfo *obj = VM_CreateObjectInfo((arg1 << 3) + tmp_data[arg1]);
                     obj->QuoteCount++, obj->VarQuoteCount++;
                     for (int i = 0; i < arg1; i++)
-                        *(uulong *)&obj->Data[i << 3] = tmp_data[i];
-                    *(++calculate_stack_top) = (uulong)obj;
+                        *(ullong *)&obj->Data[i << 3] = tmp_data[i];
+                    *(++calculate_stack_top) = (ullong)obj;
                 }
                 break;
             case arrmem: 
                 {
                     // Get the dimension
-                    arg1 = *(uulong *)(current_runtime_block->ExecContent + call_stack_top->Address);
-                    call_stack_top->Address += sizeof(uulong);
+                    arg1 = *(ullong *)(current_runtime_block->ExecContent + call_stack_top->Address);
+                    call_stack_top->Address += sizeof(ullong);
                     // Get the index of each dimension
                     for (int i = arg1; i >= 0; i--) tmp_data[i] = *(calculate_stack_top--);
                     calculate_stack_top++;
                     // Calculate the address
-                    arg2 = arg1 * sizeof(uulong);
+                    arg2 = arg1 * sizeof(ullong);
                     vbyte *obj_data = ((struct VM_ObjectInfo*)tmp_data[0])->Data;
-                    for (uulong i = 1, p = 0; i <= arg1; i++, p += sizeof(uulong)) 
-                        arg2 += tmp_data[i] * (*(uulong*)(obj_data + p));
+                    for (ullong i = 1, p = 0; i <= arg1; i++, p += sizeof(ullong)) 
+                        arg2 += tmp_data[i] * (*(ullong*)(obj_data + p));
                     // Update the calculate_stack
-                    *(++calculate_stack_top) = (uulong)(obj_data + arg2);
+                    *(++calculate_stack_top) = (ullong)(obj_data + arg2);
                 }
                 break;
             case arrmem1:
                 {
                     arg2 = *(calculate_stack_top--), arg1 = *calculate_stack_top;
                     vbyte *obj_data = ((struct VM_ObjectInfo*)arg1)->Data;
-                    *(++calculate_stack_top) = (uulong)(obj_data + sizeof(uulong) + arg2 * (*(uulong *)obj_data));
+                    *(++calculate_stack_top) = (ullong)(obj_data + sizeof(ullong) + arg2 * (*(ullong *)obj_data));
                 }
                 break;
             case arromem:
                 {
                     // Get the dimension
-                    arg1 = *(uulong *)(current_runtime_block->ExecContent + call_stack_top->Address);
-                    call_stack_top->Address += sizeof(uulong);
+                    arg1 = *(ullong *)(current_runtime_block->ExecContent + call_stack_top->Address);
+                    call_stack_top->Address += sizeof(ullong);
                     // Get the index of each dimension
                     for (int i = arg1; i >= 0; i--) tmp_data[i] = *(calculate_stack_top--);
                     calculate_stack_top++;
                     // Calculate the address
-                    arg2 = arg1 * sizeof(uulong);
+                    arg2 = arg1 * sizeof(ullong);
                     vbyte *obj_data = ((struct VM_ObjectInfo*)tmp_data[0])->Data;
-                    for (uulong i = 1, p = 0; i <= arg1; i++, p += sizeof(uulong)) 
-                        arg2 += tmp_data[i] * (*(uulong*)(obj_data + p));
+                    for (ullong i = 1, p = 0; i <= arg1; i++, p += sizeof(ullong)) 
+                        arg2 += tmp_data[i] * (*(ullong*)(obj_data + p));
                     // Update the calculate_stack
-                    *(++calculate_stack_top) = (uulong)(obj_data + arg2);
+                    *(++calculate_stack_top) = (ullong)(obj_data + arg2);
                     // Set Flag
                     *(((struct VM_ObjectInfo*)tmp_data[0])->Flag + VM_ObjectInfo_FlagAddr(arg2)) |= VM_ObjectInfo_FlagBit(arg2);
                     
-                    struct VM_ObjectInfo *mem_obj = (struct VM_ObjectInfo*)*(uulong*)*calculate_stack_top;
+                    struct VM_ObjectInfo *mem_obj = (struct VM_ObjectInfo*)*(ullong*)*calculate_stack_top;
                     if (mem_obj != NULL) mem_obj->VarQuoteCount++, mem_obj->QuoteCount++;
                 }
                 break;
@@ -717,12 +721,12 @@ void *VM_VMThread(void *vexe_path) {
                     // arg2 illustrates the index, arg1 is the array object
                     arg2 = *(calculate_stack_top--), arg1 = *calculate_stack_top;
                     vbyte *obj_data = ((struct VM_ObjectInfo*)arg1)->Data;
-                    arg2 *= *(uulong *)obj_data; arg2 += sizeof(uulong);
-                    *(++calculate_stack_top) = (uulong)(obj_data + arg2);
+                    arg2 *= *(ullong *)obj_data; arg2 += sizeof(ullong);
+                    *(++calculate_stack_top) = (ullong)(obj_data + arg2);
                     // Set Flag
                     *(((struct VM_ObjectInfo*)arg1)->Flag + VM_ObjectInfo_FlagAddr(arg2)) |= VM_ObjectInfo_FlagBit(arg2);
 
-                    struct VM_ObjectInfo *mem_obj = (struct VM_ObjectInfo*)*(uulong*)*calculate_stack_top;
+                    struct VM_ObjectInfo *mem_obj = (struct VM_ObjectInfo*)*(ullong*)*calculate_stack_top;
                     if (mem_obj != NULL) mem_obj->VarQuoteCount++, mem_obj->QuoteCount++;
                 }
                 break;
@@ -730,43 +734,43 @@ void *VM_VMThread(void *vexe_path) {
                 {
                     struct VM_ObjectInfo* obj = VM_CreateObjectInfo(9);
                     obj->QuoteCount++, obj->VarQuoteCount++;
-                    *(uulong *)obj->Data = *calculate_stack_top;
-                    *calculate_stack_top = (uulong)obj;
+                    *(ullong *)obj->Data = *calculate_stack_top;
+                    *calculate_stack_top = (ullong)obj;
                 }
                 break;
             case unpack:
                 {
                     struct VM_ObjectInfo *obj = (struct VM_ObjectInfo *)*calculate_stack_top;
                     obj->VarQuoteCount--, obj->QuoteCount--;
-                    *(calculate_stack_top) = *(uulong*)obj->Data;
+                    *(calculate_stack_top) = *(ullong*)obj->Data;
                 }
                 break;
             #pragma endregion
             #pragma region jump and function operator
             case jmp:
-                call_stack_top->Address = *(uulong*)(current_runtime_block->ExecContent + call_stack_top->Address);
+                call_stack_top->Address = *(ullong*)(current_runtime_block->ExecContent + call_stack_top->Address);
                 break;
             case jz:
-                if (*(calculate_stack_top--)) call_stack_top->Address += sizeof(uulong);
-                else call_stack_top->Address = *(uulong*)(current_runtime_block->ExecContent + call_stack_top->Address);
+                if (*(calculate_stack_top--)) call_stack_top->Address += sizeof(ullong);
+                else call_stack_top->Address = *(ullong*)(current_runtime_block->ExecContent + call_stack_top->Address);
                 break;
             case jp:
                 if (*(calculate_stack_top--)) 
-                    call_stack_top->Address = *(uulong*)(current_runtime_block->ExecContent + call_stack_top->Address);
-                else call_stack_top->Address += sizeof(uulong);
+                    call_stack_top->Address = *(ullong*)(current_runtime_block->ExecContent + call_stack_top->Address);
+                else call_stack_top->Address += sizeof(ullong);
                 break;
             case call:
-                arg1 = *(uulong *)(current_runtime_block->ExecContent + call_stack_top->Address);
-                call_stack_top->Address += sizeof(uulong);
-                arg2 = *(uulong *)(current_runtime_block->ExecContent + call_stack_top->Address);
-                call_stack_top->Address += sizeof(uulong);
+                arg1 = *(ullong *)(current_runtime_block->ExecContent + call_stack_top->Address);
+                call_stack_top->Address += sizeof(ullong);
+                arg2 = *(ullong *)(current_runtime_block->ExecContent + call_stack_top->Address);
+                call_stack_top->Address += sizeof(ullong);
                 Function_Call(arg1, arg2, -1);
                 break;
             case ecall:
-                arg1 = *(uulong *)(current_runtime_block->ExecContent + call_stack_top->Address);
-                call_stack_top->Address += sizeof(uulong);
-                arg2 = *(uulong *)(current_runtime_block->ExecContent + call_stack_top->Address);
-                call_stack_top->Address += sizeof(uulong);
+                arg1 = *(ullong *)(current_runtime_block->ExecContent + call_stack_top->Address);
+                call_stack_top->Address += sizeof(ullong);
+                arg2 = *(ullong *)(current_runtime_block->ExecContent + call_stack_top->Address);
+                call_stack_top->Address += sizeof(ullong);
                 Function_ECall(arg1, arg2);
                 break;
             case ret:
@@ -775,21 +779,21 @@ void *VM_VMThread(void *vexe_path) {
             #pragma endregion
             #pragma region constant and varibale operator
             case setvar:
-                arg1 = *(uulong *)(current_runtime_block->ExecContent + call_stack_top->Address);
-                call_stack_top->Address += sizeof(uulong);
+                arg1 = *(ullong *)(current_runtime_block->ExecContent + call_stack_top->Address);
+                call_stack_top->Address += sizeof(ullong);
                 // call_stack_top->VariableCount = arg1, call_stack_top->UsedMaxVariable = 0;
-                call_stack_top->Variables = malloc((arg1 + 1) * sizeof(uulong));
+                call_stack_top->Variables = malloc((arg1 + 1) * sizeof(ullong));
                 // printf("malloc %llx\n", call_stack_top->Variables);
                 for (int i = 0; i < arg1; i++) call_stack_top->Variables[i] = 0;
                 break;
             case poparg:
-                arg1 = *(uulong *)(current_runtime_block->ExecContent + call_stack_top->Address);
-                call_stack_top->Address += sizeof(uulong);
+                arg1 = *(ullong *)(current_runtime_block->ExecContent + call_stack_top->Address);
+                call_stack_top->Address += sizeof(ullong);
                 for (int i = 0; i < arg1; i++) call_stack_top->Variables[i] = arg_data[i];
                 break;
             case push:
-                *(++calculate_stack_top) = *(uulong *)(current_runtime_block->ExecContent + call_stack_top->Address);
-                call_stack_top->Address += sizeof(uulong);
+                *(++calculate_stack_top) = *(ullong *)(current_runtime_block->ExecContent + call_stack_top->Address);
+                call_stack_top->Address += sizeof(ullong);
                 break;
             case push0:
                 *(++calculate_stack_top) = 0;
@@ -798,91 +802,91 @@ void *VM_VMThread(void *vexe_path) {
                 *(++calculate_stack_top) = 1;
                 break;
             case pvar:
-                *(++calculate_stack_top) = (uulong)(
-                    call_stack_top->Variables + *(uulong *)(current_runtime_block->ExecContent + call_stack_top->Address));
+                *(++calculate_stack_top) = (ullong)(
+                    call_stack_top->Variables + *(ullong *)(current_runtime_block->ExecContent + call_stack_top->Address));
                 // call_stack_top->UsedMaxVariable = max(call_stack_top->UsedMaxVariable, *(uulong *)(current_runtime_block->ExecContent + call_stack_top->Address));
-                call_stack_top->Address += sizeof(uulong);
+                call_stack_top->Address += sizeof(ullong);
                 break;
             case pvar0:
-                *(++calculate_stack_top) = (uulong)(&call_stack_top->Variables[0]);
+                *(++calculate_stack_top) = (ullong)(&call_stack_top->Variables[0]);
                 // call_stack_top->UsedMaxVariable = max(call_stack_top->UsedMaxVariable, 0);
                 break;
             case pvar1:
-                *(++calculate_stack_top) = (uulong)(&call_stack_top->Variables[1]);
+                *(++calculate_stack_top) = (ullong)(&call_stack_top->Variables[1]);
                 // call_stack_top->UsedMaxVariable = max(call_stack_top->UsedMaxVariable, 1);
                 break;
              case pvar2:
-                *(++calculate_stack_top) = (uulong)(&call_stack_top->Variables[2]);
+                *(++calculate_stack_top) = (ullong)(&call_stack_top->Variables[2]);
                 // call_stack_top->UsedMaxVariable = max(call_stack_top->UsedMaxVariable, 2);
                 break;
              case pvar3:
-                *(++calculate_stack_top) = (uulong)(&call_stack_top->Variables[3]);
+                *(++calculate_stack_top) = (ullong)(&call_stack_top->Variables[3]);
                 // call_stack_top->UsedMaxVariable = max(call_stack_top->UsedMaxVariable, 3);
                 break;
             case povar:
-                *(++calculate_stack_top) = (uulong)(
-                    call_stack_top->Variables + *(uulong *)(current_runtime_block->ExecContent + call_stack_top->Address));
+                *(++calculate_stack_top) = (ullong)(
+                    call_stack_top->Variables + *(ullong *)(current_runtime_block->ExecContent + call_stack_top->Address));
                 // call_stack_top->UsedMaxVariable = max(call_stack_top->UsedMaxVariable, *(uulong *)(current_runtime_block->ExecContent + call_stack_top->Address));
-                call_stack_top->Address += sizeof(uulong);
+                call_stack_top->Address += sizeof(ullong);
                 {
-                    struct VM_ObjectInfo* obj = (struct VM_ObjectInfo *)*(uulong*)*calculate_stack_top;
+                    struct VM_ObjectInfo* obj = (struct VM_ObjectInfo *)*(ullong*)*calculate_stack_top;
                     if (obj != NULL) obj->QuoteCount++, obj->VarQuoteCount++;
                 }
                 break;
             case povar0:
-                *(++calculate_stack_top) = (uulong)(&call_stack_top->Variables[0]);
+                *(++calculate_stack_top) = (ullong)(&call_stack_top->Variables[0]);
                 // call_stack_top->UsedMaxVariable = max(call_stack_top->UsedMaxVariable, 0);
                 {
-                    struct VM_ObjectInfo* obj = (struct VM_ObjectInfo *)*(uulong*)*(calculate_stack_top);
+                    struct VM_ObjectInfo* obj = (struct VM_ObjectInfo *)*(ullong*)*(calculate_stack_top);
                     if (obj != NULL) obj->QuoteCount++, obj->VarQuoteCount++;
                 }
                 break;
             case povar1:
-                *(++calculate_stack_top) = (uulong)(&call_stack_top->Variables[1]);
+                *(++calculate_stack_top) = (ullong)(&call_stack_top->Variables[1]);
                 // call_stack_top->UsedMaxVariable = max(call_stack_top->UsedMaxVariable, 1);
                 {
-                    struct VM_ObjectInfo* obj = (struct VM_ObjectInfo *)*(uulong*)*(calculate_stack_top);
+                    struct VM_ObjectInfo* obj = (struct VM_ObjectInfo *)*(ullong*)*(calculate_stack_top);
                     if (obj != NULL) obj->QuoteCount++, obj->VarQuoteCount++;
                 }
                 break;
             case povar2:
-                *(++calculate_stack_top) = (uulong)(&call_stack_top->Variables[2]);
+                *(++calculate_stack_top) = (ullong)(&call_stack_top->Variables[2]);
                 // call_stack_top->UsedMaxVariable = max(call_stack_top->UsedMaxVariable, 2);
                 {
-                    struct VM_ObjectInfo* obj = (struct VM_ObjectInfo *)*(uulong*)*calculate_stack_top;
+                    struct VM_ObjectInfo* obj = (struct VM_ObjectInfo *)*(ullong*)*calculate_stack_top;
                     if (obj != NULL) obj->QuoteCount++, obj->VarQuoteCount++;
                 }
                 break;
             case povar3:
-                *(++calculate_stack_top) = (uulong)(&call_stack_top->Variables[3]);
+                *(++calculate_stack_top) = (ullong)(&call_stack_top->Variables[3]);
                 // call_stack_top->UsedMaxVariable = max(call_stack_top->UsedMaxVariable, 3);
 
                 {
-                    struct VM_ObjectInfo* obj = (struct VM_ObjectInfo *)*(uulong*)*(calculate_stack_top);
+                    struct VM_ObjectInfo* obj = (struct VM_ObjectInfo *)*(ullong*)*(calculate_stack_top);
                     if (obj != NULL) obj->QuoteCount++, obj->VarQuoteCount++;
                 }
                 break;
             case pglo:
-                *(++calculate_stack_top) = (uulong)(
-                    current_runtime_block->Glomem + *(uulong *)(current_runtime_block->ExecContent + call_stack_top->Address));
-                call_stack_top->Address += sizeof(uulong);
+                *(++calculate_stack_top) = (ullong)(
+                    current_runtime_block->Glomem + *(ullong *)(current_runtime_block->ExecContent + call_stack_top->Address));
+                call_stack_top->Address += sizeof(ullong);
                 break;
             case poglo:
-                *(++calculate_stack_top) = (uulong)(
-                    current_runtime_block->Glomem + *(uulong *)(current_runtime_block->ExecContent + call_stack_top->Address));
-                call_stack_top->Address += sizeof(uulong);
+                *(++calculate_stack_top) = (ullong)(
+                    current_runtime_block->Glomem + *(ullong *)(current_runtime_block->ExecContent + call_stack_top->Address));
+                call_stack_top->Address += sizeof(ullong);
                 {
-                    struct VM_ObjectInfo* obj = (struct VM_ObjectInfo *)*(uulong*)*(calculate_stack_top);
+                    struct VM_ObjectInfo* obj = (struct VM_ObjectInfo *)*(ullong*)*(calculate_stack_top);
                     if (obj != NULL) obj->QuoteCount++, obj->VarQuoteCount++;
                 }
                 break;
             case pstr:
-                *(++calculate_stack_top) = (uulong)(&current_runtime_block->StringObjectList[
-                    *(uulong *)(current_runtime_block->ExecContent + call_stack_top->Address)
+                *(++calculate_stack_top) = (ullong)(&current_runtime_block->StringObjectList[
+                    *(ullong *)(current_runtime_block->ExecContent + call_stack_top->Address)
                 ]);
-                call_stack_top->Address += sizeof(uulong);
+                call_stack_top->Address += sizeof(ullong);
                 {
-                    struct VM_ObjectInfo* obj = (struct VM_ObjectInfo *)*(uulong*)*(calculate_stack_top);
+                    struct VM_ObjectInfo* obj = (struct VM_ObjectInfo *)*(ullong*)*(calculate_stack_top);
                     if (obj != NULL) obj->QuoteCount++, obj->VarQuoteCount++;
                 }
                 break;
@@ -911,8 +915,8 @@ void *VM_VMThread(void *vexe_path) {
             #pragma endregion
             #pragma region system operator
             case sys:
-                arg1 = *(uulong *)(current_runtime_block->ExecContent + call_stack_top->Address);
-                call_stack_top->Address += sizeof(uulong);
+                arg1 = *(ullong *)(current_runtime_block->ExecContent + call_stack_top->Address);
+                call_stack_top->Address += sizeof(ullong);
 
                 if (arg1 < 6)
                     System_IO(arg1, *(calculate_stack_top--));
@@ -920,22 +924,107 @@ void *VM_VMThread(void *vexe_path) {
                     *(++calculate_stack_top) = System_IO(arg1, 0);
                 break;
             #pragma endregion
+            case excmd:
+                {
+                    ullong excid = *(ullong *)(current_runtime_block->ExecContent + call_stack_top->Address);
+                    call_stack_top->Address += sizeof(ullong);
+                    switch (excid) {
+                        #pragma region ++ and --
+                        case EX_vbpinc:
+                            *(vbyte *)calculate_stack_top = ++*(vbyte *)*calculate_stack_top;
+                            break;
+                        case EX_vi32pinc:
+                            *(int *)calculate_stack_top = ++*(int *)*calculate_stack_top;
+                            break;
+                        case EX_vi64pinc:
+                            *(long long *)calculate_stack_top = ++*(long long *)*calculate_stack_top;
+                            break;
+                        case EX_vupinc:
+                            *calculate_stack_top = ++*(ullong *)*calculate_stack_top;
+                            break;
+                        case EX_vbsinc:
+                            *(vbyte *)calculate_stack_top = *(vbyte *)*calculate_stack_top++;
+                            break;
+                        case EX_vi32sinc:
+                            *(int *)calculate_stack_top = *(int *)*calculate_stack_top++;
+                            break;
+                        case EX_vi64sinc:
+                            *(long long *)calculate_stack_top = (*(long long *)*calculate_stack_top)++;
+                            break;
+                        case EX_vusinc:
+                            *calculate_stack_top = *(ullong *)*calculate_stack_top++;
+                            break;
+
+                        case EX_vbpdec:
+                            break;
+                        case EX_vi32pdec:
+                            break;
+                        case EX_vi64pdec:
+                            break;
+                        case EX_vupdec:
+                            break;
+                        case EX_vbsdec:
+                            break;
+                        case EX_vi32sdec:
+                            break;
+                        case EX_vi64sdec:
+                            break;
+                        case EX_vusdec:
+                            break;
+
+                        case EX_mbpinc:
+                            break;
+                        case EX_mi32pinc:
+                            break;
+                        case EX_mi64pinc:
+                            break;
+                        case EX_mupinc:
+                            break;
+                        case EX_mbsinc:
+                            break;
+                        case EX_mi32sinc:
+                            break;
+                        case EX_mi64sinc:
+                            break;
+                        case EX_musinc:
+                            break;
+
+                        case EX_mbpdec:
+                            break;
+                        case EX_mi32pdec:
+                            break;
+                        case EX_mi64pdec:
+                            break;
+                        case EX_mupdec:
+                            break;
+                        case EX_mbsdec:
+                            break;
+                        case EX_mi32sdec:
+                            break;
+                        case EX_mi64sdec:
+                            break;
+                        case EX_musdec:
+                            break;
+                        #pragma endregion
+                    }
+                }
+                break;
         }
     }
     VMThreadState = ThreadState_Exit;
     return NULL;
 }
 
-void InitVM(uulong calculate_stack_size, uulong call_stack_size) {
+void InitVM(ullong calculate_stack_size, ullong call_stack_size) {
     LibraryMap = HashMap_CreateMap(HASHMAP_DEFAULT_RANGE);
     ExternMap = HashMap_CreateMap(HASHMAP_DEFAULT_RANGE);
-    calculate_stack = (uulong *) malloc(sizeof(uulong) * calculate_stack_size);
-    call_stack = (uulong *) malloc(sizeof(struct CallFrame) * call_stack_size);
+    calculate_stack = (ullong *) malloc(sizeof(ullong) * calculate_stack_size);
+    call_stack = (ullong *) malloc(sizeof(struct CallFrame) * call_stack_size);
     calculate_stack_top = calculate_stack;
     call_stack_top = call_stack;
     runtime_block_count = 0;
 }
-void VM_Launch(char *path, uulong calculate_stack_size, uulong call_stack_size) {
+void VM_Launch(char *path, ullong calculate_stack_size, ullong call_stack_size) {
     InitVM(calculate_stack_size, call_stack_size);
     VM_InitGC();
     // PrintLog("Finish initialization process.\n", FOREGROUND_BLUE);
