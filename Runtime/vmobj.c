@@ -49,7 +49,7 @@ struct VM_ObjectInfo *VM_CreateObjectInfo(ullong size) {
     element->FlagSize = FlagSize(size);
     element->Flag = malloc(sizeof(ullong) * element->FlagSize);
     element->Data = malloc(size);
-    memset(element->Data, 0, sizeof(vbyte) * size);
+    memset(element->Data, 0, sizeof(byte) * size);
     memset(element->Flag, 0, sizeof(ullong) * element->FlagSize);
 
     CurrentMemorySize += size;

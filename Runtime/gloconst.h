@@ -118,7 +118,7 @@ enum EXCommandID {
 };
 
 typedef unsigned long long ullong;
-typedef unsigned char vbyte;
+typedef unsigned char byte;
 #ifdef PLATFORM_WINDOWS
 #define FOREGROUND_WHITE 0x07
 void PrintError(string info, int line = 0);

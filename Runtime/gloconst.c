@@ -26,11 +26,11 @@ void PrintLog(char* info, short foreground_color) {
 
 void InitCommandInfo() {
     for (int i = 0; i <= CMD0_COUNT; i++) 
-        cmdsize[i] = sizeof(vbyte), cmdargcnt[i] = 0;
+        cmdsize[i] = sizeof(byte), cmdargcnt[i] = 0;
     for (int i = CMD0_COUNT + 1; i <= CMD1_COUNT; i++) 
-        cmdsize[i] = sizeof(vbyte) + sizeof(ullong), cmdargcnt[i] = 1;
+        cmdsize[i] = sizeof(byte) + sizeof(ullong), cmdargcnt[i] = 1;
     for (int i = CMD0_COUNT + CMD1_COUNT + 1; i <= CMD0_COUNT + CMD1_COUNT + CMD2_COUNT; i++)
-        cmdsize[i] = sizeof(vbyte) + sizeof(ullong) + sizeof(ullong), cmdargcnt[i] = 2;
+        cmdsize[i] = sizeof(byte) + sizeof(ullong) + sizeof(ullong), cmdargcnt[i] = 2;
 }
 
 int GetCommandSize(int cmdid) { return cmdsize[cmdid]; }

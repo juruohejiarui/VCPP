@@ -11,7 +11,7 @@ struct RuntimeBlock {
     char *Path;
     FILE *FileInfo;
 
-    vbyte *Glomem, *ExecContent;
+    byte *Glomem, *ExecContent;
     ullong ExposeCount;
     struct HashMap* ExposeMap;
     ullong RelyCount;
@@ -56,9 +56,9 @@ static inline ullong ReadUULong(FILE *file) {
     fread(&res, sizeof(ullong), 1, file);
     return res;
 }
-static inline vbyte ReadVByte(FILE *file) { 
-    vbyte res = 0;
-    fread(&res, sizeof(vbyte), 1, file);
+static inline byte ReadVByte(FILE *file) { 
+    byte res = 0;
+    fread(&res, sizeof(byte), 1, file);
     return res; 
 }
 char temp_string[1 << 24];
@@ -145,12 +145,12 @@ void LoadVlib(int blkid) {
     for (int i = 0; i < cnt; i++) blk->ExternList[i] = ReadString(blk->FileInfo);
 
     //load exec size
-    blk->ExecContent = (vbyte *) malloc(sizeof(vbyte) * (cnt = ReadUULong(blk->FileInfo)));
-    blk->Glomem = (vbyte *) malloc(sizeof(vbyte) * ReadUULong(blk->FileInfo));
+    blk->ExecContent = (byte *) malloc(sizeof(byte) * (cnt = ReadUULong(blk->FileInfo)));
+    blk->Glomem = (byte *) malloc(sizeof(byte) * ReadUULong(blk->FileInfo));
     //load the string region
     LoadStringRegion(blk->FileInfo, blk);
     //load the exec content
-    fread(blk->ExecContent, sizeof(vbyte), cnt, blk->FileInfo);
+    fread(blk->ExecContent, sizeof(byte), cnt, blk->FileInfo);
     fclose(blk->FileInfo);
     return ;
 }
@@ -165,7 +165,7 @@ ullong LoadVexe(char *path) {
     //modify the current_runtime_block
     current_runtime_block = blk;
 
-    ullong main_addr, execsize, cnt; vbyte flag;
+    ullong main_addr, execsize, cnt; byte flag;
     int res = 0;
     FILE *file = OpenFile(path);
     blk->RelyCount = cnt = ReadUULong(file);
@@ -178,8 +178,8 @@ ullong LoadVexe(char *path) {
     blk->ExternList = (char **) malloc(cnt * sizeof(char **));
     for (int i = 0; i < cnt; i++) blk->ExternList[i] = ReadString(file);
 
-    execsize = ReadUULong(file), blk->ExecContent = (vbyte *) malloc(sizeof(vbyte) * execsize);
-    cnt = ReadUULong(file), blk->Glomem = (vbyte *) malloc(sizeof(vbyte) * cnt);
+    execsize = ReadUULong(file), blk->ExecContent = (byte *) malloc(sizeof(byte) * execsize);
+    cnt = ReadUULong(file), blk->Glomem = (byte *) malloc(sizeof(byte) * cnt);
 
     LoadStringRegion(file, blk);
 
@@ -187,7 +187,7 @@ ullong LoadVexe(char *path) {
     if (!flag) main_addr = 0;
     else main_addr = cnt;
 
-    fread(blk->ExecContent, sizeof(vbyte), execsize, file);
+    fread(blk->ExecContent, sizeof(byte), execsize, file);
     fclose(file);
     return main_addr;
 }
@@ -226,7 +226,7 @@ void *VM_VMThread(void *vexe_path) {
     ullong main_addr = LoadVexe((char *)vexe_path);
     // printf("Loaded vexe file %s\n", vexe_path);
     Function_Call(main_addr, 0, 0);
-    vbyte cid; ullong arg1, arg2;
+    byte cid; ullong arg1, arg2;
     while (call_stack_top != call_stack) {
         if (GCThreadState == ThreadState_Waiting) {
             VMThreadState = ThreadState_Pause;
@@ -237,7 +237,7 @@ void *VM_VMThread(void *vexe_path) {
         switch (cid) {
             #pragma region xxmov
             case vbmov:
-                *(vbyte *)(*(calculate_stack_top - 1)) = *((vbyte *)calculate_stack_top);
+                *(byte *)(*(calculate_stack_top - 1)) = *((byte *)calculate_stack_top);
                 calculate_stack_top -= 2;
                 break;
             case vi32mov:
@@ -268,7 +268,7 @@ void *VM_VMThread(void *vexe_path) {
                     struct VM_ObjectInfo *obj = (struct VM_ObjectInfo *)*(calculate_stack_top - 2);
                     obj->VarQuoteCount--, obj->QuoteCount--;
                     VM_GC(obj);
-                    *(vbyte *)*(calculate_stack_top - 1) = *(vbyte *)calculate_stack_top;
+                    *(byte *)*(calculate_stack_top - 1) = *(byte *)calculate_stack_top;
                     calculate_stack_top -= 3;
                 }
                 break;
@@ -561,7 +561,7 @@ void *VM_VMThread(void *vexe_path) {
             #pragma endregion
             #pragma region xxgvl
             case vbgvl:
-                *calculate_stack_top = *(vbyte *)*calculate_stack_top;
+                *calculate_stack_top = *(byte *)*calculate_stack_top;
                 break;
             case vi32gvl:
                 *calculate_stack_top = *(unsigned int *)*calculate_stack_top;
@@ -579,7 +579,7 @@ void *VM_VMThread(void *vexe_path) {
                 {
                     struct VM_ObjectInfo *obj = (struct VM_ObjectInfo *)*(calculate_stack_top - 1);
                     obj->QuoteCount--, obj->VarQuoteCount--;
-                    *(calculate_stack_top - 1) = *(vbyte *)*calculate_stack_top;
+                    *(calculate_stack_top - 1) = *(byte *)*calculate_stack_top;
                     calculate_stack_top--;
                     if (!obj->QuoteCount) VM_GC(obj);
                 }
@@ -676,7 +676,7 @@ void *VM_VMThread(void *vexe_path) {
                     calculate_stack_top++;
                     // Calculate the address
                     arg2 = arg1 * sizeof(ullong);
-                    vbyte *obj_data = ((struct VM_ObjectInfo*)tmp_data[0])->Data;
+                    byte *obj_data = ((struct VM_ObjectInfo*)tmp_data[0])->Data;
                     for (ullong i = 1, p = 0; i <= arg1; i++, p += sizeof(ullong)) 
                         arg2 += tmp_data[i] * (*(ullong*)(obj_data + p));
                     // Update the calculate_stack
@@ -686,7 +686,7 @@ void *VM_VMThread(void *vexe_path) {
             case arrmem1:
                 {
                     arg2 = *(calculate_stack_top--), arg1 = *calculate_stack_top;
-                    vbyte *obj_data = ((struct VM_ObjectInfo*)arg1)->Data;
+                    byte *obj_data = ((struct VM_ObjectInfo*)arg1)->Data;
                     *(++calculate_stack_top) = (ullong)(obj_data + sizeof(ullong) + arg2 * (*(ullong *)obj_data));
                 }
                 break;
@@ -700,7 +700,7 @@ void *VM_VMThread(void *vexe_path) {
                     calculate_stack_top++;
                     // Calculate the address
                     arg2 = arg1 * sizeof(ullong);
-                    vbyte *obj_data = ((struct VM_ObjectInfo*)tmp_data[0])->Data;
+                    byte *obj_data = ((struct VM_ObjectInfo*)tmp_data[0])->Data;
                     for (ullong i = 1, p = 0; i <= arg1; i++, p += sizeof(ullong)) 
                         arg2 += tmp_data[i] * (*(ullong*)(obj_data + p));
                     // Update the calculate_stack
@@ -716,7 +716,7 @@ void *VM_VMThread(void *vexe_path) {
                 {
                     // arg2 illustrates the index, arg1 is the array object
                     arg2 = *(calculate_stack_top--), arg1 = *calculate_stack_top;
-                    vbyte *obj_data = ((struct VM_ObjectInfo*)arg1)->Data;
+                    byte *obj_data = ((struct VM_ObjectInfo*)arg1)->Data;
                     arg2 *= *(ullong *)obj_data; arg2 += sizeof(ullong);
                     *(++calculate_stack_top) = (ullong)(obj_data + arg2);
                     // Set Flag
@@ -914,7 +914,7 @@ void *VM_VMThread(void *vexe_path) {
                     switch (excid) {
                         #pragma region ++ and --
                         case EX_vbpinc:
-                            *(vbyte *)calculate_stack_top = ++*(vbyte *)*calculate_stack_top;
+                            *(byte *)calculate_stack_top = ++*(byte *)*calculate_stack_top;
                             *calculate_stack_top = (*calculate_stack_top & ~(1ull << 8)) ^ (~(1ull << 8));
                             break;
                         case EX_vi32pinc:
@@ -928,7 +928,7 @@ void *VM_VMThread(void *vexe_path) {
                             *calculate_stack_top = ++*(ullong *)*calculate_stack_top;
                             break;
                         case EX_vbsinc:
-                            *calculate_stack_top = (*(vbyte *)*calculate_stack_top)++;
+                            *calculate_stack_top = (*(byte *)*calculate_stack_top)++;
                             *calculate_stack_top = (*calculate_stack_top & ~(1ull << 8)) ^ (~(1ull << 8));
                             break;
                         case EX_vi32sinc:
@@ -943,7 +943,7 @@ void *VM_VMThread(void *vexe_path) {
                             break;
 
                         case EX_vbpdec:
-                            *(vbyte *)calculate_stack_top = --*(vbyte *)*calculate_stack_top;
+                            *(byte *)calculate_stack_top = --*(byte *)*calculate_stack_top;
                             *calculate_stack_top = (*calculate_stack_top & ~(1ull << 8)) ^ (~(1ull << 8));
                             break;
                         case EX_vi32pdec:
@@ -956,7 +956,7 @@ void *VM_VMThread(void *vexe_path) {
                             *calculate_stack_top = --*(ullong *)*calculate_stack_top;
                             break;
                         case EX_vbsdec:
-                            *calculate_stack_top = *(vbyte *)*calculate_stack_top--;
+                            *calculate_stack_top = *(byte *)*calculate_stack_top--;
                             break;
                         case EX_vi32sdec:
                             *calculate_stack_top = (*(int *)*calculate_stack_top)--;
@@ -974,7 +974,7 @@ void *VM_VMThread(void *vexe_path) {
                                 struct VM_ObjectInfo *obj = (struct VM_ObjectInfo *)*(calculate_stack_top - 1);
                                 obj->QuoteCount--, obj->VarQuoteCount--;
                                 if (!obj->QuoteCount) VM_GC(obj);
-                                *(vbyte *)(calculate_stack_top - 1) = ++*(vbyte *)*calculate_stack_top;
+                                *(byte *)(calculate_stack_top - 1) = ++*(byte *)*calculate_stack_top;
                                 calculate_stack_top--;
                                 *calculate_stack_top = (*calculate_stack_top & ~(1ull << 8)) ^ (~(1ull << 8));
                             }
@@ -1012,7 +1012,7 @@ void *VM_VMThread(void *vexe_path) {
                                 struct VM_ObjectInfo *obj = (struct VM_ObjectInfo *)*(calculate_stack_top - 1);
                                 obj->QuoteCount--, obj->VarQuoteCount--;
                                 if (!obj->QuoteCount) VM_GC(obj);
-                                *(vbyte *)(calculate_stack_top - 1) = (*(vbyte *)*calculate_stack_top)++;
+                                *(byte *)(calculate_stack_top - 1) = (*(byte *)*calculate_stack_top)++;
                                 calculate_stack_top--;
                                 *calculate_stack_top = (*calculate_stack_top & ~(1ull << 8)) ^ (~(1ull << 8));
                             }
@@ -1050,7 +1050,7 @@ void *VM_VMThread(void *vexe_path) {
                                 struct VM_ObjectInfo *obj = (struct VM_ObjectInfo *)*(calculate_stack_top - 1);
                                 obj->QuoteCount--, obj->VarQuoteCount--;
                                 if (!obj->QuoteCount) VM_GC(obj);
-                                *(vbyte *)(calculate_stack_top - 1) = --*(vbyte *)*calculate_stack_top;
+                                *(byte *)(calculate_stack_top - 1) = --*(byte *)*calculate_stack_top;
                                 calculate_stack_top--;
                                 *calculate_stack_top = (*calculate_stack_top & ~(1ull << 8)) ^ (~(1ull << 8));
                             }
@@ -1088,7 +1088,7 @@ void *VM_VMThread(void *vexe_path) {
                                 struct VM_ObjectInfo *obj = (struct VM_ObjectInfo *)*(calculate_stack_top - 1);
                                 obj->QuoteCount--, obj->VarQuoteCount--;
                                 if (!obj->QuoteCount) VM_GC(obj);
-                                *(vbyte *)(calculate_stack_top - 1) = (*(vbyte *)*calculate_stack_top)--;
+                                *(byte *)(calculate_stack_top - 1) = (*(byte *)*calculate_stack_top)--;
                                 calculate_stack_top--;
                                 *calculate_stack_top = (*calculate_stack_top & ~(1ull << 8)) ^ (~(1ull << 8));
                             }

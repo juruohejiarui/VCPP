@@ -13,7 +13,7 @@ struct VM_ObjectInfo {
     //1: the size of this object
     ullong Size, FlagSize;
     //The data
-    vbyte *Data;
+    byte *Data;
     //The flag, the i-th bit demonstrates whethter Data[i...i+8] store an address of an object
     ullong *Flag;
     
