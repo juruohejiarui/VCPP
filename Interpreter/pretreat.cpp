@@ -143,7 +143,10 @@ namespace Interpreter {
 
 	static int GetVCTokenList(vector<Token>& list, string& str) {
 		Token tk;
-		for (int l = 0, r = 0; l < str.size(); l = r) {
+		// ignore the prefix of tab and space
+		int st = 0;
+		while (str[st] == ' ' || str[st] == '\t') st++;
+		for (int l = st, r = st; l < str.size(); l = r) {
 			char &fir_ch = str[l];
 			tk = Token(); tk.Line = CurrentLineId;
 			if (fir_ch == '#') {
@@ -270,8 +273,11 @@ namespace Interpreter {
 				if (str[l + 1] == ':') r += 2, tk.Type = TokenType::Region;
 				else r++, PrintError("Unsupported operator \":\"", CurrentLineId);
 			}
-			else if (fir_ch == '\n') r++, CurrentLineId++;
-			else r++;
+			else if (fir_ch == '\n') {
+				r++, CurrentLineId++;
+				// Skip all the space character following the '\n'
+				while (r < str.size() && (str[r] == ' ' || str[r] == '\t')) r++;
+			} else r++;
 			if (tk.Type != TokenType::Empty) list.emplace_back(tk);
 		}
 		return 0;

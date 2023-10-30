@@ -1,57 +1,57 @@
 namespace Console {
 	public func void Print(int data) {
-#vasmbegin
+		#vasmbegin
 		pvar0
 		vi32gvl
 		sys 0
-#vasmend
+		#vasmend
 	}
 	public func void Print(long data) {
-#vasmbegin
+		#vasmbegin
 		pvar0
 		vi64gvl
 		sys 1
-#vasmend
+		#vasmend
 	}
 	public func void Print(ulong data) {
-#vasmbegin
+		#vasmbegin
 		pvar0
 		vi64gvl
 		sys 2
-#vasmend
+		#vasmend
 	}
 	public func void Print(double data) {
-#vasmbegin
+		#vasmbegin
 		pvar0
 		vfgvl
 		sys 3
-#vasmend
+		#vasmend
 	}
 	public func int InputInt() {
-#vasmbegin
+		#vasmbegin
 		sys 6
 		ret
-#vasmend
+		#vasmend
 	}
 	public func double InputDouble() {
-#vasmbegin
+		#vasmbegin
 		sys 9
 		ret
-#vasmend
+		#vasmend
 	}
 	public func void PutChar(char ch) { 
-#vasmbegin
+		#vasmbegin
 		pvar0
 		vbgvl
 		sys 5
-#vasmend
+		#vasmend
 	}
 
 	public func char GetChar() {
-#vasmbegin
+		#vasmbegin
 		sys 11
 		ret
-#vasmend
+		#vasmend
 	}
 
 	public func void Print(char[] str) {

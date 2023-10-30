@@ -12,9 +12,9 @@
 label Console@Print.int_Dimc0
 setvar 1
 poparg 1
-		pvar0
-		vi32gvl
-		sys 0
+pvar0
+vi32gvl
+sys 0
 
 pvar0
 push0
@@ -23,9 +23,9 @@ ret
 label Console@Print.long_Dimc0
 setvar 1
 poparg 1
-		pvar0
-		vi64gvl
-		sys 1
+pvar0
+vi64gvl
+sys 1
 
 pvar0
 push0
@@ -34,9 +34,9 @@ ret
 label Console@Print.ulong_Dimc0
 setvar 1
 poparg 1
-		pvar0
-		vi64gvl
-		sys 2
+pvar0
+vi64gvl
+sys 2
 
 pvar0
 push0
@@ -45,9 +45,9 @@ ret
 label Console@Print.double_Dimc0
 setvar 1
 poparg 1
-		pvar0
-		vfgvl
-		sys 3
+pvar0
+vfgvl
+sys 3
 
 pvar0
 push0
@@ -56,23 +56,23 @@ ret
 label Console@InputInt
 setvar 0
 poparg 0
-		sys 6
-		ret
+sys 6
+ret
 
 ret
 label Console@InputDouble
 setvar 0
 poparg 0
-		sys 9
-		ret
+sys 9
+ret
 
 ret
 label Console@PutChar.char_Dimc0
 setvar 1
 poparg 1
-		pvar0
-		vbgvl
-		sys 5
+pvar0
+vbgvl
+sys 5
 
 pvar0
 push0
@@ -81,8 +81,8 @@ ret
 label Console@GetChar
 setvar 0
 poparg 0
-		sys 11
-		ret
+sys 11
+ret
 
 ret
 label Console@Print.char_Dimc1

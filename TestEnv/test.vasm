@@ -1,6 +1,6 @@
 #RELY "test-class.vlib"
-#RELY "console.vlib"
 #RELY "math.vlib"
+#RELY "console.vlib"
 #RELY "list.vlib"
 #GLOMEM 48
 #EXTERN __init__.Container@List_Dimc0
