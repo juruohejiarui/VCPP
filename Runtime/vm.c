@@ -777,9 +777,7 @@ void *VM_VMThread(void *vexe_path) {
             case setvar:
                 arg1 = *(ullong *)(current_runtime_block->ExecContent + call_stack_top->Address);
                 call_stack_top->Address += sizeof(ullong);
-                // call_stack_top->VariableCount = arg1, call_stack_top->UsedMaxVariable = 0;
                 call_stack_top->Variables = malloc((arg1 + 1) * sizeof(ullong));
-                // printf("malloc %llx\n", call_stack_top->Variables);
                 for (int i = 0; i < arg1; i++) call_stack_top->Variables[i] = 0;
                 break;
             case poparg:
@@ -800,29 +798,23 @@ void *VM_VMThread(void *vexe_path) {
             case pvar:
                 *(++calculate_stack_top) = (ullong)(
                     call_stack_top->Variables + *(ullong *)(current_runtime_block->ExecContent + call_stack_top->Address));
-                // call_stack_top->UsedMaxVariable = max(call_stack_top->UsedMaxVariable, *(uulong *)(current_runtime_block->ExecContent + call_stack_top->Address));
                 call_stack_top->Address += sizeof(ullong);
                 break;
             case pvar0:
                 *(++calculate_stack_top) = (ullong)(&call_stack_top->Variables[0]);
-                // call_stack_top->UsedMaxVariable = max(call_stack_top->UsedMaxVariable, 0);
                 break;
             case pvar1:
                 *(++calculate_stack_top) = (ullong)(&call_stack_top->Variables[1]);
-                // call_stack_top->UsedMaxVariable = max(call_stack_top->UsedMaxVariable, 1);
                 break;
              case pvar2:
                 *(++calculate_stack_top) = (ullong)(&call_stack_top->Variables[2]);
-                // call_stack_top->UsedMaxVariable = max(call_stack_top->UsedMaxVariable, 2);
                 break;
              case pvar3:
                 *(++calculate_stack_top) = (ullong)(&call_stack_top->Variables[3]);
-                // call_stack_top->UsedMaxVariable = max(call_stack_top->UsedMaxVariable, 3);
                 break;
             case povar:
                 *(++calculate_stack_top) = (ullong)(
                     call_stack_top->Variables + *(ullong *)(current_runtime_block->ExecContent + call_stack_top->Address));
-                // call_stack_top->UsedMaxVariable = max(call_stack_top->UsedMaxVariable, *(uulong *)(current_runtime_block->ExecContent + call_stack_top->Address));
                 call_stack_top->Address += sizeof(ullong);
                 {
                     struct VM_ObjectInfo* obj = (struct VM_ObjectInfo *)*(ullong*)*calculate_stack_top;
@@ -831,7 +823,6 @@ void *VM_VMThread(void *vexe_path) {
                 break;
             case povar0:
                 *(++calculate_stack_top) = (ullong)(&call_stack_top->Variables[0]);
-                // call_stack_top->UsedMaxVariable = max(call_stack_top->UsedMaxVariable, 0);
                 {
                     struct VM_ObjectInfo* obj = (struct VM_ObjectInfo *)*(ullong*)*(calculate_stack_top);
                     if (obj != NULL) obj->QuoteCount++, obj->VarQuoteCount++;
@@ -839,7 +830,6 @@ void *VM_VMThread(void *vexe_path) {
                 break;
             case povar1:
                 *(++calculate_stack_top) = (ullong)(&call_stack_top->Variables[1]);
-                // call_stack_top->UsedMaxVariable = max(call_stack_top->UsedMaxVariable, 1);
                 {
                     struct VM_ObjectInfo* obj = (struct VM_ObjectInfo *)*(ullong*)*(calculate_stack_top);
                     if (obj != NULL) obj->QuoteCount++, obj->VarQuoteCount++;
@@ -847,7 +837,6 @@ void *VM_VMThread(void *vexe_path) {
                 break;
             case povar2:
                 *(++calculate_stack_top) = (ullong)(&call_stack_top->Variables[2]);
-                // call_stack_top->UsedMaxVariable = max(call_stack_top->UsedMaxVariable, 2);
                 {
                     struct VM_ObjectInfo* obj = (struct VM_ObjectInfo *)*(ullong*)*calculate_stack_top;
                     if (obj != NULL) obj->QuoteCount++, obj->VarQuoteCount++;
@@ -855,8 +844,6 @@ void *VM_VMThread(void *vexe_path) {
                 break;
             case povar3:
                 *(++calculate_stack_top) = (ullong)(&call_stack_top->Variables[3]);
-                // call_stack_top->UsedMaxVariable = max(call_stack_top->UsedMaxVariable, 3);
-
                 {
                     struct VM_ObjectInfo* obj = (struct VM_ObjectInfo *)*(ullong*)*(calculate_stack_top);
                     if (obj != NULL) obj->QuoteCount++, obj->VarQuoteCount++;
@@ -928,9 +915,11 @@ void *VM_VMThread(void *vexe_path) {
                         #pragma region ++ and --
                         case EX_vbpinc:
                             *(vbyte *)calculate_stack_top = ++*(vbyte *)*calculate_stack_top;
+                            *calculate_stack_top = (*calculate_stack_top & ~(1ull << 8)) ^ (~(1ull << 8));
                             break;
                         case EX_vi32pinc:
                             *(int *)calculate_stack_top = ++*(int *)*calculate_stack_top;
+                            *((int *)calculate_stack_top + 1) = 0;
                             break;
                         case EX_vi64pinc:
                             *(long long *)calculate_stack_top = ++*(long long *)*calculate_stack_top;
@@ -939,7 +928,8 @@ void *VM_VMThread(void *vexe_path) {
                             *calculate_stack_top = ++*(ullong *)*calculate_stack_top;
                             break;
                         case EX_vbsinc:
-                            *calculate_stack_top = *(vbyte *)*calculate_stack_top++;
+                            *calculate_stack_top = (*(vbyte *)*calculate_stack_top)++;
+                            *calculate_stack_top = (*calculate_stack_top & ~(1ull << 8)) ^ (~(1ull << 8));
                             break;
                         case EX_vi32sinc:
                             *calculate_stack_top = (*(int *)*calculate_stack_top)++;
@@ -949,11 +939,12 @@ void *VM_VMThread(void *vexe_path) {
                             *(long long *)calculate_stack_top = (*(long long *)*calculate_stack_top)++;
                             break;
                         case EX_vusinc:
-                            *calculate_stack_top = *(ullong *)*calculate_stack_top++;
+                            *calculate_stack_top = (*(ullong *)*calculate_stack_top)++;
                             break;
 
                         case EX_vbpdec:
                             *(vbyte *)calculate_stack_top = --*(vbyte *)*calculate_stack_top;
+                            *calculate_stack_top = (*calculate_stack_top & ~(1ull << 8)) ^ (~(1ull << 8));
                             break;
                         case EX_vi32pdec:
                             *(int *)calculate_stack_top = --*(int *)*calculate_stack_top;
@@ -979,38 +970,156 @@ void *VM_VMThread(void *vexe_path) {
                             break;
 
                         case EX_mbpinc:
-                            
+                            {
+                                struct VM_ObjectInfo *obj = (struct VM_ObjectInfo *)*(calculate_stack_top - 1);
+                                obj->QuoteCount--, obj->VarQuoteCount--;
+                                if (!obj->QuoteCount) VM_GC(obj);
+                                *(vbyte *)(calculate_stack_top - 1) = ++*(vbyte *)*calculate_stack_top;
+                                calculate_stack_top--;
+                                *calculate_stack_top = (*calculate_stack_top & ~(1ull << 8)) ^ (~(1ull << 8));
+                            }
                             break;
                         case EX_mi32pinc:
+                            {
+                                struct VM_ObjectInfo *obj = (struct VM_ObjectInfo *)*(calculate_stack_top - 1);
+                                obj->QuoteCount--, obj->VarQuoteCount--;
+                                if (!obj->QuoteCount) VM_GC(obj);
+                                *(int *)(calculate_stack_top - 1) = ++*(int *)*calculate_stack_top;
+                                calculate_stack_top--;
+                                *((int *)calculate_stack_top + 1) = 0;
+                            }
                             break;
                         case EX_mi64pinc:
+                            {
+                                struct VM_ObjectInfo *obj = (struct VM_ObjectInfo *)*(calculate_stack_top - 1);
+                                obj->QuoteCount--, obj->VarQuoteCount--;
+                                if (!obj->QuoteCount) VM_GC(obj);
+                                *(long long *)(calculate_stack_top - 1) = ++*(long long *)*calculate_stack_top;
+                                calculate_stack_top--;
+                            }
                             break;
                         case EX_mupinc:
+                            {
+                                struct VM_ObjectInfo *obj = (struct VM_ObjectInfo *)*(calculate_stack_top - 1);
+                                obj->QuoteCount--, obj->VarQuoteCount--;
+                                if (!obj->QuoteCount) VM_GC(obj);
+                                *(ullong *)(calculate_stack_top - 1) = ++*(ullong *)*calculate_stack_top;
+                                calculate_stack_top--;
+                            }
                             break;
                         case EX_mbsinc:
+                            {
+                                struct VM_ObjectInfo *obj = (struct VM_ObjectInfo *)*(calculate_stack_top - 1);
+                                obj->QuoteCount--, obj->VarQuoteCount--;
+                                if (!obj->QuoteCount) VM_GC(obj);
+                                *(vbyte *)(calculate_stack_top - 1) = (*(vbyte *)*calculate_stack_top)++;
+                                calculate_stack_top--;
+                                *calculate_stack_top = (*calculate_stack_top & ~(1ull << 8)) ^ (~(1ull << 8));
+                            }
                             break;
                         case EX_mi32sinc:
+                            {
+                                struct VM_ObjectInfo *obj = (struct VM_ObjectInfo *)*(calculate_stack_top - 1);
+                                obj->QuoteCount--, obj->VarQuoteCount--;
+                                if (!obj->QuoteCount) VM_GC(obj);
+                                *(int *)(calculate_stack_top - 1) = (*(int *)*calculate_stack_top)++;
+                                calculate_stack_top--;
+                                *((int *)calculate_stack_top + 1) = 0;
+                            }
                             break;
                         case EX_mi64sinc:
+                            {
+                                struct VM_ObjectInfo *obj = (struct VM_ObjectInfo *)*(calculate_stack_top - 1);
+                                obj->QuoteCount--, obj->VarQuoteCount--;
+                                if (!obj->QuoteCount) VM_GC(obj);
+                                *(long long *)(calculate_stack_top - 1) = (*(long long *)*calculate_stack_top)++;
+                                calculate_stack_top--;
+                            }
                             break;
                         case EX_musinc:
+                            {
+                                struct VM_ObjectInfo *obj = (struct VM_ObjectInfo *)*(calculate_stack_top - 1);
+                                obj->QuoteCount--, obj->VarQuoteCount--;
+                                if (!obj->QuoteCount) VM_GC(obj);
+                                *(ullong *)(calculate_stack_top - 1) = (*(ullong *)*calculate_stack_top)++;
+                                calculate_stack_top--;
+                            }
                             break;
-
                         case EX_mbpdec:
+                            {
+                                struct VM_ObjectInfo *obj = (struct VM_ObjectInfo *)*(calculate_stack_top - 1);
+                                obj->QuoteCount--, obj->VarQuoteCount--;
+                                if (!obj->QuoteCount) VM_GC(obj);
+                                *(vbyte *)(calculate_stack_top - 1) = --*(vbyte *)*calculate_stack_top;
+                                calculate_stack_top--;
+                                *calculate_stack_top = (*calculate_stack_top & ~(1ull << 8)) ^ (~(1ull << 8));
+                            }
                             break;
                         case EX_mi32pdec:
+                            {
+                                struct VM_ObjectInfo *obj = (struct VM_ObjectInfo *)*(calculate_stack_top - 1);
+                                obj->QuoteCount--, obj->VarQuoteCount--;
+                                if (!obj->QuoteCount) VM_GC(obj);
+                                *(int *)(calculate_stack_top - 1) = --*(int *)*calculate_stack_top;
+                                calculate_stack_top--;
+                                *((int *)calculate_stack_top + 1) = 0;
+                            }
                             break;
                         case EX_mi64pdec:
+                            {
+                                struct VM_ObjectInfo *obj = (struct VM_ObjectInfo *)*(calculate_stack_top - 1);
+                                obj->QuoteCount--, obj->VarQuoteCount--;
+                                if (!obj->QuoteCount) VM_GC(obj);
+                                *(long long *)(calculate_stack_top - 1) = --*(long long *)*calculate_stack_top;
+                                calculate_stack_top--;
+                            }
                             break;
                         case EX_mupdec:
+                            {
+                                struct VM_ObjectInfo *obj = (struct VM_ObjectInfo *)*(calculate_stack_top - 1);
+                                obj->QuoteCount--, obj->VarQuoteCount--;
+                                if (!obj->QuoteCount) VM_GC(obj);
+                                *(ullong *)(calculate_stack_top - 1) = --*(ullong *)*calculate_stack_top;
+                                calculate_stack_top--;
+                            }
                             break;
                         case EX_mbsdec:
+                            {
+                                struct VM_ObjectInfo *obj = (struct VM_ObjectInfo *)*(calculate_stack_top - 1);
+                                obj->QuoteCount--, obj->VarQuoteCount--;
+                                if (!obj->QuoteCount) VM_GC(obj);
+                                *(vbyte *)(calculate_stack_top - 1) = (*(vbyte *)*calculate_stack_top)--;
+                                calculate_stack_top--;
+                                *calculate_stack_top = (*calculate_stack_top & ~(1ull << 8)) ^ (~(1ull << 8));
+                            }
                             break;
                         case EX_mi32sdec:
+                            {
+                                struct VM_ObjectInfo *obj = (struct VM_ObjectInfo *)*(calculate_stack_top - 1);
+                                obj->QuoteCount--, obj->VarQuoteCount--;
+                                if (!obj->QuoteCount) VM_GC(obj);
+                                *(int *)(calculate_stack_top - 1) = (*(int *)*calculate_stack_top)--;
+                                calculate_stack_top--;
+                                *((int *)calculate_stack_top + 1) = 0;
+                            }
                             break;
                         case EX_mi64sdec:
+                            {
+                                struct VM_ObjectInfo *obj = (struct VM_ObjectInfo *)*(calculate_stack_top - 1);
+                                obj->QuoteCount--, obj->VarQuoteCount--;
+                                if (!obj->QuoteCount) VM_GC(obj);
+                                *(long long *)(calculate_stack_top - 1) = (*(long long *)*calculate_stack_top)--;
+                                calculate_stack_top--;
+                            }
                             break;
                         case EX_musdec:
+                            {
+                                struct VM_ObjectInfo *obj = (struct VM_ObjectInfo *)*(calculate_stack_top - 1);
+                                obj->QuoteCount--, obj->VarQuoteCount--;
+                                if (!obj->QuoteCount) VM_GC(obj);
+                                *(ullong *)(calculate_stack_top - 1) = (*(ullong *)*calculate_stack_top)--;
+                                calculate_stack_top--;
+                            }
                             break;
                         #pragma endregion
                     }

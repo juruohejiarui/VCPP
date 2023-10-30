@@ -270,6 +270,7 @@ namespace Interpreter {
 						cid += EX_vbsdec - EX_vbsinc;
 					if (node->Type == CplNodeType::PInc || node->Type == CplNodeType::PDec)
 						cid += EX_vbpinc - EX_vbsinc;
+					if (node->At(0)->ExprType.IsMember) cid += EX_mbsinc - EX_vbsinc;
 					VasmBuilder_WriteEXCommand(cid);
 				}
 				break;

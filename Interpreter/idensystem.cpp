@@ -727,7 +727,7 @@ namespace Interpreter {
 					} else {
 						// store the infomation of member in the operator
 						if (pir->second->Type == IdenType::Function) node->Content.String = pir->second->FullName;
-						else node->Content.Ulong = ((VarInfo *)pir->second)->Address;
+						else node->Content.Ulong = ((VarInfo *)pir->second)->Address, node->ExprType.IsMember = true;
 					}
 					node->ExprType = pir->second->ExprType;
 					break;

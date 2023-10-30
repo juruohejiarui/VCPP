@@ -1,6 +1,6 @@
 #RELY "test-class.vlib"
-#RELY "math.vlib"
 #RELY "console.vlib"
+#RELY "math.vlib"
 #RELY "list.vlib"
 #GLOMEM 48
 #EXTERN __init__.Container@List_Dimc0
@@ -119,9 +119,6 @@ mi32gvl
 push0
 eq
 jz @IF_FAIL0
-pglo 8
-excmd EX_vi32sinc
-pop
 poglo 0
 vogvl
 pvar1
@@ -134,7 +131,7 @@ pvar3
 vi32gvl
 arrmem1
 pglo 8
-vi32gvl
+excmd EX_vi32pinc
 mi32mov
 jmp @IF_END0
 label @IF_FAIL0
@@ -172,17 +169,8 @@ vi32gvl
 arromem1
 mogvl
 mem 24
-poglo 0
-vogvl
-pvar1
-vi32gvl
-arromem1
-mogvl
-mem 24
-mi32gvl
-push1
-add
-mi32mov
+excmd EX_mi32sinc
+pop
 pvar1
 push0
 vi64mov

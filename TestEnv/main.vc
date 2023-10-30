@@ -17,10 +17,10 @@ func void insert(String str) {
 	var int cur = 0;
 	for (var int i = 0; i < str.Length(); i++) {
 		var int ch = getid(str.Get(i));
-		if (nd[cur].ch[ch] == 0) ndcnt++, nd[cur].ch[ch] = ndcnt;
+		if (nd[cur].ch[ch] == 0) nd[cur].ch[ch] = ++ndcnt;
 		cur = nd[cur].ch[ch];
 	}
-	nd[cur].fl = nd[cur].fl + 1;
+	nd[cur].fl++;
 }
 
 var int[] q;
