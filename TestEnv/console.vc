@@ -33,6 +33,12 @@ namespace Console {
 		ret
 		#vasmend
 	}
+	public func long InputLong() {
+		#vasmbegin
+		sys 7
+		ret
+		#vasmend
+	}
 	public func double InputDouble() {
 		#vasmbegin
 		sys 9

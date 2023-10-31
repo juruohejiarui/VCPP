@@ -7,6 +7,16 @@ namespace Math {
 		if (a < b) return a;
 		return b;
 	}
+
+	public func long max(long a, long b) {
+		if (a < b) return b;
+		return a;
+	}
+	public func long min(long a, long b) {
+		if (a < b) return a;
+		return b;
+	}
+
 	public func double min(double a, double b) {
 		if (a < b) return a;
 		return b;
@@ -14,6 +24,18 @@ namespace Math {
 	public func double max(double a, double b) {
 		if (a < b) return b;
 		return a;
+	}
+
+	public func int gcd(int a, int b) {
+		if (b == 0) return a;
+		return gcd(b, a % b);
+	}
+	public func long gcd(long a, long b) {
+		if (b == 0) return a;
+		return gcd(b, a % b);
+	}
+	public func long lcm(long a, long b) {
+		return a / gcd(a, b) * b;
 	}
 
 	public class Pair {

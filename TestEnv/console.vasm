@@ -4,6 +4,7 @@
 #EXPOSE Console@Print.ulong_Dimc0
 #EXPOSE Console@Print.double_Dimc0
 #EXPOSE Console@InputInt
+#EXPOSE Console@InputLong
 #EXPOSE Console@InputDouble
 #EXPOSE Console@PutChar.char_Dimc0
 #EXPOSE Console@GetChar
@@ -57,6 +58,13 @@ label Console@InputInt
 setvar 0
 poparg 0
 sys 6
+ret
+
+ret
+label Console@InputLong
+setvar 0
+poparg 0
+sys 7
 ret
 
 ret

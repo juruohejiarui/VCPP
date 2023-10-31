@@ -24,6 +24,7 @@
 #EXTERN Console@GetChar
 #EXTERN Console@InputDouble
 #EXTERN Console@InputInt
+#EXTERN Console@InputLong
 #EXTERN Console@Print.char_Dimc1
 #EXTERN Console@Print.char_Dimc1.int_Dimc0
 #EXTERN Console@Print.double_Dimc0

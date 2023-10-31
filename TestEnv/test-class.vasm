@@ -12,10 +12,15 @@
 #EXPOSE Test@Student@SetAge.int_Dimc0
 #EXPOSE Test@Student@GetRegion
 #EXTERN __init__.Math@Pair_Dimc0.object_Dimc0.object_Dimc0
+#EXTERN Math@gcd.int_Dimc0.int_Dimc0
+#EXTERN Math@gcd.long_Dimc0.long_Dimc0
+#EXTERN Math@lcm.long_Dimc0.long_Dimc0
 #EXTERN Math@max.double_Dimc0.double_Dimc0
 #EXTERN Math@max.int_Dimc0.int_Dimc0
+#EXTERN Math@max.long_Dimc0.long_Dimc0
 #EXTERN Math@min.double_Dimc0.double_Dimc0
 #EXTERN Math@min.int_Dimc0.int_Dimc0
+#EXTERN Math@min.long_Dimc0.long_Dimc0
 label __init__.Test@Person_Dimc0
 setvar 1
 poparg 1

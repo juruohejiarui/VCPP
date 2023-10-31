@@ -1,8 +1,13 @@
 #RELY "test-class.vlib"
-#RELY "console.vlib"
 #RELY "math.vlib"
+#RELY "console.vlib"
 #RELY "list.vlib"
-#GLOMEM 48
+#GLOMEM 56
+#EXPOSE ACMachine@solve
+#EXPOSE ClassTest@solve
+#EXPOSE FloatTest@solve
+#EXPOSE GcdTest@solve
+#EXPOSE RecursionTest@solve
 #EXTERN __init__.Container@List_Dimc0
 #EXTERN __init__.Container@List_Dimc0.int_Dimc0
 #EXTERN __init__.Container@String_Dimc0
@@ -27,6 +32,7 @@
 #EXTERN Console@GetChar
 #EXTERN Console@InputDouble
 #EXTERN Console@InputInt
+#EXTERN Console@InputLong
 #EXTERN Console@Print.char_Dimc1
 #EXTERN Console@Print.char_Dimc1.int_Dimc0
 #EXTERN Console@Print.double_Dimc0
@@ -35,10 +41,15 @@
 #EXTERN Console@Print.ulong_Dimc0
 #EXTERN Console@PutChar.char_Dimc0
 #EXTERN __init__.Math@Pair_Dimc0.object_Dimc0.object_Dimc0
+#EXTERN Math@gcd.int_Dimc0.int_Dimc0
+#EXTERN Math@gcd.long_Dimc0.long_Dimc0
+#EXTERN Math@lcm.long_Dimc0.long_Dimc0
 #EXTERN Math@max.double_Dimc0.double_Dimc0
 #EXTERN Math@max.int_Dimc0.int_Dimc0
+#EXTERN Math@max.long_Dimc0.long_Dimc0
 #EXTERN Math@min.double_Dimc0.double_Dimc0
 #EXTERN Math@min.int_Dimc0.int_Dimc0
+#EXTERN Math@min.long_Dimc0.long_Dimc0
 #EXTERN __init__.Test@Girl_Dimc0
 #EXTERN __init__.Test@Girl_Dimc0.int_Dimc0
 #EXTERN __init__.Test@Person_Dimc0
@@ -50,7 +61,71 @@
 #EXTERN Test@Person@SetAge.int_Dimc0
 #EXTERN Test@Student@GetRegion
 #EXTERN Test@Student@SetAge.int_Dimc0
-label getid.char_Dimc0
+label Main
+setvar 1
+poparg 0
+#STRING "Test Module\n 1. AC-Machine 2. Class 3.float-max 4: prefix-gcd 5: recursion-test\n"
+pstr 0
+vogvl
+call Console@Print.char_Dimc1 1
+pvar0
+call Console@InputInt 0
+vi32mov
+pvar0
+vi32gvl
+push1
+eq
+jz @IF_FAIL0
+call ACMachine@solve 0
+jmp @IF_END0
+label @IF_FAIL0
+pvar0
+vi32gvl
+push 2
+eq
+jz @IF_FAIL1
+call ClassTest@solve 0
+jmp @IF_END1
+label @IF_FAIL1
+pvar0
+vi32gvl
+push 3
+eq
+jz @IF_FAIL2
+call FloatTest@solve 0
+jmp @IF_END2
+label @IF_FAIL2
+pvar0
+vi32gvl
+push 4
+eq
+jz @IF_FAIL3
+call GcdTest@solve 0
+jmp @IF_END3
+label @IF_FAIL3
+pvar0
+vi32gvl
+push 5
+eq
+jz @IF_FAIL4
+call RecursionTest@solve 0
+jmp @IF_END4
+label @IF_FAIL4
+label @IF_END4
+label @IF_END3
+label @IF_END2
+label @IF_END1
+label @IF_END0
+push0
+pvar0
+push0
+vi64mov
+ret
+pvar0
+push0
+vi64mov
+ret
+label ACMachine@getid.char_Dimc0
 setvar 1
 poparg 1
 pvar0
@@ -65,7 +140,7 @@ pvar0
 push0
 vi64mov
 ret
-label __init__.ACNode_Dimc0
+label __init__.ACMachine@ACNode_Dimc0
 setvar 1
 poparg 1
 povar0
@@ -79,7 +154,7 @@ povar0
 push0
 vomov
 ret
-label insert.Container@String_Dimc0
+label ACMachine@insert.Container@String_Dimc0
 setvar 4
 poparg 1
 pvar1
@@ -102,7 +177,7 @@ vogvl
 pvar2
 vi32gvl
 call Container@String@Get.int_Dimc0 2
-call getid.char_Dimc0 1
+call ACMachine@getid.char_Dimc0 1
 vi32mov
 poglo 0
 vogvl
@@ -118,7 +193,7 @@ arrmem1
 mi32gvl
 push0
 eq
-jz @IF_FAIL0
+jz @IF_FAIL5
 poglo 0
 vogvl
 pvar1
@@ -133,9 +208,9 @@ arrmem1
 pglo 8
 excmd EX_vi32pinc
 mi32mov
-jmp @IF_END0
-label @IF_FAIL0
-label @IF_END0
+jmp @IF_END5
+label @IF_FAIL5
+label @IF_END5
 pvar1
 poglo 0
 vogvl
@@ -178,13 +253,13 @@ povar0
 push0
 vomov
 ret
-label build
+label ACMachine@build
 setvar 2
 poparg 0
-pglo 32
+pglo 24
 push1
 vi32mov
-pglo 40
+pglo 32
 push0
 vi32mov
 pvar0
@@ -207,16 +282,16 @@ pvar0
 vi32gvl
 arrmem1
 mi32gvl
-jz @IF_FAIL1
-pglo 40
-pglo 40
+jz @IF_FAIL6
+pglo 32
+pglo 32
 vi32gvl
 push1
 add
 vi32mov
-poglo 24
+poglo 16
 vogvl
-pglo 40
+pglo 32
 vi32gvl
 arrmem1
 poglo 0
@@ -231,9 +306,9 @@ vi32gvl
 arrmem1
 mi32gvl
 mi32mov
-jmp @IF_END1
-label @IF_FAIL1
-label @IF_END1
+jmp @IF_END6
+label @IF_FAIL6
+label @IF_END6
 label @LOOP_CTEND1
 pvar0
 excmd EX_vi32sinc
@@ -244,22 +319,22 @@ pvar0
 push0
 vi64mov
 label @LOOP_START2
-pglo 32
+pglo 24
 vi32gvl
-pglo 40
+pglo 32
 vi32gvl
 le
 jz @LOOP_END2
 pvar0
-poglo 24
+poglo 16
 vogvl
-pglo 32
+pglo 24
 vi32gvl
 arrmem1
 mi32gvl
 vi32mov
-pglo 32
-pglo 32
+pglo 24
+pglo 24
 vi32gvl
 push1
 add
@@ -285,16 +360,16 @@ pvar1
 vi32gvl
 arrmem1
 mi32gvl
-jz @IF_FAIL2
-pglo 40
-pglo 40
+jz @IF_FAIL7
+pglo 32
+pglo 32
 vi32gvl
 push1
 add
 vi32mov
-poglo 24
+poglo 16
 vogvl
-pglo 40
+pglo 32
 vi32gvl
 arrmem1
 poglo 0
@@ -346,8 +421,8 @@ vi32gvl
 arrmem1
 mi32gvl
 mi32mov
-jmp @IF_END2
-label @IF_FAIL2
+jmp @IF_END7
+label @IF_FAIL7
 poglo 0
 vogvl
 pvar0
@@ -378,7 +453,7 @@ vi32gvl
 arrmem1
 mi32gvl
 mi32mov
-label @IF_END2
+label @IF_END7
 label @LOOP_CTEND3
 pvar1
 excmd EX_vi32sinc
@@ -395,7 +470,7 @@ label @LOOP_CTEND2
 jmp @LOOP_START2
 label @LOOP_END2
 ret
-label calc.Container@String_Dimc0
+label ACMachine@calc.Container@String_Dimc0
 setvar 5
 poparg 1
 pvar1
@@ -429,7 +504,7 @@ vogvl
 pvar2
 vi32gvl
 call Container@String@Get.int_Dimc0 2
-call getid.char_Dimc0 1
+call ACMachine@getid.char_Dimc0 1
 arrmem1
 mi32gvl
 vi32mov
@@ -528,15 +603,19 @@ povar0
 push0
 vomov
 ret
-label AC
+label ACMachine@solve
 setvar 3
 poparg 0
+#STRING "ACMachine-test\n"
+pstr 1
+vogvl
+call Console@Print.char_Dimc1 1
 poglo 0
 push 8
 push 1000005
 arrnew 1
 vomov
-poglo 24
+poglo 16
 push 4
 push 1000005
 arrnew 1
@@ -558,7 +637,7 @@ arromem1
 push 32
 new
 ocpy
-call __init__.ACNode_Dimc0 1
+call __init__.ACMachine@ACNode_Dimc0 1
 momov
 label @LOOP_CTEND6
 pvar0
@@ -596,7 +675,7 @@ vogvl
 call Container@String@Input 1
 povar2
 vogvl
-call insert.Container@String_Dimc0 1
+call ACMachine@insert.Container@String_Dimc0 1
 povar2
 push0
 vomov
@@ -609,7 +688,7 @@ label @LOOP_END7
 pvar1
 push0
 vi64mov
-call build 0
+call ACMachine@build 0
 povar1
 push 32
 new
@@ -621,7 +700,7 @@ vogvl
 call Container@String@Input 1
 povar1
 vogvl
-call calc.Container@String_Dimc0 1
+call ACMachine@calc.Container@String_Dimc0 1
 call Console@Print.int_Dimc0 1
 push 10
 call Console@PutChar.char_Dimc0 1
@@ -632,7 +711,7 @@ povar1
 push0
 vomov
 ret
-label __init__.Man_Dimc0
+label __init__.ClassTest@Man_Dimc0
 setvar 1
 poparg 1
 povar0
@@ -642,14 +721,14 @@ povar0
 push0
 vomov
 ret
-label __init__.Man_Dimc0.int_Dimc0
+label __init__.ClassTest@Man_Dimc0.int_Dimc0
 setvar 2
 poparg 2
 povar0
 vogvl
 pvar1
 vi32gvl
-call Man@SetAge.int_Dimc0 2
+call ClassTest@Man@SetAge.int_Dimc0 2
 pvar1
 push0
 vi64mov
@@ -657,7 +736,7 @@ povar0
 push0
 vomov
 ret
-label Man@SetAge.int_Dimc0
+label ClassTest@Man@SetAge.int_Dimc0
 setvar 2
 poparg 2
 povar0
@@ -670,7 +749,7 @@ pvar1
 vi32gvl
 push 18
 ge
-jz @IF_FAIL3
+jz @IF_FAIL8
 povar0
 vogvl
 mem 24
@@ -681,14 +760,14 @@ push 17
 sub
 mul
 mi32mov
-jmp @IF_END3
-label @IF_FAIL3
+jmp @IF_END8
+label @IF_FAIL8
 povar0
 vogvl
 mem 24
 push0
 mi32mov
-label @IF_END3
+label @IF_END8
 pvar1
 push0
 vi64mov
@@ -696,7 +775,7 @@ povar0
 push0
 vomov
 ret
-label Man@GetSalary
+label ClassTest@Man@GetSalary
 setvar 1
 poparg 1
 povar0
@@ -711,9 +790,13 @@ povar0
 push0
 vomov
 ret
-label Class
+label ClassTest@solve
 setvar 3
 poparg 0
+#STRING "class-test:\n"
+pstr 2
+vogvl
+call Console@Print.char_Dimc1 1
 povar0
 push 24
 new
@@ -760,21 +843,21 @@ push 32
 new
 ocpy
 push 12
-call __init__.Man_Dimc0.int_Dimc0 2
+call __init__.ClassTest@Man_Dimc0.int_Dimc0 2
 vomov
 povar2
 vogvl
-call Man@GetSalary 1
+call ClassTest@Man@GetSalary 1
 call Console@Print.int_Dimc0 1
 push 32
 call Console@PutChar.char_Dimc0 1
 povar2
 vogvl
 push 24
-call Man@SetAge.int_Dimc0 2
+call ClassTest@Man@SetAge.int_Dimc0 2
 povar2
 vogvl
-call Man@GetSalary 1
+call ClassTest@Man@GetSalary 1
 call Console@Print.int_Dimc0 1
 povar0
 push0
@@ -786,17 +869,17 @@ povar1
 push0
 vomov
 ret
-label Float
+label FloatTest@solve
 setvar 3
 poparg 0
-#STRING "Now input the length of the sequence: "
-pstr 0
+#STRING "float-test: Now input the length of the sequence: "
+pstr 3
 vogvl
 call Console@Print.char_Dimc1 1
 pvar0
 call Console@InputInt 0
 vi32mov
-poglo 16
+poglo 40
 push 8
 pvar0
 vi32gvl
@@ -815,7 +898,7 @@ pvar0
 vi32gvl
 le
 jz @LOOP_END8
-poglo 16
+poglo 40
 vogvl
 pvar2
 vi32gvl
@@ -826,21 +909,21 @@ pvar2
 vi32gvl
 push1
 eq
-jz @IF_FAIL4
+jz @IF_FAIL9
 pvar1
-poglo 16
+poglo 40
 vogvl
 pvar2
 vi32gvl
 arrmem1
 mfgvl
 vfmov
-jmp @IF_END4
-label @IF_FAIL4
+jmp @IF_END9
+label @IF_FAIL9
 pvar1
 pvar1
 vfgvl
-poglo 16
+poglo 40
 vogvl
 pvar2
 vi32gvl
@@ -848,7 +931,7 @@ arrmem1
 mfgvl
 call Math@max.double_Dimc0.double_Dimc0 2
 vfmov
-label @IF_END4
+label @IF_END9
 label @LOOP_CTEND8
 pvar2
 excmd EX_vi32sinc
@@ -868,46 +951,217 @@ pvar0
 push0
 vi64mov
 ret
-label Main
-setvar 1
+label GcdTest@solve
+setvar 3
 poparg 0
-#STRING "Test Module\n 1. AC-Machine 2. Class 3.float-max : "
-pstr 1
+#STRING "gcd-test: Now input the length of the sequence: "
+pstr 4
 vogvl
 call Console@Print.char_Dimc1 1
 pvar0
 call Console@InputInt 0
 vi32mov
-pvar0
-vi32gvl
-call Console@Print.int_Dimc0 1
-push 10
-call Console@PutChar.char_Dimc0 1
+poglo 48
+push 4
 pvar0
 vi32gvl
 push1
-eq
-jz @IF_FAIL5
-call AC 0
-jmp @IF_END5
-label @IF_FAIL5
+add
+arrnew 1
+vomov
+pvar1
+push1
+vi32mov
+label @LOOP_START9
+pvar1
+vi32gvl
 pvar0
 vi32gvl
-push 2
-eq
-jz @IF_FAIL6
-call Class 0
-jmp @IF_END6
-label @IF_FAIL6
-call Float 0
-label @IF_END6
-label @IF_END5
+le
+jz @LOOP_END9
+poglo 48
+vogvl
+pvar1
+vi32gvl
+arrmem1
+call Console@InputInt 0
+mi32mov
+label @LOOP_CTEND9
+pvar1
+excmd EX_vi32sinc
+pop
+jmp @LOOP_START9
+label @LOOP_END9
+pvar1
 push0
+vi64mov
+pvar1
+poglo 48
+vogvl
+push1
+arrmem1
+mi32gvl
+vi32mov
+pvar1
+vi32gvl
+call Console@Print.int_Dimc0 1
+push 32
+call Console@PutChar.char_Dimc0 1
+pvar2
+push 2
+vi32mov
+label @LOOP_START10
+pvar2
+vi32gvl
+pvar0
+vi32gvl
+le
+jz @LOOP_END10
+pvar1
+pvar1
+vi32gvl
+poglo 48
+vogvl
+pvar2
+vi32gvl
+arrmem1
+mi32gvl
+call Math@gcd.int_Dimc0.int_Dimc0 2
+vi32mov
+pvar1
+vi32gvl
+call Console@Print.int_Dimc0 1
+push 32
+call Console@PutChar.char_Dimc0 1
+label @LOOP_CTEND10
+pvar2
+excmd EX_vi32sinc
+pop
+jmp @LOOP_START10
+label @LOOP_END10
+pvar2
+push0
+vi64mov
+push 10
+call Console@PutChar.char_Dimc0 1
+pvar1
+push0
+vi64mov
 pvar0
 push0
 vi64mov
 ret
+label RecursionTest@g.long_Dimc0.long_Dimc0
+setvar 3
+poparg 2
 pvar0
+vi64gvl
+pvar1
+vi64gvl
+lmod
+push0
+eq
+jz @IF_FAIL10
+push 2
+pvar0
+vi64gvl
+lmul
+pvar1
+vi64gvl
+lsub
+pvar0
+push0
+vi64mov
+pvar1
+push0
+vi64mov
+ret
+jmp @IF_END10
+label @IF_FAIL10
+label @IF_END10
+pvar2
+pvar0
+vi64gvl
+pvar1
+vi64gvl
+ldiv
+vi64mov
+pvar1
+vi64gvl
+pvar0
+vi64gvl
+pvar1
+vi64gvl
+lmod
+call RecursionTest@g.long_Dimc0.long_Dimc0 2
+push 2
+pvar2
+vi64gvl
+lmul
+pvar1
+vi64gvl
+lmul
+ladd
+pvar2
+push0
+vi64mov
+pvar0
+push0
+vi64mov
+pvar1
+push0
+vi64mov
+ret
+pvar2
+push0
+vi64mov
+pvar0
+push0
+vi64mov
+pvar1
+push0
+vi64mov
+ret
+label RecursionTest@solve
+setvar 2
+poparg 0
+#STRING "recursion-test\n"
+pstr 5
+vogvl
+call Console@Print.char_Dimc1 1
+pvar0
+call Console@InputLong 0
+vi64mov
+pvar1
+call Console@InputLong 0
+vi64mov
+pvar1
+vi64gvl
+pvar0
+vi64gvl
+pvar1
+vi64gvl
+lsub
+call Math@max.long_Dimc0.long_Dimc0 2
+pvar1
+vi64gvl
+pvar0
+vi64gvl
+pvar1
+vi64gvl
+lsub
+call Math@min.long_Dimc0.long_Dimc0 2
+call RecursionTest@g.long_Dimc0.long_Dimc0 2
+pvar0
+vi64gvl
+ladd
+call Console@Print.long_Dimc0 1
+push 10
+call Console@PutChar.char_Dimc0 1
+pvar0
+push0
+vi64mov
+pvar1
 push0
 vi64mov
 ret

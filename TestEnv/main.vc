@@ -2,112 +2,150 @@ using Console;
 using Container;
 using Math;
 
-var ACNode[] nd;
-var int ndcnt;
-var double[] a;
 
-func int getid(char ch) { return (ch - 'a') => int; }
-class ACNode {
-	public var int[] ch;
-	public var int fil, fl;
-	func __init__() { ch = $int[26]; }
-}
+namespace ACMachine {
+	var ACNode[] nd;
+	var int ndcnt;
 
-func void insert(String str) {
-	var int cur = 0;
-	for (var int i = 0; i < str.Length(); i++) {
-		var int ch = getid(str.Get(i));
-		if (nd[cur].ch[ch] == 0) nd[cur].ch[ch] = ++ndcnt;
-		cur = nd[cur].ch[ch];
+	func int getid(char ch) { return (ch - 'a') => int; }
+	class ACNode {
+		public var int[] ch;
+		public var int fil, fl;
+		func __init__() { ch = $int[26]; }
 	}
-	nd[cur].fl++;
-}
 
-var int[] q;
-var int ql, qr;
-
-func void build() {
-	ql = 1, qr = 0;
-	for (var int i = 0; i < 26; i++) if (nd[0].ch[i])
-		qr = qr + 1, q[qr] = nd[0].ch[i];
-	while (ql <= qr) {
-		var int u = q[ql]; ql = ql + 1;
-		for (var int i = 0; i < 26; i++)
-			if (nd[u].ch[i]) {
-				qr = qr + 1, q[qr] = nd[u].ch[i];
-				nd[nd[u].ch[i]].fil = nd[nd[u].fil].ch[i];
-			} else nd[u].ch[i] = nd[nd[u].fil].ch[i];
+	func void insert(String str) {
+		var int cur = 0;
+		for (var int i = 0; i < str.Length(); i++) {
+			var int ch = getid(str.Get(i));
+			if (nd[cur].ch[ch] == 0) nd[cur].ch[ch] = ++ndcnt;
+			cur = nd[cur].ch[ch];
+		}
+		nd[cur].fl++;
 	}
-}
 
-func int calc(String str) {
-	var int ans = 0;
-	for (var int i = 0, u = 0; i < str.Length(); i++) {
-		u = nd[u].ch[getid(str.Get(i))];
-		for (var int j = u; j && nd[j].fl != 0 - 1; j = nd[j].fil)
-		 	ans = ans + nd[j].fl, nd[j].fl = 0 - 1;
+	var int[] q;
+	var int ql, qr;
+
+	func void build() {
+		ql = 1, qr = 0;
+		for (var int i = 0; i < 26; i++) if (nd[0].ch[i])
+			qr = qr + 1, q[qr] = nd[0].ch[i];
+		while (ql <= qr) {
+			var int u = q[ql]; ql = ql + 1;
+			for (var int i = 0; i < 26; i++)
+				if (nd[u].ch[i]) {
+					qr = qr + 1, q[qr] = nd[u].ch[i];
+					nd[nd[u].ch[i]].fil = nd[nd[u].fil].ch[i];
+				} else nd[u].ch[i] = nd[nd[u].fil].ch[i];
+		}
 	}
-	return ans;
-}
 
-func void AC() {
-	nd = $ACNode[1000005];
-	q = $int[1000005];
-	for (var int i = 0; i <= 1000000; i++) nd[i] = $ACNode();
-	var int n = InputInt();
-	ndcnt = 0;
-	for (var int i = 1; i <= n; i++) {
+	func int calc(String str) {
+		var int ans = 0;
+		for (var int i = 0, u = 0; i < str.Length(); i++) {
+			u = nd[u].ch[getid(str.Get(i))];
+			for (var int j = u; j && nd[j].fl != 0 - 1; j = nd[j].fil)
+				ans = ans + nd[j].fl, nd[j].fl = 0 - 1;
+		}
+		return ans;
+	}
+	public func void solve() {
+		Print("ACMachine-test\n");
+		nd = $ACNode[1000005];
+		q = $int[1000005];
+		for (var int i = 0; i <= 1000000; i++) nd[i] = $ACNode();
+		var int n = InputInt();
+		ndcnt = 0;
+		for (var int i = 1; i <= n; i++) {
+			var String str = $String();
+			str.Input();
+			insert(str);
+		}
+		build();
 		var String str = $String();
 		str.Input();
-		insert(str);
+		Print(calc(str)), PutChar('\n');
 	}
-	build();
-	var String str = $String();
-	str.Input();
-	Print(calc(str)), PutChar('\n');
 }
 
-class Man :: Test::Person {
-	protected var int Salary;
-	func __init__() { super(); }
-	func __init__(int Age) { SetAge(Age); }
-	func void SetAge(int Age) {
-		this.Age = Age;
-		if (Age >= 18) Salary = 100 * (Age - 17);
-		else Salary = 0;
+namespace ClassTest {
+	class Man :: Test::Person {
+		protected var int Salary;
+		func __init__() { super(); }
+		func __init__(int Age) { SetAge(Age); }
+		func void SetAge(int Age) {
+			this.Age = Age;
+			if (Age >= 18) Salary = 100 * (Age - 17);
+			else Salary = 0;
+		}
+		func int GetSalary() { return Salary; }
 	}
-	func int GetSalary() { return Salary; }
+
+	public func void solve() {
+		Print("class-test:\n");
+		var Test::Girl girl = $Test::Girl(24);
+		Print(girl.GetAge()), PutChar(' '), Print((girl => Test::Person).GetAge()), PutChar('\n');
+		var Test::Student student = $Test::Student();
+		student.SetAge(24);
+		Print(student.GetRegion()), PutChar(' '), Print(student.GetAge()), PutChar('\n');
+		var Man man = $Man(12);  
+		Print(man.GetSalary()), PutChar(' '), man.SetAge(24), Print(man.GetSalary());
+	}
 }
 
-func void Class() {
-	var Test::Girl girl = $Test::Girl(24);
-	Print(girl.GetAge()), PutChar(' '), Print((girl => Test::Person).GetAge()), PutChar('\n');
-	var Test::Student student = $Test::Student();
-	student.SetAge(24);
-	Print(student.GetRegion()), PutChar(' '), Print(student.GetAge()), PutChar('\n');
-	var Man man = $Man(12);  
-	Print(man.GetSalary()), PutChar(' '), man.SetAge(24), Print(man.GetSalary());
+namespace FloatTest {
+	var double[] a;
+	public func void solve() {
+		Print("float-test: Now input the length of the sequence: ");
+		var int n = InputInt();
+		a = $double[n + 1];
+		var double mxa;
+		for (var int i = 1; i <= n; i++) {
+			a[i] = InputDouble();
+			if (i == 1) mxa = a[i];
+			else mxa = max(mxa, a[i]);
+		}
+		Print(mxa);
+	}
 }
 
-func void Float() {
-	Print("Now input the length of the sequence: ");
-	var int n = InputInt();
-	a = $double[n + 1];
-	var double mxa;
-	for (var int i = 1; i <= n; i++) {
-		a[i] = InputDouble();
-		if (i == 1) mxa = a[i];
-		else mxa = max(mxa, a[i]);
+namespace GcdTest {
+	var int[] a;
+	public func void solve() {
+		Print("gcd-test: Now input the length of the sequence: ");
+		var int n = InputInt();
+		a = $int[n + 1];
+		for (var int i = 1; i <= n; i++) a[i] = InputInt();
+		var int g = a[1];
+		Print(g), PutChar(' ');
+		for (var int i = 2; i <= n; i++) 
+			g = gcd(g, a[i]), Print(g), PutChar(' ');
+		PutChar('\n');
 	}
-	Print(mxa);
+}
+
+namespace RecursionTest {
+	func long g(long a, long b) {
+		if (a % b == 0) return 2 * a - b;
+		var long t = a / b;
+		return g(b, a % b) + 2 * t * b;
+	}
+	public func void solve() {
+		Print("recursion-test\n");
+		var long a = InputLong(), b = InputLong();
+		Print(g(max(b, a - b), min(b, a - b)) + a);
+		PutChar('\n');
+	}
 }
 
 func int Main() {
-	Print("Test Module\n 1. AC-Machine 2. Class 3.float-max : ");
+	Print("Test Module\n 1. AC-Machine 2. Class 3.float-max 4: prefix-gcd 5: recursion-test\n");
 	var int T = InputInt();
-	Print(T); PutChar('\n');
-	if (T == 1) AC();
-	else if (T == 2) Class();
-	else Float();
+	if (T == 1) ACMachine::solve();
+	else if (T == 2) ClassTest::solve();
+	else if (T == 3) FloatTest::solve();
+	else if (T == 4) GcdTest::solve();
+	else if (T == 5) RecursionTest::solve();
 	return 0;
 }
