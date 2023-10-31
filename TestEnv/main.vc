@@ -30,12 +30,12 @@ namespace ACMachine {
 	func void build() {
 		ql = 1, qr = 0;
 		for (var int i = 0; i < 26; i++) if (nd[0].ch[i])
-			qr = qr + 1, q[qr] = nd[0].ch[i];
+			q[++qr] = nd[0].ch[i];
 		while (ql <= qr) {
 			var int u = q[ql]; ql = ql + 1;
 			for (var int i = 0; i < 26; i++)
 				if (nd[u].ch[i]) {
-					qr = qr + 1, q[qr] = nd[u].ch[i];
+					q[++qr] = nd[u].ch[i];
 					nd[nd[u].ch[i]].fil = nd[nd[u].fil].ch[i];
 				} else nd[u].ch[i] = nd[nd[u].fil].ch[i];
 		}
