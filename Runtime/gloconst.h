@@ -77,6 +77,10 @@ enum EXCommandID {
 	EX_mbpinc, EX_mi32pinc, EX_mi64pinc, EX_mupinc, EX_mbsinc, EX_mi32sinc, EX_mi64sinc, EX_musinc,
 	EX_mbpdec, EX_mi32pdec, EX_mi64pdec, EX_mupdec, EX_mbsdec, EX_mi32sdec, EX_mi64sdec, EX_musdec,
 
+	// big number
+	EX_iadd, EX_isub, EX_imul, EX_idiv, EX_imod, EX_iand, EX_ior, EX_ixor, EX_inot, EX_ilmv, EX_irmv,
+	EX_itof,
+
 	//+= -= *= /= %= &= |= ^= <<= >>=
 	EX_vbaddmov, EX_vaddmov, EX_vladdmov, EX_vuaddmov, EX_vfaddmov, 
 	EX_mbaddmov, EX_maddmov, EX_mladdmov, EX_muaddmov, EX_mfaddmov, 

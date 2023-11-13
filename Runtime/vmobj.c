@@ -1,125 +1,84 @@
 #include "vmobj.h"
 
-volatile enum ThreadState VMThreadState, GCThreadState;
-struct VM_ObjectInfo *ObjectListStart, *ObjectListEnd, *FreeObjectListStart, *FreeObjectListEnd;
+struct Object *GenerationListStart[2], *GenerationListEnd[2], *RootListStart[2], *RootListEnd[2], *CrossListStart, *CrossListEnd;
+// The free list
+struct Object *FreeObjectListStart, *FreeObjectListEnd;
 
 int CurrentMemorySize;
 
-void InitList(struct VM_ObjectInfo *start, struct VM_ObjectInfo *end) {
-    start->Previous = end->Next = NULL;
-    start->Next = end;
-    end->Previous = start;
-}
-void InsertElement(struct VM_ObjectInfo *element, struct VM_ObjectInfo *p) {
-    element->Previous = p->Previous;
-    element->Next = p;
-    p->Previous->Next = element;
-    p->Previous = element;
-}
-void DeleteElement(struct VM_ObjectInfo *element) {
-    element->Previous->Next = element->Next;
-    element->Next->Previous = element->Previous;
-    element->Previous = element->Next = NULL;
+void InitList(struct Object *_start, struct Object *_end) {
+    _start->Previous = _end->Next = NULL;
+    _start->Next = _end;
+    _end->Previous = _start;
 }
 
+// Insert the _element in front of _position
+void InsertElement(struct Object *_element, struct Object *_position) {
+    _element->Previous = _position->Previous;
+    _element->Next = _position;
+    _position->Previous->Next = _element;
+    _position->Previous = _element;
+}
 
-void VM_InitGC() {
-    ObjectListStart = malloc(sizeof(struct VM_ObjectInfo));
-    ObjectListEnd = malloc(sizeof(struct VM_ObjectInfo));
-    FreeObjectListStart = malloc(sizeof(struct VM_ObjectInfo));
-    FreeObjectListEnd = malloc(sizeof(struct VM_ObjectInfo));
+// Delete the link of _element from the list
+void DeleteElement(struct Object *_element) {
+    _element->Previous->Next = _element->Next;
+    _element->Next->Previous = _element->Previous;
+    _element->Previous = _element->Next = NULL;
+}
 
-    InitList(ObjectListStart, ObjectListEnd);
+ullong GenerationMaxSize[2], GenerationSize[2];
+
+void VM_InitGC(ullong _generation0_max_size, ullong _generation1_max_size) {
+    GenerationMaxSize[0] = _generation0_max_size;
+    GenerationMaxSize[1] = _generation1_max_size;
+
+    GenerationSize[0] = GenerationSize[1] = 0;
+
+    for (int i = 0; i < 2; i++) {
+        GenerationListStart[i] = malloc(sizeof(struct Object));
+        GenerationListEnd[i] = malloc(sizeof(struct Object));
+        InitList(GenerationListStart[i], GenerationListEnd[i]);
+
+        RootListStart[i] = malloc(sizeof(struct Object));
+        RootListEnd[i] = malloc(sizeof(struct Object));
+        InitList(RootListStart[i], RootListEnd[i]);
+    }
+    CrossListStart = malloc(sizeof(struct Object));
+    CrossListEnd = malloc(sizeof(struct Object));
+    InitList(CrossListStart, CrossListEnd);
+
+    FreeObjectListStart = malloc(sizeof(struct Object));
+    FreeObjectListEnd = malloc(sizeof(struct Object));
     InitList(FreeObjectListStart, FreeObjectListEnd);
 }
 
 static inline ullong FlagSize(ullong data_size) { return ((data_size >> 3) + 64) >> 6;}
 
-struct VM_ObjectInfo *VM_CreateObjectInfo(ullong size) {
-    // printf("Create an object size = %llu\n", size);
-    struct VM_ObjectInfo *element;
-    // need to malloc a new object
-    if (FreeObjectListStart->Next == FreeObjectListEnd) {
-        element = malloc(sizeof(struct VM_ObjectInfo));
-    } else element = FreeObjectListEnd->Previous, DeleteElement(element);
-    InsertElement(element, ObjectListEnd);
-    element->State = 1;
-    element->QuoteCount = element->VarQuoteCount = 0;
-    element->Size = size;
-    element->FlagSize = FlagSize(size);
-    element->Flag = malloc(sizeof(ullong) * element->FlagSize);
-    element->Data = malloc(size);
-    memset(element->Data, 0, sizeof(byte) * size);
-    memset(element->Flag, 0, sizeof(ullong) * element->FlagSize);
+void VM_AddReference(struct Object *_object) { _object->ReferenceCount++; }
 
-    CurrentMemorySize += size;
-    return element;
+void VM_AddRootReference(struct Object *_object) {
+    _object->ReferenceCount++, _object->RootReferenceCount++;
+    // if it becomes a root, then add it into the root list of the right generation
+    if (_object->RootReferenceCount == 1) InsertElement(_object, RootListEnd[_object->Generation]);
 }
 
-void GC(struct VM_ObjectInfo *obj) {
-    if (obj->QuoteCount) return ;
-    DeleteElement(obj);
-    InsertElement(obj, FreeObjectListEnd);
-    obj->State = 0;
-    CurrentMemorySize -= obj->Size;
-    //Scan [i, i + 63]
-    // printf("GC... %llx\n", (uulong)obj);
-    for (ullong i = 0, shift = 0; i < obj->FlagSize; i++, shift += 64)
-        if (*(obj->Flag + i))
-            for (ullong j = 0; j < 64 && ((shift + j + 1) << 3) <= obj->Size; j++) if (*(obj->Flag + i) & (1llu << j)) {
-                if (*(ullong *)(obj->Data + ((shift + j) << 3)) != NULL) {
-                    struct VM_ObjectInfo *mem = *(ullong *)(obj->Data + ((shift + j) << 3));
-                    mem->QuoteCount--;
-                    if (!mem->QuoteCount) GC(mem);
-                }
-            } 
-    free(obj->Data);
-    free(obj->Flag);
-}
-void VM_GC(struct VM_ObjectInfo *obj) {
-    if (obj == NULL || obj->QuoteCount > 0) return ;
-    GC(obj);
+void VM_ReduceReference(struct Object *_object) {
+    _object->ReferenceCount--;
+    if (_object->ReferenceCount == 0) VM_GC(_object);
 }
 
-const int GCCheckLoopTime = 5 * CLOCKS_PER_SEC;
-
-void ScanObject(struct VM_ObjectInfo* obj) {
-    if (obj->State == 1) return ;
-    obj->State = 1;
-    for (ullong i = 0, shift = 0; i < obj->FlagSize; i++, shift += 64) 
-        if (*(obj->Flag + i))
-            for (ullong j = 0; j < 64 && ((shift + j + 1) << 3) <= obj->Size; j++) if (*(obj->Flag + i) & (1llu << j))
-                if (*(ullong *)(obj->Data + ((shift + j) << 3)) != NULL) 
-                    ScanObject((struct VM_ObjectInfo *)*(ullong *)(obj->Data + ((shift + j) << 3)));
-}
-
-void *VM_GCThread(void *arg) {
-    // printf("GCThread Launched.\n");
-    clock_t st = clock();
-    int delay_count = 0;
-    while (1) {
-        while (delay_count <= GCCheckLoopTime) delay_count++;
-        sleep(4);
-        // if (clock() - st <= GCCheckLoopTime * max(1, (CurrentMemorySize >> 25))) continue;
-        GCThreadState = ThreadState_Waiting;
-        // wait until the VMThread pause
-        while (VMThreadState == ThreadState_Running) ;
-        GCThreadState = ThreadState_Running;
-        ullong pos = 0;
-        // printf("Scan...\n");
-        for (struct VM_ObjectInfo *obj = ObjectListStart->Next; obj != ObjectListEnd; obj = obj->Next) 
-            obj->State = 2;
-        for (struct VM_ObjectInfo *obj = ObjectListStart->Next; obj != ObjectListEnd; obj = obj->Next)
-            if (obj->VarQuoteCount > 0 && obj->State == 2) ScanObject(obj);
-        for (struct VM_ObjectInfo *obj = ObjectListStart->Next; obj != ObjectListEnd; obj = obj->Next)
-            if (obj->State == 2) {
-                CurrentMemorySize -= obj->Size;
-                DeleteElement(obj);
-                obj->State = 0, free(obj->Data), free(obj->Flag);
-                InsertElement(obj, FreeObjectListEnd);
-            }
-        GCThreadState = ThreadState_Pause;
+void VM_ReduceRootReference(struct Object *_object) {
+    _object->ReferenceCount--, _object->RootReferenceCount--;
+    if (_object->ReferenceCount == 0) {
+        // remove it from the root list
+        DeleteElement(_object);
+        VM_GC(_object);
     }
-    GCThreadState = ThreadState_Exit;
-    return NULL;
+}
+
+struct Object *VM_CreateObject(ullong size) {
+    struct Object *_object = malloc(sizeof(struct Object));
+    
+    return _object;
 }
