@@ -123,12 +123,23 @@ void VM_GC(struct Object *_object) {
 
 // move the object from generation 0 to generation 1
 void move_to_generation1(struct Object *_object) {
+    if (_object->Generation == 1) return ;
     // modify the generation size
     GenerationSize[0] -= _object->Size, GenerationSize[1] += _object->Size;
     // modify the list element
     _object->Generation = 1;
     List_Delete(_object->Belong), List_Insert(_object->Belong, GenerationListEnd[1]);
     if (_object->RootReferenceCount) List_Delete(_object->RootBelong), List_Insert(_object->RootBelong, RootListEnd[1]);
+
+    // Add cross generation reference
+    for (ullong i = 0; i < _object->FlagSize; i++) if (_object->Flag[i])
+        for (ullong j = 0; j < 64 && (((i << 6) + j) << 3) < _object->Size; j++)
+            if (_object->Flag[i] & (1ull << j)) {
+                struct Object *_ref = (struct Object *)*(ullong *)_object->Data[(((i << 6) + j) << 3)];
+                if (_ref == NULL || _ref->Generation) continue;
+                _ref->CrossReferenceCount++;
+                if (_ref->CrossReferenceCount == 1) List_Insert(_ref->RootBelong, RootListEnd[0]);
+            }
 }
 
 inline int VM_Check() {
