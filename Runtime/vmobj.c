@@ -186,9 +186,19 @@ void VM_GenerationalGC() {
         if (_object->RootReferenceCount) List_Insert(_object, RootListEnd[1]);
     }
     GenerationSize[0] = 0;
-
+    
+    // check if it is necessary to scan generation 1
     if (GenerationSize[1] > GenerationMaxSize[1] && clock() - LastGCTime > GCTimeInterval * (GenerationMaxSize[1] / GenerationMaxSize[0])) {
-        
+        // scan all the object 
+        for (struct ListElement *_element = GenerationListStart[1]->Next; _element != GenerationListEnd[1]; _element = _element->Next)
+            ((struct Object *)_element->Content)->State = 2;
+        for (struct ListElement *_element = RootListStart[1]->Next; _element != RootListEnd[1]; _element = _element->Next)
+            scan_object((struct Object *)_element->Content, 1);
+        for (struct ListElement *_element = GenerationListStart[0]->Next, *_next; _element != GenerationListEnd[0]; _element = _next) {
+            _next = _element->Next;
+            if (((struct Object *)_element->Content)->State == 2)
+                free_object((struct Object *)_element->Content);
+        }
     }
     LastGCTime = clock();
 }
