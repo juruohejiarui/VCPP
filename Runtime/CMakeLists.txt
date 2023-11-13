@@ -2,8 +2,8 @@ cmake_minimum_required (VERSION 2.8)
 
 project (Runtime)
 
-set(C_SOURCE gloconst.c vm.c vmobj.c main.c hashmap.c syscall.c)
-set(C_HEADER gloconst.h vm.h vmobj.h hashmap.h syscall.h)
+set(C_SOURCE gloconst.c vm.c vmobj.c main.c hashmap.c syscall.c list.c bignumber.c)
+set(C_HEADER gloconst.h vm.h vmobj.h hashmap.h syscall.h list.h)
 add_executable(Runtime ${C_SOURCE} ${C_HEADER})
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)

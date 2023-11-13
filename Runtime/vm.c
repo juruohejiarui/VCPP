@@ -1138,7 +1138,7 @@ void InitVM(ullong calculate_stack_size, ullong call_stack_size) {
 }
 void VM_Launch(char *path, ullong calculate_stack_size, ullong call_stack_size) {
     InitVM(calculate_stack_size, call_stack_size);
-    VM_InitGC(DEFAULT_GENERATION0_MAX_SIZE, DEFAULT_GENERATION1_MAX_SIZE);
+    VM_InitGC(DEFAULT_GENERATION0_MAX_SIZE, DEFAULT_GENERATION1_MAX_SIZE, DEFAULT_GC_TIME_INTERVAL);
     
     clock_t st = clock();
     VM_VMThread((void *)path);
