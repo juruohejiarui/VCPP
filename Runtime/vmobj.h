@@ -20,7 +20,7 @@ struct Object {
     //The flag, the i-th bit demonstrates whethter Data[i...i+8] store an address of an object
     ullong *Flag;
 
-    struct ListElement *Belong, *RootBelong;
+    struct ListElement *Belong, *RootBelong, *CrossBelong;
 };
 
 struct BigNumber {
@@ -40,18 +40,19 @@ void VM_InitGC(ullong _generation0_max_size, ullong _generation1_max_size, clock
 struct Object* VM_CreateObject(ullong _object_size);
 // struct Object* VM_CreateBigNumber();
 
-// referencetype GC
-void VM_GC(struct Object* _object);
-
 // Check if it is necessary to run generational GC process.
 int VM_Check();
+// referencetype GC
+void VM_ReferenceGC(struct Object* _object);
 // the generational GC process
 void VM_GenerationalGC();
 
-void VM_AddReference(struct Object *_object);
-void VM_AddRootReference(struct Object *_object);
-void VM_ReduceReference(struct Object *_object);
-void VM_ReduceRootReference(struct Object *_object);
+void VM_AddReference(struct Object *_object, int _data);
+void VM_AddRootReference(struct Object *_object, int _data);
+void VM_ReduceReference(struct Object *_object, int _data);
+void VM_ReduceRootReference(struct Object *_object, int _data);
+void VM_AddCrossReference(struct Object *_object, int _data);
+void VM_ReduceCrossReference(struct Object *_object, int _data);
 
 static inline ullong VM_FlagAddr(ullong _address) { return _address >> 9; }
 static inline ullong VM_FlagBit(ullong _address) { return 1llu << ((_address >> 3) - ((_address >> 9) << 6)); }

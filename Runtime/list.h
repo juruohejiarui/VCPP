@@ -7,5 +7,6 @@ struct ListElement {
 };
 
 void List_Init(struct ListElement *_start, struct ListElement *_end);
+void List_Clean(struct ListElement *_start, struct ListElement *_end);
 void List_Insert(struct ListElement *_element, struct ListElement *_p);
 void List_Delete(struct ListElement *_element);
