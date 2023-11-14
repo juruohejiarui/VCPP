@@ -123,7 +123,7 @@ void LoadStringRegion(FILE *file, struct RuntimeBlock *blk) {
         char *str = ReadString(file);
         ullong len = strlen(str) + 1;
         struct Object *obj = VM_CreateObject(len + sizeof(ullong));
-        obj->ReferenceCount = obj->RootReferenceCount = 1;
+        VM_AddRootReference(obj, 1), VM_AddReference(obj, 1);
         obj->FlagSize = 0;
         obj->Size = sizeof(ullong) + len;
         *(ullong*)(obj->Data) = 1;
@@ -299,15 +299,16 @@ void *VM_VMThread(void *vexe_path) {
                         // remove the reference from stack and par
                         VM_ReduceRootReference(lst_obj, 1), VM_ReduceReference(lst_obj, 2);
                         // modify the cross generation reference if it is necessary
-                        if (par->Generation > lst_obj->Generation) VM_ReduceRootReference(lst_obj, 1);
+                        if (par->Generation > lst_obj->Generation) VM_ReduceCrossReference(lst_obj, 1);
                     }
                     *(ullong *)*(calculate_stack_top - 1) = *calculate_stack_top;
                     if ((struct Object*)*calculate_stack_top != NULL) {
                         struct Object *new_obj = (struct Object*)*calculate_stack_top;
-                        // If it is a cross generation reference, -> root reference count += 1
+                        // If it is a cross generation reference, -> cross reference count += 1
                         // remove it from stack -> root reference count -= 1, reference count -= 1
                         // add reference from par -> reference count += 1
-                        if (par->Generation <= new_obj->Generation) VM_ReduceRootReference(new_obj->RootReferenceCount, 1);
+                        VM_ReduceRootReference(new_obj, 1);
+                        if (par->Generation > new_obj->Generation) VM_AddCrossReference(new_obj, 1);
                     }
                     calculate_stack_top -= 3;
                 }
@@ -816,7 +817,7 @@ void *VM_VMThread(void *vexe_path) {
             case povar0:
                 *(++calculate_stack_top) = (ullong)(&call_stack_top->Variables[0]);
                 {
-                    struct Object* obj = (struct Object *)*(ullong*)*(calculate_stack_top);
+                    struct Object* obj = (struct Object *)*(ullong*)*calculate_stack_top;
                     if (obj != NULL) VM_AddRootReference(obj, 1), VM_AddReference(obj, 1);
 
                 }
@@ -824,7 +825,7 @@ void *VM_VMThread(void *vexe_path) {
             case povar1:
                 *(++calculate_stack_top) = (ullong)(&call_stack_top->Variables[1]);
                 {
-                    struct Object* obj = (struct Object *)*(ullong*)*(calculate_stack_top);
+                    struct Object* obj = (struct Object *)*(ullong*)*calculate_stack_top;
                     if (obj != NULL) VM_AddRootReference(obj, 1), VM_AddReference(obj, 1);
                 }
                 break;
@@ -875,7 +876,7 @@ void *VM_VMThread(void *vexe_path) {
                 calculate_stack_top++;
                 if ((struct Object *)*calculate_stack_top != NULL) {
                     struct Object *obj = (struct Object *)*calculate_stack_top;
-                    obj->RootReferenceCount++, obj->ReferenceCount++;
+                    VM_AddRootReference(obj, 1), VM_AddReference(obj, 1);
                 }
                 break;
             case pop:
@@ -884,7 +885,7 @@ void *VM_VMThread(void *vexe_path) {
             case opop:
                 {
                     struct Object *obj = (struct Object *)calculate_stack_top;
-                    if (obj != NULL) obj->RootReferenceCount--, obj->ReferenceCount--;
+                    if (obj != NULL) VM_ReduceRootReference(obj, 1), VM_ReduceReference(obj, 1);
                     --calculate_stack_top;
                 }
                 break;

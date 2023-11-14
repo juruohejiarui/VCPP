@@ -22,7 +22,7 @@ void VM_InitGC(ullong _generation0_max_size, ullong _generation1_max_size, clock
     for (int i = 0; i < 2; i++) {
         GenerationListStart[i] = malloc(sizeof(struct Object));
         GenerationListEnd[i] = malloc(sizeof(struct Object));
-        List_init(GenerationListStart[i], GenerationListEnd[i]);
+        List_Init(GenerationListStart[i], GenerationListEnd[i]);
 
         RootListStart[i] = malloc(sizeof(struct Object));
         RootListEnd[i] = malloc(sizeof(struct Object));
@@ -54,7 +54,7 @@ void VM_ReduceReference(struct Object *_object, int _data) {
 
 void VM_ReduceRootReference(struct Object *_object, int _data) {
     _object->RootReferenceCount -= _data;
-    if (_object->ReferenceCount == 0) {
+    if (_object->RootReferenceCount == 0) {
         // remove it from the root list
         List_Delete(_object->RootBelong);
     }
@@ -103,7 +103,7 @@ struct Object *VM_CreateObject(ullong _object_size) {
 
     // intial generation of _object is generation 0
     _object->Generation = 0;
-    InsertElement(_list_ele, GenerationListEnd[0]);
+    List_Insert(_list_ele, GenerationListEnd[0]);
     GenerationSize[0] += _object_size;
 
     return _object;
@@ -113,6 +113,8 @@ struct Object *VM_CreateObject(ullong _object_size) {
 void free_object(struct Object *_object) {
     _object->State = 0;
     List_Delete(_object->Belong), List_Insert(_object->Belong, FreeListEnd);
+    if (_object->RootReferenceCount) List_Delete(_object->RootBelong);
+    if (_object->CrossReferenceCount) List_Delete(_object->CrossBelong);
     free(_object->Flag), free(_object->Data);
 }
 
@@ -124,13 +126,10 @@ void VM_ReferenceGC(struct Object *_object) {
     for (ullong i = 0; i < _object->FlagSize; i++) if (_object->Flag[i])
         for (ullong j = 0; j < 64 && (((i << 6) + j) << 3) < _object->Size; j++)
             if (_object->Flag[i] & (1ull << j)) {
-                struct Object *_ref = (struct Object *)*(ullong *)_object->Data[(((i << 6) + j) << 3)];
+                struct Object *_ref = (struct Object *)*(ullong *)&_object->Data[((i << 6) + j) << 3];
                 if (_ref == NULL) continue;
                 // modify the cross reference count
-                if (_object->Generation > _ref->Generation) {
-                    _ref->RootReferenceCount--;
-                    if (_ref->RootReferenceCount == 0) List_Delete(_ref->RootBelong);
-                }
+                if (_object->Generation > _ref->Generation) VM_ReduceCrossReference(_ref, 1);
                 // modity the reference count of _ref and check if it is removable
                 if (_ref->ReferenceCount-- == 0) VM_ReferenceGC(_ref);
             }
@@ -147,7 +146,7 @@ void scan_object(struct Object *_object, int _max_generation) {
      for (ullong i = 0; i < _object->FlagSize; i++) if (_object->Flag[i])
         for (ullong j = 0; j < 64 && (((i << 6) + j) << 3) < _object->Size; j++)
             if (_object->Flag[i] & (1ull << j)) {
-                struct Object *_ref = (struct Object *)*(ullong *)_object->Data[(((i << 6) + j) << 3)];
+                struct Object *_ref = (struct Object *)*(ullong *)&_object->Data[(((i << 6) + j) << 3)];
                 if (_ref == NULL || _ref->Generation > _max_generation) continue;
                 scan_object(_ref, _max_generation);
             }
@@ -183,7 +182,7 @@ void VM_GenerationalGC() {
         GenerationSize[1] += _object->Size;
         _object->Generation = 1;
         // modify the root list of generation 1
-        if (_object->RootReferenceCount) List_Insert(_object, RootListEnd[1]);
+        if (_object->RootReferenceCount) List_Insert(_object->RootBelong, RootListEnd[1]);
     }
     GenerationSize[0] = 0;
     

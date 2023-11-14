@@ -4,5 +4,6 @@
         "iosfwd": "cpp",
         "vector": "cpp",
         "gloconst.h": "c"
-    }
+    },
+    "cmake.configureOnOpen": true
 }
