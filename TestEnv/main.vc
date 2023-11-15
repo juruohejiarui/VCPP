@@ -141,12 +141,13 @@ namespace RecursionTest {
 }
 
 func int Main() {
-	Print("Test Module\n 1. AC-Machine 2. Class 3.float-max 4: prefix-gcd 5: recursion-test\n");
+	Print("Test Module\n 1. AC-Machine 2. Class 3.float-max 4: prefix-gcd 5: recursion-test 6: speed-test\n");
 	var int T = InputInt();
 	if (T == 1) ACMachine::solve();
 	else if (T == 2) ClassTest::solve();
 	else if (T == 3) FloatTest::solve();
 	else if (T == 4) GcdTest::solve();
 	else if (T == 5) RecursionTest::solve();
+	else if (T == 6) SpeedTest::solve();
 	return 0;
 }

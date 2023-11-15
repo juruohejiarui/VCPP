@@ -1,13 +1,14 @@
 #RELY "test-class.vlib"
-#RELY "math.vlib"
 #RELY "console.vlib"
+#RELY "math.vlib"
 #RELY "list.vlib"
-#GLOMEM 56
+#GLOMEM 72
 #EXPOSE ACMachine@solve
 #EXPOSE ClassTest@solve
 #EXPOSE FloatTest@solve
 #EXPOSE GcdTest@solve
 #EXPOSE RecursionTest@solve
+#EXPOSE SpeedTest@solve
 #EXTERN __init__.Container@List_Dimc0
 #EXTERN __init__.Container@List_Dimc0.int_Dimc0
 #EXTERN __init__.Container@String_Dimc0
@@ -64,7 +65,7 @@
 label Main
 setvar 1
 poparg 0
-#STRING "Test Module\n 1. AC-Machine 2. Class 3.float-max 4: prefix-gcd 5: recursion-test\n"
+#STRING "Test Module\n 1. AC-Machine 2. Class 3.float-max 4: prefix-gcd 5: recursion-test 6: speed-test\n"
 pstr 0
 vogvl
 call Console@Print.char_Dimc1 1
@@ -111,6 +112,15 @@ jz @IF_FAIL4
 call RecursionTest@solve 0
 jmp @IF_END4
 label @IF_FAIL4
+pvar0
+vi32gvl
+push 6
+eq
+jz @IF_FAIL5
+call SpeedTest@solve 0
+jmp @IF_END5
+label @IF_FAIL5
+label @IF_END5
 label @IF_END4
 label @IF_END3
 label @IF_END2
@@ -193,7 +203,7 @@ arrmem1
 mi32gvl
 push0
 eq
-jz @IF_FAIL5
+jz @IF_FAIL6
 poglo 0
 vogvl
 pvar1
@@ -218,9 +228,9 @@ new
 ocpy
 call __init__.ACMachine@ACNode_Dimc0 1
 momov
-jmp @IF_END5
-label @IF_FAIL5
-label @IF_END5
+jmp @IF_END6
+label @IF_FAIL6
+label @IF_END6
 pvar1
 poglo 0
 vogvl
@@ -292,7 +302,7 @@ pvar0
 vi32gvl
 arrmem1
 mi32gvl
-jz @IF_FAIL6
+jz @IF_FAIL7
 poglo 16
 vogvl
 pglo 32
@@ -310,9 +320,9 @@ vi32gvl
 arrmem1
 mi32gvl
 mi32mov
-jmp @IF_END6
-label @IF_FAIL6
-label @IF_END6
+jmp @IF_END7
+label @IF_FAIL7
+label @IF_END7
 label @LOOP_CTEND1
 pvar0
 excmd EX_vi32sinc
@@ -364,7 +374,7 @@ pvar1
 vi32gvl
 arrmem1
 mi32gvl
-jz @IF_FAIL7
+jz @IF_FAIL8
 poglo 16
 vogvl
 pglo 32
@@ -419,8 +429,8 @@ vi32gvl
 arrmem1
 mi32gvl
 mi32mov
-jmp @IF_END7
-label @IF_FAIL7
+jmp @IF_END8
+label @IF_FAIL8
 poglo 0
 vogvl
 pvar0
@@ -451,7 +461,7 @@ vi32gvl
 arrmem1
 mi32gvl
 mi32mov
-label @IF_END7
+label @IF_END8
 label @LOOP_CTEND3
 pvar1
 excmd EX_vi32sinc
@@ -753,7 +763,7 @@ pvar1
 vi32gvl
 push 18
 ge
-jz @IF_FAIL8
+jz @IF_FAIL9
 povar0
 vogvl
 mem 24
@@ -764,14 +774,14 @@ push 17
 sub
 mul
 mi32mov
-jmp @IF_END8
-label @IF_FAIL8
+jmp @IF_END9
+label @IF_FAIL9
 povar0
 vogvl
 mem 24
 push0
 mi32mov
-label @IF_END8
+label @IF_END9
 pvar1
 push0
 vi64mov
@@ -913,7 +923,7 @@ pvar2
 vi32gvl
 push1
 eq
-jz @IF_FAIL9
+jz @IF_FAIL10
 pvar1
 poglo 40
 vogvl
@@ -922,8 +932,8 @@ vi32gvl
 arrmem1
 mfgvl
 vfmov
-jmp @IF_END9
-label @IF_FAIL9
+jmp @IF_END10
+label @IF_FAIL10
 pvar1
 pvar1
 vfgvl
@@ -935,7 +945,7 @@ arrmem1
 mfgvl
 call Math@max.double_Dimc0.double_Dimc0 2
 vfmov
-label @IF_END9
+label @IF_END10
 label @LOOP_CTEND7
 pvar2
 excmd EX_vi32sinc
@@ -1065,7 +1075,7 @@ vi64gvl
 lmod
 push0
 eq
-jz @IF_FAIL10
+jz @IF_FAIL11
 push 2
 pvar0
 vi64gvl
@@ -1080,9 +1090,9 @@ pvar1
 push0
 vi64mov
 ret
-jmp @IF_END10
-label @IF_FAIL10
-label @IF_END10
+jmp @IF_END11
+label @IF_FAIL11
+label @IF_END11
 pvar2
 pvar0
 vi64gvl
@@ -1168,4 +1178,80 @@ vi64mov
 pvar1
 push0
 vi64mov
+ret
+label SpeedTest@solve
+setvar 1
+poparg 0
+pglo 56
+push 10000000
+vi32mov
+poglo 64
+push 8
+pglo 56
+vi32gvl
+push1
+add
+arrnew 1
+vomov
+poglo 64
+vogvl
+push0
+arrmem1
+push1
+mi64mov
+poglo 64
+vogvl
+push1
+arrmem1
+push1
+mi64mov
+pvar0
+push 2
+vi32mov
+label @LOOP_START10
+pvar0
+vi32gvl
+pglo 56
+vi32gvl
+le
+jz @LOOP_END10
+poglo 64
+vogvl
+pvar0
+vi32gvl
+arrmem1
+poglo 64
+vogvl
+pvar0
+vi32gvl
+push1
+sub
+arrmem1
+mi64gvl
+poglo 64
+vogvl
+pvar0
+vi32gvl
+push 2
+sub
+arrmem1
+mi64gvl
+uadd
+mi64mov
+label @LOOP_CTEND10
+pvar0
+excmd EX_vi32sinc
+pop
+jmp @LOOP_START10
+label @LOOP_END10
+pvar0
+push0
+vi64mov
+poglo 64
+vogvl
+pglo 56
+vi32gvl
+arrmem1
+mi64gvl
+call Console@Print.ulong_Dimc0 1
 ret

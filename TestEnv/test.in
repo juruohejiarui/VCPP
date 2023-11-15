@@ -13,8 +13,9 @@ math.vlib
 test-class.vc
 math.vlib
 test-class.vlib
-1 1 4
+1 2 4
 main.vc
+speedtest.vc
 list.vlib
 math.vlib
 console.vlib

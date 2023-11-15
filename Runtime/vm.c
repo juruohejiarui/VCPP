@@ -230,6 +230,7 @@ void *VM_VMThread(void *vexe_path) {
     while (call_stack_top != call_stack) {
         // use generational GC if it is necessary
         if (VM_Check()) VM_GenerationalGC();
+
         cid = current_runtime_block->ExecContent[call_stack_top->Address++];
         switch (cid) {
             #pragma region xxmov

@@ -2,12 +2,13 @@ cmake_minimum_required (VERSION 2.8)
 
 project (Interpreter)
 
-aux_source_directory(. SRC_LIST)
+set(CXX_SOURCE cpltree.cpp gloconst.cpp idenstring.cpp idensystem.cpp Interpreter.cpp pbuilder.cpp pretreat.cpp vasm.cpp vasmbuilder.cpp vcppcpl.cpp)
+set(CXX_HEADER gloconst.h pbuilder.h pretreat.h vasm.h vcppcpl.h)  
 
 # set_target_properties(${TARGET} PROPERTIES
 #     COMPILE_FLAGS "-pthread"
 #     LINK_FLAGS "-pthread")
-add_executable(Interpreter ${SRC_LIST})
+add_executable(Interpreter ${CXX_SOURCE} ${CXX_HEADER})
 find_package(Threads)
 target_link_libraries(Interpreter ${CMAKE_THREAD_LIBS_INIT})
 

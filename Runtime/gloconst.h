@@ -10,7 +10,9 @@
 // #define VM_DEBUG_MODULE
 // #define VM_DEBUG_MODULE_BREAK
 // #define PLATFORM_WINDOWS
-#define PLATFORM_MACOS
+// #define PLATFORM_MACOS
+#define PLATFORM_LINUX
+
 
 #ifdef PLATFORM_WINDOWS
 #include <Windows.h>
@@ -69,6 +71,11 @@ enum CommandID {
 	call, ecall, excmd, 
 };
 
+#ifdef PLATFORM_LINUX
+typedef unsigned long long uint64_t;
+typedef unsigned char uint8_t;
+#endif
+
 enum EXCommandID {
 	EX_none, 
 	//++ and --
@@ -79,7 +86,9 @@ enum EXCommandID {
 
 	// big number
 	EX_iadd, EX_isub, EX_imul, EX_idiv, EX_imod, EX_iand, EX_ior, EX_ixor, EX_inot, EX_ilmv, EX_irmv,
-	EX_itof,
+	EX_ieq, EX_ine, EX_igt, EX_ige, EX_ils, EX_ile,
+	EX_vipinc, EX_visinc, EX_vipdec, EX_visdec, EX_mipinc, EX_misinc, EX_mipdec, EX_misdec,
+	EX_btoi, EX_itoi, EX_ltoi, EX_utoi,
 
 	//+= -= *= /= %= &= |= ^= <<= >>=
 	EX_vbaddmov, EX_vaddmov, EX_vladdmov, EX_vuaddmov, EX_vfaddmov, 
@@ -127,7 +136,16 @@ void PrintError(string info, int line = 0);
 void PrintLog(string info, WORD foreground_color = FOREGROUND_INTENSITY | FOREGROUND_BLUE);
 #endif
 #ifdef PLATFORM_MACOS
+#define FOREGROUND_RED 0x01
+#define FOREGROUND_GREEN 0x02
+#define FOREGROUND_BLUE 0x04
+#define FOREGROUND_WHITE 0x07
+#define FOREGROUND_INTENSITY 0x08
+void PrintError(char* info, int line);
+void PrintLog(char* info, short foreground_color);
+#endif
 
+#ifdef PLATFORM_LINUX
 #define FOREGROUND_RED 0x01
 #define FOREGROUND_GREEN 0x02
 #define FOREGROUND_BLUE 0x04
