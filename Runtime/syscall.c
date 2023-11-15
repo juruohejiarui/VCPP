@@ -1,7 +1,7 @@
 #include "syscall.h"
 
-ullong System_IO(ullong id, ullong arg) {
-    ullong res = 0;
+uint64_t System_IO(uint64_t id, uint64_t arg) {
+    uint64_t res = 0;
     switch (id) {
         case 0:
             printf("%d", *(int*)&arg);

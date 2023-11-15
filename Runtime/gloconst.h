@@ -121,8 +121,6 @@ enum EXCommandID {
 	
 };
 
-typedef unsigned long long ullong;
-typedef unsigned char byte;
 #ifdef PLATFORM_WINDOWS
 #define FOREGROUND_WHITE 0x07
 void PrintError(string info, int line = 0);
@@ -145,4 +143,4 @@ int GetCommandArgCount(int cmdid);
 #define min(a, b) ((a) < (b) ? (a) : (b))
 #define max(a, b) ((a) < (b) ? (b) : (a))
 
-ullong StringToUint64(char *str);
+uint64_t StringToUint64(char *str);

@@ -240,7 +240,7 @@ namespace Interpreter {
 			else if (fir_ch == ')') r++, tk.Type = TokenType::SBracketR;
 			else if (fir_ch == '-') {
 				if (str[l + 1] == '-') r += 2, tk.Type = TokenType::PDec;
-				r++, tk.Type = TokenType::Minus;
+				else r++, tk.Type = TokenType::Minus;
 			} else if (fir_ch == '+') {
 				if (str[l + 1] == '+') r += 2, tk.Type = TokenType::PInc;
 				else r++, tk.Type = TokenType::Add;

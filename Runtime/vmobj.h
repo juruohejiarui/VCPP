@@ -14,17 +14,17 @@ struct Object {
     //The number of quote
     int ReferenceCount, RootReferenceCount, CrossReferenceCount;
     //the size of this object
-    ullong Size, FlagSize;
+    uint64_t Size, FlagSize;
     //The data
-    byte *Data;
+    uint8_t *Data;
     //The flag, the i-th bit demonstrates whethter Data[i...i+8] store an address of an object
-    ullong *Flag;
+    uint64_t *Flag;
 
     struct ListElement *Belong, *RootBelong, *CrossBelong;
 };
 
 struct BigNumber {
-    struct Object Base;
+    struct Object *Base;
     unsigned int Length;
     unsigned int Data[0];
 };
@@ -36,9 +36,10 @@ struct BigNumber {
 // the default gc time interval is 500(ms)
 #define DEFAULT_GC_TIME_INTERVAL (500000)
 
-void VM_InitGC(ullong _generation0_max_size, ullong _generation1_max_size, clock_t _gc_time_interval);
-struct Object* VM_CreateObject(ullong _object_size);
-// struct Object* VM_CreateBigNumber();
+void VM_InitGC(uint64_t _generation0_max_size, uint64_t _generation1_max_size, clock_t _gc_time_interval);
+struct Object *VM_CreateObject(uint64_t _object_size);
+struct Object *VM_CreateBuiltinObject(uint64_t _object_size, size_t _struct_size);
+struct BigNumber *VM_BigNumber_Create();
 
 // Check if it is necessary to run generational GC process.
 int VM_Check();
@@ -54,5 +55,5 @@ void VM_ReduceRootReference(struct Object *_object, int _data);
 void VM_AddCrossReference(struct Object *_object, int _data);
 void VM_ReduceCrossReference(struct Object *_object, int _data);
 
-static inline ullong VM_FlagAddr(ullong _address) { return _address >> 9; }
-static inline ullong VM_FlagBit(ullong _address) { return 1llu << ((_address >> 3) - ((_address >> 9) << 6)); }
+static inline uint64_t VM_FlagAddr(uint64_t _address) { return _address >> 9; }
+static inline uint64_t VM_FlagBit(uint64_t _address) { return 1llu << ((_address >> 3) - ((_address >> 9) << 6)); }

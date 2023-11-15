@@ -26,19 +26,19 @@ void PrintLog(char* info, short foreground_color) {
 
 void InitCommandInfo() {
     for (int i = 0; i <= CMD0_COUNT; i++) 
-        cmdsize[i] = sizeof(byte), cmdargcnt[i] = 0;
+        cmdsize[i] = sizeof(uint8_t), cmdargcnt[i] = 0;
     for (int i = CMD0_COUNT + 1; i <= CMD1_COUNT; i++) 
-        cmdsize[i] = sizeof(byte) + sizeof(ullong), cmdargcnt[i] = 1;
+        cmdsize[i] = sizeof(uint8_t) + sizeof(uint64_t), cmdargcnt[i] = 1;
     for (int i = CMD0_COUNT + CMD1_COUNT + 1; i <= CMD0_COUNT + CMD1_COUNT + CMD2_COUNT; i++)
-        cmdsize[i] = sizeof(byte) + sizeof(ullong) + sizeof(ullong), cmdargcnt[i] = 2;
+        cmdsize[i] = sizeof(uint8_t) + sizeof(uint64_t) + sizeof(uint64_t), cmdargcnt[i] = 2;
 }
 
 int GetCommandSize(int cmdid) { return cmdsize[cmdid]; }
 
 int GetCommandArgCount(int cmdid) { return cmdargcnt[cmdid]; }
 
-ullong StringToUint64(char *str) {
-    ullong res = 0;
+uint64_t StringToUint64(char *str) {
+    uint64_t res = 0;
     while (*str != '\0') res = (res << 3) + (res << 1) + (*str - '0');
     return res;
 }

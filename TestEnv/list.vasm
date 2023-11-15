@@ -718,13 +718,8 @@ mbmov
 povar0
 vogvl
 mem 24
-povar0
-vogvl
-mem 24
-mi32gvl
-push1
-add
-mi32mov
+excmd EX_mi32sinc
+pop
 pvar1
 push0
 vi64mov
@@ -738,13 +733,8 @@ poparg 1
 povar0
 vogvl
 mem 24
-povar0
-vogvl
-mem 24
-mi32gvl
-push1
-sub
-mi32mov
+excmd EX_mi32sdec
+pop
 povar0
 push0
 vomov
@@ -790,13 +780,6 @@ ret
 label Container@String@Print
 setvar 2
 poparg 1
-povar0
-vogvl
-mem 24
-mi32gvl
-call Console@Print.int_Dimc0 1
-push 10
-call Console@PutChar.char_Dimc0 1
 pvar1
 push0
 vi32mov

@@ -55,14 +55,13 @@ namespace Container {
 				this.data = new_data;
 			}
 			this.data[size] = data;
-			size = size + 1;
+			size++;
 		}
-		public func void Popback() { size = size - 1; }
+		public func void Popback() { size--; }
 		public func void Merge(String src) {
 			for (var int i = 0; i < src.Length(); i++) Append(src.Get(i));
 		}
 		public func void Print() {
-			Print(size), PutChar('\n');
 			for (var int i = 0; i < size; i++) PutChar(data[i]);
 		}
 		public func void Input() {

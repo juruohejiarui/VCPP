@@ -18,7 +18,7 @@ namespace ACMachine {
 		var int cur = 0;
 		for (var int i = 0; i < str.Length(); i++) {
 			var int ch = getid(str.Get(i));
-			if (nd[cur].ch[ch] == 0) nd[cur].ch[ch] = ++ndcnt;
+			if (nd[cur].ch[ch] == 0) nd[cur].ch[ch] = ++ndcnt, nd[ndcnt] = $ACNode();
 			cur = nd[cur].ch[ch];
 		}
 		nd[cur].fl++;
@@ -52,15 +52,16 @@ namespace ACMachine {
 	}
 	public func void solve() {
 		Print("ACMachine-test\n");
-		nd = $ACNode[1000005];
+		nd = $ACNode[1000005], nd[0] = $ACNode();
 		q = $int[1000005];
-		for (var int i = 0; i <= 1000000; i++) nd[i] = $ACNode();
 		var int n = InputInt();
+		Print("n = "), Print(n), PutChar('\n');
 		ndcnt = 0;
 		for (var int i = 1; i <= n; i++) {
 			var String str = $String();
 			str.Input();
 			insert(str);
+			Print("string "), Print(i), Print(": "), str.Print(), PutChar('\n');
 		}
 		build();
 		var String str = $String();

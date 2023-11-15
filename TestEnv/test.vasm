@@ -208,6 +208,16 @@ arrmem1
 pglo 8
 excmd EX_vi32pinc
 mi32mov
+poglo 0
+vogvl
+pglo 8
+vi32gvl
+arromem1
+push 32
+new
+ocpy
+call __init__.ACMachine@ACNode_Dimc0 1
+momov
 jmp @IF_END5
 label @IF_FAIL5
 label @IF_END5
@@ -283,16 +293,10 @@ vi32gvl
 arrmem1
 mi32gvl
 jz @IF_FAIL6
-pglo 32
-pglo 32
-vi32gvl
-push1
-add
-vi32mov
 poglo 16
 vogvl
 pglo 32
-vi32gvl
+excmd EX_vi32pinc
 arrmem1
 poglo 0
 vogvl
@@ -361,16 +365,10 @@ vi32gvl
 arrmem1
 mi32gvl
 jz @IF_FAIL7
-pglo 32
-pglo 32
-vi32gvl
-push1
-add
-vi32mov
 poglo 16
 vogvl
 pglo 32
-vi32gvl
+excmd EX_vi32pinc
 arrmem1
 poglo 0
 vogvl
@@ -615,55 +613,45 @@ push 8
 push 1000005
 arrnew 1
 vomov
-poglo 16
-push 4
-push 1000005
-arrnew 1
-vomov
-pvar0
-push0
-vi32mov
-label @LOOP_START6
-pvar0
-vi32gvl
-push 1000000
-le
-jz @LOOP_END6
 poglo 0
 vogvl
-pvar0
-vi32gvl
+push0
 arromem1
 push 32
 new
 ocpy
 call __init__.ACMachine@ACNode_Dimc0 1
 momov
-label @LOOP_CTEND6
-pvar0
-excmd EX_vi32sinc
-pop
-jmp @LOOP_START6
-label @LOOP_END6
-pvar0
-push0
-vi64mov
+poglo 16
+push 4
+push 1000005
+arrnew 1
+vomov
 pvar0
 call Console@InputInt 0
 vi32mov
+#STRING "n = "
+pstr 2
+vogvl
+call Console@Print.char_Dimc1 1
+pvar0
+vi32gvl
+call Console@Print.int_Dimc0 1
+push 10
+call Console@PutChar.char_Dimc0 1
 pglo 8
 push0
 vi32mov
 pvar1
 push1
 vi32mov
-label @LOOP_START7
+label @LOOP_START6
 pvar1
 vi32gvl
 pvar0
 vi32gvl
 le
-jz @LOOP_END7
+jz @LOOP_END6
 povar2
 push 32
 new
@@ -676,15 +664,31 @@ call Container@String@Input 1
 povar2
 vogvl
 call ACMachine@insert.Container@String_Dimc0 1
+#STRING "string "
+pstr 3
+vogvl
+call Console@Print.char_Dimc1 1
+pvar1
+vi32gvl
+call Console@Print.int_Dimc0 1
+#STRING ": "
+pstr 4
+vogvl
+call Console@Print.char_Dimc1 1
+povar2
+vogvl
+call Container@String@Print 1
+push 10
+call Console@PutChar.char_Dimc0 1
 povar2
 push0
 vomov
-label @LOOP_CTEND7
+label @LOOP_CTEND6
 pvar1
 excmd EX_vi32sinc
 pop
-jmp @LOOP_START7
-label @LOOP_END7
+jmp @LOOP_START6
+label @LOOP_END6
 pvar1
 push0
 vi64mov
@@ -794,7 +798,7 @@ label ClassTest@solve
 setvar 3
 poparg 0
 #STRING "class-test:\n"
-pstr 2
+pstr 5
 vogvl
 call Console@Print.char_Dimc1 1
 povar0
@@ -873,7 +877,7 @@ label FloatTest@solve
 setvar 3
 poparg 0
 #STRING "float-test: Now input the length of the sequence: "
-pstr 3
+pstr 6
 vogvl
 call Console@Print.char_Dimc1 1
 pvar0
@@ -891,13 +895,13 @@ pvar1
 pvar2
 push1
 vi32mov
-label @LOOP_START8
+label @LOOP_START7
 pvar2
 vi32gvl
 pvar0
 vi32gvl
 le
-jz @LOOP_END8
+jz @LOOP_END7
 poglo 40
 vogvl
 pvar2
@@ -932,12 +936,12 @@ mfgvl
 call Math@max.double_Dimc0.double_Dimc0 2
 vfmov
 label @IF_END9
-label @LOOP_CTEND8
+label @LOOP_CTEND7
 pvar2
 excmd EX_vi32sinc
 pop
-jmp @LOOP_START8
-label @LOOP_END8
+jmp @LOOP_START7
+label @LOOP_END7
 pvar2
 push0
 vi64mov
@@ -955,7 +959,7 @@ label GcdTest@solve
 setvar 3
 poparg 0
 #STRING "gcd-test: Now input the length of the sequence: "
-pstr 4
+pstr 7
 vogvl
 call Console@Print.char_Dimc1 1
 pvar0
@@ -972,13 +976,13 @@ vomov
 pvar1
 push1
 vi32mov
-label @LOOP_START9
+label @LOOP_START8
 pvar1
 vi32gvl
 pvar0
 vi32gvl
 le
-jz @LOOP_END9
+jz @LOOP_END8
 poglo 48
 vogvl
 pvar1
@@ -986,12 +990,12 @@ vi32gvl
 arrmem1
 call Console@InputInt 0
 mi32mov
-label @LOOP_CTEND9
+label @LOOP_CTEND8
 pvar1
 excmd EX_vi32sinc
 pop
-jmp @LOOP_START9
-label @LOOP_END9
+jmp @LOOP_START8
+label @LOOP_END8
 pvar1
 push0
 vi64mov
@@ -1010,13 +1014,13 @@ call Console@PutChar.char_Dimc0 1
 pvar2
 push 2
 vi32mov
-label @LOOP_START10
+label @LOOP_START9
 pvar2
 vi32gvl
 pvar0
 vi32gvl
 le
-jz @LOOP_END10
+jz @LOOP_END9
 pvar1
 pvar1
 vi32gvl
@@ -1033,12 +1037,12 @@ vi32gvl
 call Console@Print.int_Dimc0 1
 push 32
 call Console@PutChar.char_Dimc0 1
-label @LOOP_CTEND10
+label @LOOP_CTEND9
 pvar2
 excmd EX_vi32sinc
 pop
-jmp @LOOP_START10
-label @LOOP_END10
+jmp @LOOP_START9
+label @LOOP_END9
 pvar2
 push0
 vi64mov
@@ -1126,7 +1130,7 @@ label RecursionTest@solve
 setvar 2
 poparg 0
 #STRING "recursion-test\n"
-pstr 5
+pstr 8
 vogvl
 call Console@Print.char_Dimc1 1
 pvar0

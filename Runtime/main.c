@@ -2,9 +2,9 @@
 #include "vm.h"
 
 int main(int argc, char **argv) {
-    // freopen("input.in", "r", stdin);
+    freopen("input.in", "r", stdin);
     char *vexe_path = "./test.vexe";
-    ullong calculate_stack_size = DEFAULT_CALCUATE_STACK_SIZE,
+    uint64_t calculate_stack_size = DEFAULT_CALCUATE_STACK_SIZE,
             call_stack_size = DEFAULT_CALL_STACK_SIZE;
     for (int i = 1; i < argc; i++) {
         if (argv[i][0] == '-') {

@@ -1,7 +1,7 @@
 #include "hashmap.h"
 
-ullong CalcHashKey(char *str, ullong range) {
-    ullong res = 0;
+uint64_t CalcHashKey(char *str, uint64_t range) {
+    uint64_t res = 0;
     while (*str != '\0') {
         res = (res << 8) + *str; str++;
         if (res > range) res %= range;
@@ -20,7 +20,7 @@ int StringEqual(char *s1, char *s2) {
     if (*s1 != '\0' || *s2 != '\0') return 0;
     return 1;
 }
-struct HashMap *HashMap_CreateMap(ullong range) {
+struct HashMap *HashMap_CreateMap(uint64_t range) {
     struct HashMap *map = (struct HashMap *) malloc(sizeof(struct HashMap));
     map->ElementStart = (struct HashMapElement **) malloc(sizeof(struct HashMapElement*) * range);
     map->ElementEnd = (struct HashMapElement **) malloc(sizeof(struct HashMapElement*) * range);
@@ -37,7 +37,7 @@ struct HashMap *HashMap_CreateMap(ullong range) {
 }
 
 void HashMap_Insert(struct HashMap *map, char *key, void *value) {
-    ullong hash = CalcHashKey(key, map->HashRange);
+    uint64_t hash = CalcHashKey(key, map->HashRange);
     for (struct HashMapElement *ele = map->ElementStart[hash]->Next; ele != map->ElementEnd[hash]; ele = ele->Next)
         // find a existing one
         if (StringEqual(ele->Key, key)) { ele->Value = value; return ; }
@@ -53,7 +53,7 @@ void HashMap_Insert(struct HashMap *map, char *key, void *value) {
 }
 
 void HashMap_Erase(struct HashMap *map, char *key, int free_value) {
-    ullong hash = CalcHashKey(key, map->HashRange);
+    uint64_t hash = CalcHashKey(key, map->HashRange);
     for (struct HashMapElement *ele = map->ElementStart[hash]->Next; ele != map->ElementEnd[hash]; ele = ele->Next)
         // find a existing one
         if (StringEqual(ele->Key, key)) {
@@ -67,7 +67,7 @@ void HashMap_Erase(struct HashMap *map, char *key, int free_value) {
 }
 
 int HashMap_Count(struct HashMap *map, char *key) {
-    ullong hash = CalcHashKey(key, map->HashRange);
+    uint64_t hash = CalcHashKey(key, map->HashRange);
     for (struct HashMapElement *ele = map->ElementStart[hash]->Next; ele != map->ElementEnd[hash]; ele = ele->Next)
         // find a existing one
         if (StringEqual(ele->Key, key)) return 1;
@@ -75,7 +75,7 @@ int HashMap_Count(struct HashMap *map, char *key) {
 }
 
 void *HashMap_Get(struct HashMap *map, char *key) {
-    ullong hash = CalcHashKey(key, map->HashRange);
+    uint64_t hash = CalcHashKey(key, map->HashRange);
     for (struct HashMapElement *ele = map->ElementStart[hash]->Next; ele != map->ElementEnd[hash]; ele = ele->Next)
         // find a existing one
         if (StringEqual(ele->Key, key)) return ele->Value;
