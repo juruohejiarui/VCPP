@@ -1211,8 +1211,7 @@ vi32mov
 label @LOOP_START10
 pvar0
 vi32gvl
-pglo 56
-vi32gvl
+push 10000000
 le
 jz @LOOP_END10
 poglo 64

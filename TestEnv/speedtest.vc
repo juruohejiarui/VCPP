@@ -6,7 +6,7 @@ namespace SpeedTest {
     public func void solve() {
         n = 10000000, f = $ulong[n + 1];
         f[0] = 1 => ulong, f[1] = 1 => ulong;
-        for (var int i = 2; i <= n; i++) f[i] = f[i - 1] + f[i - 2];
+        for (var int i = 2; i <= n; i = i + 1) f[i] = f[i - 1] + f[i - 2];
         Print(f[n]);
     }
 }

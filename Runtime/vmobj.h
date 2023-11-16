@@ -48,21 +48,6 @@ void VM_ReferenceGC(struct Object* _object);
 // the generational GC process
 void VM_GenerationalGC();
 
-static inline void VM_AddReference(struct Object *_object, int _data) { _object->ReferenceCount += _data; }
-
-
-static inline void VM_AddRootReference(struct Object *_object, int _data) {
-    _object->RootReferenceCount += _data;
-}
-
-static inline void VM_ReduceReference(struct Object *_object, int _data) {
-    _object->ReferenceCount -= _data;
-    if (_object->ReferenceCount == 0) VM_ReferenceGC(_object);
-}
-
-static inline void VM_ReduceRootReference(struct Object *_object, int _data) {
-    _object->RootReferenceCount -= _data;
-}
 void VM_AddCrossReference(struct Object *_object, int _data);
 void VM_ReduceCrossReference(struct Object *_object, int _data);
 
