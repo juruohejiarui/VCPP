@@ -221,6 +221,220 @@ void Function_Return() {
 }
 #pragma endregion
 
+static inline void EXCommandHandler(uint64_t excid) {
+    switch (excid) {
+        #pragma region ++ and --
+        case EX_vbpinc:
+            *(uint8_t *)calculate_stack_top = ++*(uint8_t *)*calculate_stack_top;
+            *calculate_stack_top = (*calculate_stack_top & ~(1ull << 8)) ^ (~(1ull << 8));
+            break;
+        case EX_vi32pinc:
+            *(int *)calculate_stack_top = ++*(int *)*calculate_stack_top;
+            *((int *)calculate_stack_top + 1) = 0;
+            break;
+        case EX_vi64pinc:
+            *(long long *)calculate_stack_top = ++*(long long *)*calculate_stack_top;
+            break;
+        case EX_vupinc:
+            *calculate_stack_top = ++*(uint64_t *)*calculate_stack_top;
+            break;
+        case EX_vbsinc:
+            *calculate_stack_top = (*(uint8_t *)*calculate_stack_top)++;
+            *calculate_stack_top = (*calculate_stack_top & ~(1ull << 8)) ^ (~(1ull << 8));
+            break;
+        case EX_vi32sinc:
+            *calculate_stack_top = (*(int *)*calculate_stack_top)++;
+            *((int *)calculate_stack_top + 1) = 0;
+            break;
+        case EX_vi64sinc:
+            *(long long *)calculate_stack_top = (*(long long *)*calculate_stack_top)++;
+            break;
+        case EX_vusinc:
+            *calculate_stack_top = (*(uint64_t *)*calculate_stack_top)++;
+            break;
+
+        case EX_vbpdec:
+            *(uint8_t *)calculate_stack_top = --*(uint8_t *)*calculate_stack_top;
+            *calculate_stack_top = (*calculate_stack_top & ~(1ull << 8)) ^ (~(1ull << 8));
+            break;
+        case EX_vi32pdec:
+            *(int *)calculate_stack_top = --*(int *)*calculate_stack_top;
+            break;
+        case EX_vi64pdec:
+            *(long long *)calculate_stack_top = --*(long long *)*calculate_stack_top;
+            break;
+        case EX_vupdec:
+            *calculate_stack_top = --*(uint64_t *)*calculate_stack_top;
+            break;
+        case EX_vbsdec:
+            *calculate_stack_top = *(uint8_t *)*calculate_stack_top--;
+            break;
+        case EX_vi32sdec:
+            *calculate_stack_top = (*(int *)*calculate_stack_top)--;
+            *((int *)calculate_stack_top + 1) = 0;
+            break;
+        case EX_vi64sdec:
+            *(long long *)calculate_stack_top = (*(long long *)*calculate_stack_top)--;
+            break;
+        case EX_vusdec:
+            *calculate_stack_top = *(uint64_t *)*calculate_stack_top--;
+            break;
+
+        case EX_mbpinc:
+            {
+                struct Object *obj = (struct Object *)*(calculate_stack_top - 1);
+                obj->RootReferenceCount--, obj->ReferenceCount--;
+                if (!obj->ReferenceCount) VM_ReferenceGC(obj);
+                *(uint8_t *)(calculate_stack_top - 1) = ++*(uint8_t *)*calculate_stack_top;
+                calculate_stack_top--;
+                *calculate_stack_top = (*calculate_stack_top & ~(1ull << 8)) ^ (~(1ull << 8));
+            }
+            break;
+        case EX_mi32pinc:
+            {
+                struct Object *obj = (struct Object *)*(calculate_stack_top - 1);
+                obj->RootReferenceCount--, obj->ReferenceCount--;
+                if (!obj->ReferenceCount) VM_ReferenceGC(obj);
+                *(int *)(calculate_stack_top - 1) = ++*(int *)*calculate_stack_top;
+                calculate_stack_top--;
+                *((int *)calculate_stack_top + 1) = 0;
+            }
+            break;
+        case EX_mi64pinc:
+            {
+                struct Object *obj = (struct Object *)*(calculate_stack_top - 1);
+                obj->RootReferenceCount--, obj->ReferenceCount--;
+                if (!obj->ReferenceCount) VM_ReferenceGC(obj);
+                *(long long *)(calculate_stack_top - 1) = ++*(long long *)*calculate_stack_top;
+                calculate_stack_top--;
+            }
+            break;
+        case EX_mupinc:
+            {
+                struct Object *obj = (struct Object *)*(calculate_stack_top - 1);
+                obj->RootReferenceCount--, obj->ReferenceCount--;
+                if (!obj->ReferenceCount) VM_ReferenceGC(obj);
+                *(uint64_t *)(calculate_stack_top - 1) = ++*(uint64_t *)*calculate_stack_top;
+                calculate_stack_top--;
+            }
+            break;
+        case EX_mbsinc:
+            {
+                struct Object *obj = (struct Object *)*(calculate_stack_top - 1);
+                obj->RootReferenceCount--, obj->ReferenceCount--;
+                if (!obj->ReferenceCount) VM_ReferenceGC(obj);
+                *(uint8_t *)(calculate_stack_top - 1) = (*(uint8_t *)*calculate_stack_top)++;
+                calculate_stack_top--;
+                *calculate_stack_top = (*calculate_stack_top & ~(1ull << 8)) ^ (~(1ull << 8));
+            }
+            break;
+        case EX_mi32sinc:
+            {
+                struct Object *obj = (struct Object *)*(calculate_stack_top - 1);
+                obj->RootReferenceCount--, obj->ReferenceCount--;
+                if (!obj->ReferenceCount) VM_ReferenceGC(obj);
+                *(int *)(calculate_stack_top - 1) = (*(int *)*calculate_stack_top)++;
+                calculate_stack_top--;
+                *((int *)calculate_stack_top + 1) = 0;
+            }
+            break;
+        case EX_mi64sinc:
+            {
+                struct Object *obj = (struct Object *)*(calculate_stack_top - 1);
+                obj->RootReferenceCount--, obj->ReferenceCount--;
+                if (!obj->ReferenceCount) VM_ReferenceGC(obj);
+                *(long long *)(calculate_stack_top - 1) = (*(long long *)*calculate_stack_top)++;
+                calculate_stack_top--;
+            }
+            break;
+        case EX_musinc:
+            {
+                struct Object *obj = (struct Object *)*(calculate_stack_top - 1);
+                obj->RootReferenceCount--, obj->ReferenceCount--;
+                if (!obj->ReferenceCount) VM_ReferenceGC(obj);
+                *(uint64_t *)(calculate_stack_top - 1) = (*(uint64_t *)*calculate_stack_top)++;
+                calculate_stack_top--;
+            }
+            break;
+        case EX_mbpdec:
+            {
+                struct Object *obj = (struct Object *)*(calculate_stack_top - 1);
+                obj->RootReferenceCount--, obj->ReferenceCount--;
+                if (!obj->ReferenceCount) VM_ReferenceGC(obj);
+                *(uint8_t *)(calculate_stack_top - 1) = --*(uint8_t *)*calculate_stack_top;
+                calculate_stack_top--;
+                *calculate_stack_top = (*calculate_stack_top & ~(1ull << 8)) ^ (~(1ull << 8));
+            }
+            break;
+        case EX_mi32pdec:
+            {
+                struct Object *obj = (struct Object *)*(calculate_stack_top - 1);
+                obj->RootReferenceCount--, obj->ReferenceCount--;
+                if (!obj->ReferenceCount) VM_ReferenceGC(obj);
+                *(int *)(calculate_stack_top - 1) = --*(int *)*calculate_stack_top;
+                calculate_stack_top--;
+                *((int *)calculate_stack_top + 1) = 0;
+            }
+            break;
+        case EX_mi64pdec:
+            {
+                struct Object *obj = (struct Object *)*(calculate_stack_top - 1);
+                obj->RootReferenceCount--, obj->ReferenceCount--;
+                if (!obj->ReferenceCount) VM_ReferenceGC(obj);
+                *(long long *)(calculate_stack_top - 1) = --*(long long *)*calculate_stack_top;
+                calculate_stack_top--;
+            }
+            break;
+        case EX_mupdec:
+            {
+                struct Object *obj = (struct Object *)*(calculate_stack_top - 1);
+                obj->RootReferenceCount--, obj->ReferenceCount--;
+                if (!obj->ReferenceCount) VM_ReferenceGC(obj);
+                *(uint64_t *)(calculate_stack_top - 1) = --*(uint64_t *)*calculate_stack_top;
+                calculate_stack_top--;
+            }
+            break;
+        case EX_mbsdec:
+            {
+                struct Object *obj = (struct Object *)*(calculate_stack_top - 1);
+                obj->RootReferenceCount--, obj->ReferenceCount--;
+                if (!obj->ReferenceCount) VM_ReferenceGC(obj);
+                *(uint8_t *)(calculate_stack_top - 1) = (*(uint8_t *)*calculate_stack_top)--;
+                calculate_stack_top--;
+                *calculate_stack_top = (*calculate_stack_top & ~(1ull << 8)) ^ (~(1ull << 8));
+            }
+            break;
+        case EX_mi32sdec:
+            {
+                struct Object *obj = (struct Object *)*(calculate_stack_top - 1);
+                obj->RootReferenceCount--, obj->ReferenceCount--;
+                if (!obj->ReferenceCount) VM_ReferenceGC(obj);
+                *(int *)(calculate_stack_top - 1) = (*(int *)*calculate_stack_top)--;
+                calculate_stack_top--;
+                *((int *)calculate_stack_top + 1) = 0;
+            }
+            break;
+        case EX_mi64sdec:
+            {
+                struct Object *obj = (struct Object *)*(calculate_stack_top - 1);
+                obj->RootReferenceCount--, obj->ReferenceCount--;
+                if (!obj->ReferenceCount) VM_ReferenceGC(obj);
+                *(long long *)(calculate_stack_top - 1) = (*(long long *)*calculate_stack_top)--;
+                calculate_stack_top--;
+            }
+            break;
+        case EX_musdec:
+            {
+                struct Object *obj = (struct Object *)*(calculate_stack_top - 1);
+                obj->RootReferenceCount--, obj->ReferenceCount--;
+                if (!obj->ReferenceCount) VM_ReferenceGC(obj);
+                *(uint64_t *)(calculate_stack_top - 1) = (*(uint64_t *)*calculate_stack_top)--;
+                calculate_stack_top--;
+            }
+            break;
+        #pragma endregion
+    }
+}
 void *VM_VMThread(void *vexe_path) {
     // printf("VMThread Launched.\n");
     uint64_t main_addr = LoadVexe((char *)vexe_path);
@@ -323,7 +537,7 @@ void *VM_VMThread(void *vexe_path) {
                 }
                 break;
             #pragma endregion
-            #pragma region basic operator (+ - * / %)
+            #pragma region basic operator (+ - * / %)                     m m ,mb,mn m nm ,nm n,,,,,mnm,nm,nnnnnnnnnnn mn,m,n m,n  mmn,mn,m,n,mnn897098709870870988907897008790970987098709870987090787900897789
             case add:
                 *((int *)(calculate_stack_top - 1)) += *((int *)calculate_stack_top);
                 calculate_stack_top--;
@@ -921,218 +1135,7 @@ void *VM_VMThread(void *vexe_path) {
                 {
                     uint64_t excid = *(uint64_t *)(current_runtime_block->ExecContent + call_stack_top->Address);
                     call_stack_top->Address += sizeof(uint64_t);
-                    switch (excid) {
-                        #pragma region ++ and --
-                        case EX_vbpinc:
-                            *(uint8_t *)calculate_stack_top = ++*(uint8_t *)*calculate_stack_top;
-                            *calculate_stack_top = (*calculate_stack_top & ~(1ull << 8)) ^ (~(1ull << 8));
-                            break;
-                        case EX_vi32pinc:
-                            *(int *)calculate_stack_top = ++*(int *)*calculate_stack_top;
-                            *((int *)calculate_stack_top + 1) = 0;
-                            break;
-                        case EX_vi64pinc:
-                            *(long long *)calculate_stack_top = ++*(long long *)*calculate_stack_top;
-                            break;
-                        case EX_vupinc:
-                            *calculate_stack_top = ++*(uint64_t *)*calculate_stack_top;
-                            break;
-                        case EX_vbsinc:
-                            *calculate_stack_top = (*(uint8_t *)*calculate_stack_top)++;
-                            *calculate_stack_top = (*calculate_stack_top & ~(1ull << 8)) ^ (~(1ull << 8));
-                            break;
-                        case EX_vi32sinc:
-                            *calculate_stack_top = (*(int *)*calculate_stack_top)++;
-                            *((int *)calculate_stack_top + 1) = 0;
-                            break;
-                        case EX_vi64sinc:
-                            *(long long *)calculate_stack_top = (*(long long *)*calculate_stack_top)++;
-                            break;
-                        case EX_vusinc:
-                            *calculate_stack_top = (*(uint64_t *)*calculate_stack_top)++;
-                            break;
-
-                        case EX_vbpdec:
-                            *(uint8_t *)calculate_stack_top = --*(uint8_t *)*calculate_stack_top;
-                            *calculate_stack_top = (*calculate_stack_top & ~(1ull << 8)) ^ (~(1ull << 8));
-                            break;
-                        case EX_vi32pdec:
-                            *(int *)calculate_stack_top = --*(int *)*calculate_stack_top;
-                            break;
-                        case EX_vi64pdec:
-                            *(long long *)calculate_stack_top = --*(long long *)*calculate_stack_top;
-                            break;
-                        case EX_vupdec:
-                            *calculate_stack_top = --*(uint64_t *)*calculate_stack_top;
-                            break;
-                        case EX_vbsdec:
-                            *calculate_stack_top = *(uint8_t *)*calculate_stack_top--;
-                            break;
-                        case EX_vi32sdec:
-                            *calculate_stack_top = (*(int *)*calculate_stack_top)--;
-                            *((int *)calculate_stack_top + 1) = 0;
-                            break;
-                        case EX_vi64sdec:
-                            *(long long *)calculate_stack_top = (*(long long *)*calculate_stack_top)--;
-                            break;
-                        case EX_vusdec:
-                            *calculate_stack_top = *(uint64_t *)*calculate_stack_top--;
-                            break;
-
-                        case EX_mbpinc:
-                            {
-                                struct Object *obj = (struct Object *)*(calculate_stack_top - 1);
-                                obj->RootReferenceCount--, obj->ReferenceCount--;
-                                if (!obj->ReferenceCount) VM_ReferenceGC(obj);
-                                *(uint8_t *)(calculate_stack_top - 1) = ++*(uint8_t *)*calculate_stack_top;
-                                calculate_stack_top--;
-                                *calculate_stack_top = (*calculate_stack_top & ~(1ull << 8)) ^ (~(1ull << 8));
-                            }
-                            break;
-                        case EX_mi32pinc:
-                            {
-                                struct Object *obj = (struct Object *)*(calculate_stack_top - 1);
-                                obj->RootReferenceCount--, obj->ReferenceCount--;
-                                if (!obj->ReferenceCount) VM_ReferenceGC(obj);
-                                *(int *)(calculate_stack_top - 1) = ++*(int *)*calculate_stack_top;
-                                calculate_stack_top--;
-                                *((int *)calculate_stack_top + 1) = 0;
-                            }
-                            break;
-                        case EX_mi64pinc:
-                            {
-                                struct Object *obj = (struct Object *)*(calculate_stack_top - 1);
-                                obj->RootReferenceCount--, obj->ReferenceCount--;
-                                if (!obj->ReferenceCount) VM_ReferenceGC(obj);
-                                *(long long *)(calculate_stack_top - 1) = ++*(long long *)*calculate_stack_top;
-                                calculate_stack_top--;
-                            }
-                            break;
-                        case EX_mupinc:
-                            {
-                                struct Object *obj = (struct Object *)*(calculate_stack_top - 1);
-                                obj->RootReferenceCount--, obj->ReferenceCount--;
-                                if (!obj->ReferenceCount) VM_ReferenceGC(obj);
-                                *(uint64_t *)(calculate_stack_top - 1) = ++*(uint64_t *)*calculate_stack_top;
-                                calculate_stack_top--;
-                            }
-                            break;
-                        case EX_mbsinc:
-                            {
-                                struct Object *obj = (struct Object *)*(calculate_stack_top - 1);
-                                obj->RootReferenceCount--, obj->ReferenceCount--;
-                                if (!obj->ReferenceCount) VM_ReferenceGC(obj);
-                                *(uint8_t *)(calculate_stack_top - 1) = (*(uint8_t *)*calculate_stack_top)++;
-                                calculate_stack_top--;
-                                *calculate_stack_top = (*calculate_stack_top & ~(1ull << 8)) ^ (~(1ull << 8));
-                            }
-                            break;
-                        case EX_mi32sinc:
-                            {
-                                struct Object *obj = (struct Object *)*(calculate_stack_top - 1);
-                                obj->RootReferenceCount--, obj->ReferenceCount--;
-                                if (!obj->ReferenceCount) VM_ReferenceGC(obj);
-                                *(int *)(calculate_stack_top - 1) = (*(int *)*calculate_stack_top)++;
-                                calculate_stack_top--;
-                                *((int *)calculate_stack_top + 1) = 0;
-                            }
-                            break;
-                        case EX_mi64sinc:
-                            {
-                                struct Object *obj = (struct Object *)*(calculate_stack_top - 1);
-                                obj->RootReferenceCount--, obj->ReferenceCount--;
-                                if (!obj->ReferenceCount) VM_ReferenceGC(obj);
-                                *(long long *)(calculate_stack_top - 1) = (*(long long *)*calculate_stack_top)++;
-                                calculate_stack_top--;
-                            }
-                            break;
-                        case EX_musinc:
-                            {
-                                struct Object *obj = (struct Object *)*(calculate_stack_top - 1);
-                                obj->RootReferenceCount--, obj->ReferenceCount--;
-                                if (!obj->ReferenceCount) VM_ReferenceGC(obj);
-                                *(uint64_t *)(calculate_stack_top - 1) = (*(uint64_t *)*calculate_stack_top)++;
-                                calculate_stack_top--;
-                            }
-                            break;
-                        case EX_mbpdec:
-                            {
-                                struct Object *obj = (struct Object *)*(calculate_stack_top - 1);
-                                obj->RootReferenceCount--, obj->ReferenceCount--;
-                                if (!obj->ReferenceCount) VM_ReferenceGC(obj);
-                                *(uint8_t *)(calculate_stack_top - 1) = --*(uint8_t *)*calculate_stack_top;
-                                calculate_stack_top--;
-                                *calculate_stack_top = (*calculate_stack_top & ~(1ull << 8)) ^ (~(1ull << 8));
-                            }
-                            break;
-                        case EX_mi32pdec:
-                            {
-                                struct Object *obj = (struct Object *)*(calculate_stack_top - 1);
-                                obj->RootReferenceCount--, obj->ReferenceCount--;
-                                if (!obj->ReferenceCount) VM_ReferenceGC(obj);
-                                *(int *)(calculate_stack_top - 1) = --*(int *)*calculate_stack_top;
-                                calculate_stack_top--;
-                                *((int *)calculate_stack_top + 1) = 0;
-                            }
-                            break;
-                        case EX_mi64pdec:
-                            {
-                                struct Object *obj = (struct Object *)*(calculate_stack_top - 1);
-                                obj->RootReferenceCount--, obj->ReferenceCount--;
-                                if (!obj->ReferenceCount) VM_ReferenceGC(obj);
-                                *(long long *)(calculate_stack_top - 1) = --*(long long *)*calculate_stack_top;
-                                calculate_stack_top--;
-                            }
-                            break;
-                        case EX_mupdec:
-                            {
-                                struct Object *obj = (struct Object *)*(calculate_stack_top - 1);
-                                obj->RootReferenceCount--, obj->ReferenceCount--;
-                                if (!obj->ReferenceCount) VM_ReferenceGC(obj);
-                                *(uint64_t *)(calculate_stack_top - 1) = --*(uint64_t *)*calculate_stack_top;
-                                calculate_stack_top--;
-                            }
-                            break;
-                        case EX_mbsdec:
-                            {
-                                struct Object *obj = (struct Object *)*(calculate_stack_top - 1);
-                                obj->RootReferenceCount--, obj->ReferenceCount--;
-                                if (!obj->ReferenceCount) VM_ReferenceGC(obj);
-                                *(uint8_t *)(calculate_stack_top - 1) = (*(uint8_t *)*calculate_stack_top)--;
-                                calculate_stack_top--;
-                                *calculate_stack_top = (*calculate_stack_top & ~(1ull << 8)) ^ (~(1ull << 8));
-                            }
-                            break;
-                        case EX_mi32sdec:
-                            {
-                                struct Object *obj = (struct Object *)*(calculate_stack_top - 1);
-                                obj->RootReferenceCount--, obj->ReferenceCount--;
-                                if (!obj->ReferenceCount) VM_ReferenceGC(obj);
-                                *(int *)(calculate_stack_top - 1) = (*(int *)*calculate_stack_top)--;
-                                calculate_stack_top--;
-                                *((int *)calculate_stack_top + 1) = 0;
-                            }
-                            break;
-                        case EX_mi64sdec:
-                            {
-                                struct Object *obj = (struct Object *)*(calculate_stack_top - 1);
-                                obj->RootReferenceCount--, obj->ReferenceCount--;
-                                if (!obj->ReferenceCount) VM_ReferenceGC(obj);
-                                *(long long *)(calculate_stack_top - 1) = (*(long long *)*calculate_stack_top)--;
-                                calculate_stack_top--;
-                            }
-                            break;
-                        case EX_musdec:
-                            {
-                                struct Object *obj = (struct Object *)*(calculate_stack_top - 1);
-                                obj->RootReferenceCount--, obj->ReferenceCount--;
-                                if (!obj->ReferenceCount) VM_ReferenceGC(obj);
-                                *(uint64_t *)(calculate_stack_top - 1) = (*(uint64_t *)*calculate_stack_top)--;
-                                calculate_stack_top--;
-                            }
-                            break;
-                        #pragma endregion
-                    }
+                    EXCommandHandler(excid);
                 }
                 break;
         }

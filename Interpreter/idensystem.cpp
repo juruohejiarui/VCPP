@@ -45,6 +45,7 @@ namespace Interpreter {
 		BuildBasicType(uint64_cls, uint64_etype, "ulong", 8);
 		BuildBasicType(float64_cls, float64_etype, "double", 8);
 		BuildBasicType(void_cls, void_etype, "void", 0);
+		BuildBasicType(bignumber_cls, bignumber_etype, "large", 0);
 		BuildBasicType(object_cls, object_etype, "object", 8);
 	}
 
@@ -569,6 +570,14 @@ namespace Interpreter {
 		return res;
 	}
 	
+	CplNode *AddConvertOperator(CplNode *node, const ExpressionType &etype) {
+		if (node->ExprType == etype) return node;
+		CplNode *expr_as = new CplNode(CplNodeType::As), *expr_type = new CplNode(CplNodeType::Identifier);
+		expr_as->ExprType = etype, expr_as->ExprType.IsQuote = false;
+		expr_type->ExprType = expr_as->ExprType;
+		expr_as->AddChild(node), expr_as->AddChild(expr_type);
+		return expr_as;
+	}
 
 	int BuildExpressionEType(CplNode *&node) {
 		int res = 0;
@@ -591,23 +600,50 @@ namespace Interpreter {
 				break;
 			case CplNodeType::Assign:
 				res = BuildExpressionEType(node->At(0)) | BuildExpressionEType(node->At(1));
-				if (!node->At(0)->ExprType.IsQuote || node->At(0)->ExprType != node->At(1)->ExprType) {
-					PrintError("Invalid operand of \"=\"", node->Content.Line);
-					node->Type = CplNodeType::Error, res = 1;
+				{
+					bool succ = false;
+					// the operands have the same expression type
+					if (node->At(0)->ExprType == node->At(1)->ExprType) succ = true;
+					else {
+						// add a convert operation
+						if ((IsBasicType(node->At(0)->ExprType) || node->At(0)->ExprType == bignumber_etype)
+						 && (IsBasicType(node->At(1)->ExprType) || node->At(1)->ExprType == bignumber_etype)) {
+							node->At(1) = AddConvertOperator(node->At(1), node->At(0)->ExprType);
+							succ = true;
+						}
+					}
+					if (!node->At(0)->ExprType.IsQuote || !succ) {
+						PrintError("Invalid operand of \"=\"", node->Content.Line);
+						node->Type = CplNodeType::Error, res = 1;
+					}
+					node->ExprType = void_etype;
+					break;
 				}
-				node->ExprType = void_etype;
-				break;
 			case CplNodeType::Add:
 			case CplNodeType::Minus:
 			case CplNodeType::Mul:
 			case CplNodeType::Divison:
 				res |= BuildExpressionEType(node->At(0)) | BuildExpressionEType(node->At(1));
-				if (!IsBasicType(node->At(0)->ExprType) || !IsBasicType(node->At(1)->ExprType))
+				
+				if ((!IsBasicType(node->At(0)->ExprType) && node->At(0)->ExprType != bignumber_etype)
+				 || (!IsBasicType(node->At(1)->ExprType) && node->At(1)->ExprType != bignumber_etype))
 					PrintError("The operand of + - * / must be number.", node->Content.Line),
 					node->Type = CplNodeType::Error, res = 1;
 				else node->ExprType = GetOperResultType(node->At(0)->ExprType, node->At(1)->ExprType);
+				node->At(0) = AddConvertOperator(node->At(0), node->ExprType);
+				node->At(1) = AddConvertOperator(node->At(1), node->ExprType);
 				break;
 			case CplNodeType::Mod:
+				res |= BuildExpressionEType(node->At(0)) | BuildExpressionEType(node->At(1));
+				
+				if ((!IsInteger(node->At(0)->ExprType) && node->At(0)->ExprType != bignumber_etype)
+				 || (!IsInteger(node->At(1)->ExprType) && node->At(1)->ExprType != bignumber_etype))
+					PrintError("The operand of + - * / must be number.", node->Content.Line),
+					node->Type = CplNodeType::Error, res = 1;
+				else node->ExprType = GetOperResultType(node->At(0)->ExprType, node->At(1)->ExprType);
+				node->At(0) = AddConvertOperator(node->At(0), node->ExprType);
+				node->At(1) = AddConvertOperator(node->At(1), node->ExprType);
+				break;
 			case CplNodeType::BitAnd:
 			case CplNodeType::BitOr:
 			case CplNodeType::BitXor:
@@ -673,11 +709,8 @@ namespace Interpreter {
 					PrintError("The right operand of => must a type identifier.", node->Content.Line),
 					node->Type = CplNodeType::Error, res = 1;
 				node->ExprType = node->At(1)->ExprType;
-				node->ExprType.Dimc = TypeVarDimc - node->ExprType.Dimc;
-				node->ExprType.IsMember = node->At(0)->ExprType.IsMember;
-				node->ExprType.IsQuote = node->At(0)->ExprType.IsQuote;
-				if (IsBasicType(node->At(0)->ExprType) != IsBasicType(node->At(1)->ExprType))
-					node->ExprType.IsMember = node->ExprType.IsQuote = false;
+				node->ExprType.Dimc = node->At(1)->ExprType.Dimc = TypeVarDimc - node->ExprType.Dimc;
+				node->ExprType.IsMember = node->ExprType.IsQuote = false;
 				break;
 			case CplNodeType::New:
 				// use the InitFunction

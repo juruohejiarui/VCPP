@@ -73,7 +73,13 @@ enum CommandID {
 
 #ifdef PLATFORM_LINUX
 typedef unsigned long long uint64_t;
+typedef unsigned int uint32_t;
+typedef unsigned short uint16_t;
 typedef unsigned char uint8_t;
+typedef long long int64_t;
+typedef int int32_t;
+typedef short int16_t;
+typedef char int8_t;
 #endif
 
 enum EXCommandID {
@@ -84,11 +90,18 @@ enum EXCommandID {
 	EX_mbpinc, EX_mi32pinc, EX_mi64pinc, EX_mupinc, EX_mbsinc, EX_mi32sinc, EX_mi64sinc, EX_musinc,
 	EX_mbpdec, EX_mi32pdec, EX_mi64pdec, EX_mupdec, EX_mbsdec, EX_mi32sdec, EX_mi64sdec, EX_musdec,
 
+	// the operation for convertion between basic types
+	EX_btoi32, EX_btoi64, EX_btou, EX_btof,
+	EX_i32tob, EX_i32toi64, EX_i32tou, EX_i32tof,
+	EX_i64tob, EX_i64toi32, EX_i64tou, EX_i64tof,
+	EX_utob, EX_utoi32, EX_utoi64, EX_utof,
+	EX_ftob, EX_ftoi32, EX_ftoi64, EX_ftou,
+
 	// big number
-	EX_iadd, EX_isub, EX_imul, EX_idiv, EX_imod, EX_iand, EX_ior, EX_ixor, EX_inot, EX_ilmv, EX_irmv,
+	EX_iadd, EX_isub, EX_imul, EX_idiv, EX_imod, 
 	EX_ieq, EX_ine, EX_igt, EX_ige, EX_ils, EX_ile,
 	EX_vipinc, EX_visinc, EX_vipdec, EX_visdec, EX_mipinc, EX_misinc, EX_mipdec, EX_misdec,
-	EX_btoi, EX_itoi, EX_ltoi, EX_utoi,
+	EX_btoi, EX_i32toi, EX_i64toi, EX_utoi, EX_ftoi, EX_itob, EX_itoi32, EX_itoi64, EX_itou, EX_itof, 
 
 	//+= -= *= /= %= &= |= ^= <<= >>=
 	EX_vbaddmov, EX_vaddmov, EX_vladdmov, EX_vuaddmov, EX_vfaddmov, 

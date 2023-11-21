@@ -84,7 +84,7 @@ namespace Interpreter {
 		excmd, 
 	};
 
-	constexpr int EXCMD0_COUNT = 159, EXCMD1_COUNT = 2, EXCMDX_COUNT = 1;
+	constexpr int EXCMD0_COUNT = 208, EXCMD1_COUNT = 2, EXCMDX_COUNT = 1;
 	enum EXCommand {
 		EX_none,
 		//++ and --
@@ -92,6 +92,19 @@ namespace Interpreter {
 		EX_vbpdec, EX_vi32pdec, EX_vi64pdec, EX_vupdec, EX_vbsdec, EX_vi32sdec, EX_vi64sdec, EX_vusdec,
 		EX_mbpinc, EX_mi32pinc, EX_mi64pinc, EX_mupinc, EX_mbsinc, EX_mi32sinc, EX_mi64sinc, EX_musinc,
 		EX_mbpdec, EX_mi32pdec, EX_mi64pdec, EX_mupdec, EX_mbsdec, EX_mi32sdec, EX_mi64sdec, EX_musdec,
+
+		// the operation for convertion between basic types
+		EX_btoi32, EX_btoi64, EX_btou, EX_btof,
+		EX_i32tob, EX_i32toi64, EX_i32tou, EX_i32tof,
+		EX_i64tob, EX_i64toi32, EX_i64tou, EX_i64tof,
+		EX_utob, EX_utoi32, EX_utoi64, EX_utof,
+		EX_ftob, EX_ftoi32, EX_ftoi64, EX_ftou,
+
+		// big number
+		EX_iadd, EX_isub, EX_imul, EX_idiv, EX_imod, 
+		EX_ieq, EX_ine, EX_igt, EX_ige, EX_ils, EX_ile,
+		EX_vipinc, EX_visinc, EX_vipdec, EX_visdec, EX_mipinc, EX_misinc, EX_mipdec, EX_misdec,
+		EX_btoi, EX_i32toi, EX_i64toi, EX_utoi, EX_ftoi, EX_itob, EX_itoi32, EX_itoi64, EX_itou, EX_itof,
 
 		//+= -= *= /= %= &= |= ^= <<= >>=
 		EX_vbaddmov, EX_vaddmov, EX_vladdmov, EX_vuaddmov, EX_vfaddmov, 
@@ -151,11 +164,11 @@ namespace Interpreter {
 
 #endif
 	int GetCommandSize(int id);
-	int GetCommandIndex(string cmd_name);
+	int GetCommandIndex(const string& cmd_name);
 	int GetCommndArgCount(int cmdid);
 
 	extern const string EXCommandName[];
-	EXCommand GetEXCommandIndex(string excmd_name);
+	EXCommand GetEXCommandIndex(const string& excmd_name);
 	int GetEXCommandSize(int id);
 	int GetEXCommandArgCount(int cmdid);
 

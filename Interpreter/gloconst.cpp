@@ -79,7 +79,7 @@ namespace Interpreter {
 	}
 #endif
 
-	int GetCommandIndex(string cmd_name) {
+	int GetCommandIndex(const string &cmd_name) {
 		for (int i = 0; i <= CMD0_COUNT + CMD1_COUNT + CMD2_COUNT + 1; i++) if (cmdnamels[i] == cmd_name) return i;
 		return -1;
 	}
@@ -92,12 +92,24 @@ namespace Interpreter {
 	}
 
 	const string EXCommandName[] = {
-		"EX_none",
 		//++ and --
 		"EX_vbpinc", "EX_vi32pinc", "EX_vi64pinc", "EX_vupinc", "EX_vbsinc", "EX_vi32sinc", "EX_vi64sinc", "EX_vusinc", 
 		"EX_vbpdec", "EX_vi32pdec", "EX_vi64pdec", "EX_vupdec", "EX_vbsdec", "EX_vi32sdec", "EX_vi64sdec", "EX_vusdec", 
 		"EX_mbpinc", "EX_mi32pinc", "EX_mi64pinc", "EX_mupinc", "EX_mbsinc", "EX_mi32sinc", "EX_mi64sinc", "EX_musinc", 
 		"EX_mbpdec", "EX_mi32pdec", "EX_mi64pdec", "EX_mupdec", "EX_mbsdec", "EX_mi32sdec", "EX_mi64sdec", "EX_musdec", 
+
+		// the operation for convertion between basic types
+		"EX_btoi32", "EX_btoi64", "EX_btou", "EX_btof", 
+		"EX_i32tob", "EX_i32toi64", "EX_i32tou", "EX_i32tof", 
+		"EX_i64tob", "EX_i64toi32", "EX_i64tou", "EX_i64tof", 
+		"EX_utob", "EX_utoi32", "EX_utoi64", "EX_utof", 
+		"EX_ftob", "EX_ftoi32", "EX_ftoi64", "EX_ftou", 
+
+		// big number
+		"EX_iadd", "EX_isub", "EX_imul", "EX_idiv", "EX_imod", 
+		"EX_ieq", "EX_ine", "EX_igt", "EX_ige", "EX_ils", "EX_ile", 
+		"EX_vipinc", "EX_visinc", "EX_vipdec", "EX_visdec", "EX_mipinc", "EX_misinc", "EX_mipdec", "EX_misdec", 
+		"EX_btoi", "EX_i32toi", "EX_i64toi", "EX_utoi", "EX_ftoi", "EX_itob", "EX_itoi32", "EX_itoi64", "EX_itou", "EX_itof", 
 
 		//+= -= *= /= %= &= |= ^= <<= >>=
 		"EX_vbaddmov", "EX_vaddmov", "EX_vladdmov", "EX_vuaddmov", "EX_vfaddmov", 
@@ -120,6 +132,7 @@ namespace Interpreter {
 		"EX_mblmvmov", "EX_mlmvmov", "EX_mllmvmov", "EX_mulmvmov", 
 		"EX_vbrmvmov", "EX_vrmvmov", "EX_vlrmvmov", "EX_vurmvmov", 
 		"EX_mbrmvmov", "EX_mrmvmov", "EX_mlrmvmov", "EX_murmvmov", 
+
 		// vector operator
 		"EX_newvec2", "EX_newvec3", "EX_newvec4", 
 		"EX_vvec2mov", "EX_vvec3mov", "EX_vvec4mov", "EX_mvec2mov", "EX_mvec3mov", "EX_mvec4mov", 
@@ -131,13 +144,14 @@ namespace Interpreter {
 		"EX_vec2div", "EX_vec3div", "EX_vec4div", 
 		"EX_vec2len", "EX_vec3len", "EX_vec4len", 
 
-		"EX_switch", 
-		
 		// debug operator
 		"EX_hint_var", "EX_hint_code", 
+
+		"EX_switch", 
+
 	};
 
-    EXCommand GetEXCommandIndex(string excmd_name) {
+    EXCommand GetEXCommandIndex(const string &excmd_name) {
 		for (int i = 1; i <= EXCMD0_COUNT + EXCMD1_COUNT + EXCMDX_COUNT; i++)
 			if (excmd_name == EXCommandName[i]) return (EXCommand)i;
 		return EX_none;

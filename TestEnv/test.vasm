@@ -1183,7 +1183,7 @@ label SpeedTest@solve
 setvar 1
 poparg 0
 pglo 56
-push 10000000
+push 100000000
 vi32mov
 poglo 64
 push 8
@@ -1211,7 +1211,8 @@ vi32mov
 label @LOOP_START10
 pvar0
 vi32gvl
-push 10000000
+pglo 56
+vi32gvl
 le
 jz @LOOP_END10
 poglo 64
@@ -1239,8 +1240,11 @@ uadd
 mi64mov
 label @LOOP_CTEND10
 pvar0
-excmd EX_vi32sinc
-pop
+pvar0
+vi32gvl
+push1
+add
+vi32mov
 jmp @LOOP_START10
 label @LOOP_END10
 pvar0

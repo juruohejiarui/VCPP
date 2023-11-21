@@ -39,16 +39,16 @@ namespace Interpreter {
 		string ToString();
 		string ToIdenString();
 
-		bool operator == (ExpressionType &b);
-		bool operator != (ExpressionType &b);
+		friend bool operator == (const ExpressionType &a, const ExpressionType &b);
+		friend bool operator != (const ExpressionType &a, const ExpressionType &b);
 	};
 	constexpr int TypeVarDimc = 32;
 
 
-	bool IsInteger(ExpressionType &type);
-	bool IsFloat(ExpressionType &type);
+	bool IsInteger(const ExpressionType &type);
+	bool IsFloat(const ExpressionType &type);
 	bool IsBasicType(ExpressionType type);
-	extern ExpressionType char_etype, int32_etype, int64_etype, uint64_etype, float64_etype, void_etype, object_etype;
+	extern ExpressionType char_etype, int32_etype, int64_etype, uint64_etype, float64_etype, void_etype, object_etype, bignumber_etype;
 
 	struct CplNode {
 		CplNodeType Type;
@@ -126,7 +126,7 @@ namespace Interpreter {
 		int InsertMember(IdentifierInfo *iden_info);
 		void InheritMember(IdentifierInfo *iden_info);
 	};
-	extern ClassInfo *char_cls, *int32_cls, *int64_cls, *uint64_cls, *float64_cls, *void_cls, *object_cls;
+	extern ClassInfo *char_cls, *int32_cls, *int64_cls, *uint64_cls, *float64_cls, *void_cls, *object_cls, *bignumber_cls;
 	bool IsBasicClass(ClassInfo* cls);
 
 	struct NamespaceInfo : IdentifierInfo {

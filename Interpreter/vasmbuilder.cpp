@@ -26,6 +26,17 @@ namespace Interpreter {
 		vasm_stream << endl;
     }
 
+	string GetTypeModifier(const ExpressionType &etype) {
+		if (!IsBasicType(etype)) return "o";
+		if (etype == char_etype) return "b";
+		else if (etype == int32_etype) return "i32";
+		else if (etype == int64_etype) return "i64";
+		else if (etype == uint64_etype) return "u";
+		else if (etype == float64_etype) return "f";
+		else if (etype == bignumber_etype) return "i";
+		return "<error-type>";
+	}
+
 #define wrtcmd VasmBuilder_WriteCommand
 #define wrtcmdstr VasmBuilder_WriteCommandStr
 
@@ -165,6 +176,7 @@ namespace Interpreter {
 				break;
 			case CplNodeType::As:
 				res = BuildExpressionVasm(node->At(0));
+				if ((IsBasicType(node->At(0)->ExprType) || node->At(0)->ExprType == bignumber_etype) && (IsBasicType(node->At(1)->ExprType) || node->At(1)->ExprType == bignumber_etype))
 				if (IsBasicType(node->At(0)->ExprType) != IsBasicType(node->At(1)->ExprType))
 					BuildGVLVasm(node->At(0)->ExprType),
 					wrtcmd(IsBasicType(node->At(0)->ExprType) ? pack : unpack);

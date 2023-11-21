@@ -91,6 +91,8 @@ struct Object *VM_CreateObject(uint64_t _object_size) {
     _object->ReferenceCount = _object->RootReferenceCount = _object->CrossReferenceCount = 0;
     _object->State = 1;
 
+    _object->Type = ObjectType_User;
+
     // intial generation of _object is generation 0
     _object->Generation = 0;
     List_Insert(_object->Belong, GenerationListEnd[0]);
@@ -99,11 +101,15 @@ struct Object *VM_CreateObject(uint64_t _object_size) {
     return _object;
 }
 
-struct Object *VM_CreateBuiltinObject(uint64_t _object_size, size_t _struct_size) {
-    struct Object *_object = get_object(_object_size, _struct_size);
+const size_t ObjectSize[] = {sizeof(struct Object), sizeof(struct BigNumber)};
+
+struct Object *VM_CreateBuiltinObject(uint64_t _object_size, int _object_type) {
+    struct Object *_object = get_object(_object_size, ObjectSize[_object_type]);
 
     _object->ReferenceCount = _object->RootReferenceCount = _object->CrossReferenceCount = 0;
     _object->State = 1;
+
+    _object->Type = _object_type;
 
     // intial generation of _object is generation 0
     _object->Generation = 0;
@@ -116,6 +122,7 @@ struct Object *VM_CreateBuiltinObject(uint64_t _object_size, size_t _struct_size
 
 void free_object(struct Object *_object) {
     _object->State = 0;
+    if (_object->Type == ObjectType_BigNumber) VM_BigNumber_Free((struct BigNumber *)_object);
     List_Delete(_object->Belong), List_Insert(_object->Belong, FreeListEnd);
     if (_object->CrossReferenceCount) List_Delete(_object->CrossBelong);
     if (_object->Size > MIN_RECYCLE_SIZE) free(_object->Flag), free(_object->Data);

@@ -1,8 +1,8 @@
 #include "vcppcpl.h"
 
 namespace Interpreter {
-    ExpressionType char_etype, int32_etype, int64_etype, uint64_etype, float64_etype, void_etype, object_etype;
-    ClassInfo *char_cls, *int32_cls, *int64_cls, *uint64_cls, *float64_cls, *void_cls, *object_cls;
+    ExpressionType char_etype, int32_etype, int64_etype, uint64_etype, float64_etype, void_etype, object_etype, bignumber_etype;
+    ClassInfo *char_cls, *int32_cls, *int64_cls, *uint64_cls, *float64_cls, *void_cls, *object_cls, *bignumber_cls;
 
     ExpressionType::ExpressionType(string type_name, int dimc, bool is_quote, bool is_member) {
         this->TypeName = type_name;
@@ -28,11 +28,11 @@ namespace Interpreter {
         res.append(to_string(Dimc));
         return res;
     }
-    bool ExpressionType::operator==(ExpressionType &b) { return Type == b.Type && Dimc == b.Dimc; }
-    bool ExpressionType::operator!=(ExpressionType &b) { return Type != b.Type || Dimc != b.Dimc; }
+    bool operator==(const ExpressionType &a, const ExpressionType &b) { return a.Type == b.Type && a.Dimc == b.Dimc; }
+    bool operator!=(const ExpressionType &a, const ExpressionType &b) { return a.Type != b.Type || a.Dimc != b.Dimc; }
 
-    bool IsInteger(ExpressionType &type) { return type == char_etype || type == int32_etype || type == int64_etype || type == uint64_etype; }
-    bool IsFloat(ExpressionType &type) { return type == float64_etype; }
+    bool IsInteger(const ExpressionType &type) { return type == char_etype || type == int32_etype || type == int64_etype || type == uint64_etype; }
+    bool IsFloat(const ExpressionType &type) { return type == float64_etype; }
     bool IsBasicType(ExpressionType type) {
         if (type.Dimc > (TypeVarDimc >> 1)) type.Dimc = TypeVarDimc - type.Dimc;
         return IsInteger(type) || IsFloat(type); 
