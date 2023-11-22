@@ -47,6 +47,7 @@ namespace Interpreter {
 		BuildBasicType(void_cls, void_etype, "void", 0);
 		BuildBasicType(bignumber_cls, bignumber_etype, "large", 0);
 		BuildBasicType(object_cls, object_etype, "object", 8);
+		bignumber_cls->Parent = object_cls;
 	}
 
 	#pragma region operation of using_list
